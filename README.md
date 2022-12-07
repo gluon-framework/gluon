@@ -5,7 +5,11 @@
 
 ## "Comparison"
 | Part | Electron | Gluon |
-| ----- | -------- | ----- |
+| ---- | -------- | ----- |
 | Frontend | Self-contained Chromium | System Installed Chromium |
 | Backend | Self-contained Node.JS | System Installed Node.JS |
 | IPC | Electron's Internal API | Gluon's API via CDP |
+
+| Stat | Electron | Gluon |
+| ---- | -------- | ----- |
+| Build Size (not including System) | ~190MB | ~2MB |
