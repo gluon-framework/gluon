@@ -12,4 +12,6 @@
 
 | Stat | Electron | Gluon |
 | ---- | -------- | ----- |
-| Build Size (not including System) | ~190MB | ~2MB |
+| Build Size | ~190MB | ~2MB[^1] |
+
+[^1]: Does not include system installed components
