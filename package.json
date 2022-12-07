@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "dependencies": {
+    "chrome-remote-interface": "^0.31.3"
+  }
+}
