@@ -1,5 +1,5 @@
 # Glucord
-Example/demo of Gluon, a minimal Discord client using system-installed Chrome/Node.
+A minimal Discord client using system-installed Chromium/Node. Example/demo of Gluon.
 
 > **Info** |
 > Gluon is currently **Windows only**.
