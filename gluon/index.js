@@ -1,6 +1,8 @@
 const rgb = (r, g, b, msg) => `\x1b[38;2;${r};${g};${b}m${msg}\x1b[0m`;
 const log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args);
 
+process.versions.gluon = '1.0';
+
 const presets = { // Presets from OpenAsar
   'base': '--autoplay-policy=no-user-gesture-required --disable-features=WinRetrieveSuggestionsOnlyOnDemand,HardwareMediaKeyHandling,MediaSessionService', // Base Discord
   'perf': `--enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist --enable-hardware-overlays=single-fullscreen,single-on-top,underlay --enable-features=EnableDrDc,CanvasOopRasterization,BackForwardCache:TimeToLiveInBackForwardCacheInSeconds/300/should_ignore_blocklists/true/enable_same_site/true,ThrottleDisplayNoneAndVisibilityHiddenCrossOriginIframes,UseSkiaRenderer,WebAssemblyLazyCompilation --disable-features=Vulkan --force_high_performance_gpu`, // Performance
@@ -60,7 +62,10 @@ export const open = async (url, onLoad = () => {}) => {
 
   const toRun = `(() => {
     if (window.self !== window.top) return; // inside frame
-    (${onLoad})();
+    (${onLoad.toString()
+      .replaceAll('GLUON_VERSION', process.versions.gluon)
+      .replaceAll('CHROMIUM_VERSION', '${navigator.userAgentData.brands.find(x => x.brand === \'Chromium\').version}')
+      .replaceAll('NODE_VERSION', process.versions.node)})();
   })()`;
 
   run(toRun);
