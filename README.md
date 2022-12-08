@@ -1,11 +1,13 @@
 # Gluon
-Library for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS. ***VERY*** early and probably never finished/production ready. *Not* an Electron alternative, mostly.
+Library and self-contained ecosystem for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS. ***VERY*** early and probably never finished/production ready. *Not* an Electron alternative, mostly.
 
 <br>
 
-## Structure
+## Ecosystem
 - [Gluon](gluon): the Gluon library
-- [Glugun](glugun): Gluon builder
+- [Glugun](glugun): builds Gluon apps into releasable builds with optional bundling
+
+### Apps
 - [Glucord](glucord): minimal Discord client loading official webapp (demo/example)
 
 
