@@ -1,5 +1,5 @@
 # Gluon
-*Not* an Electron alternative, mostly. Library for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS. ***VERY*** early and probably never finished/production ready.
+Library for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS. ***VERY*** early and probably never finished/production ready. *Not* an Electron alternative, mostly.
 
 <br>
 
