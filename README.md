@@ -21,3 +21,7 @@
 | Build Size | ~190MB | ~2MB[^1] |
 
 [^1]: Does not include system installed components
+
+
+## Release Schedule
+Gluon (and it's subprojects) use a `major.patch` version format, with major releases being released at ~22:00 UTC daily if there are changes present in `main`, while using `X.0-dev` in the meantime. Patch releases may happen inbetween to fix bugs (not adding anything new or breaking).
