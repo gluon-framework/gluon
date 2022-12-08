@@ -3,7 +3,7 @@ A minimal Discord client loading Discord Web, using system-installed Chromium/No
 
 <br>
 
-## Usage
+## Testing
 > **Note** |
 > Gluon is currently **Windows only**.
 
@@ -11,3 +11,7 @@ A minimal Discord client loading Discord Web, using system-installed Chromium/No
 1. Clone the Gluon repo
 2. `npm install`
 3. `node glucord` (with `--canary` if using Chrome Canary)
+
+## Building
+1. Cd into the repo root
+2. `node glugun glucord glucord`
