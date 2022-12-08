@@ -21,14 +21,14 @@ const __dirname = dirname(__filename);
 import CDP from 'chrome-remote-interface';
 
 
-const findChromePath = () => {
-  let whichChrome = 'stable';
+const findChromiumPath = () => {
+  let whichChromium = 'stable';
 
   for (const x of [ 'canary', 'edge' ]) {
-    if (process.argv.includes('--' + x)) whichChrome = x;
+    if (process.argv.includes('--' + x)) whichChromium = x;
   }
 
-  switch (whichChrome) {
+  switch (whichChromium) {
     case 'stable': return join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe');
     case 'canary': return join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe');
     case 'edge': return join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe');
@@ -38,16 +38,16 @@ const findChromePath = () => {
 const getDataPath = () => join(__dirname, '..', 'chrome_data');
 
 
-const startChrome = url => new Promise(res => {
+const startChromium = url => new Promise(res => {
   const dataPath = getDataPath();
-  const chromePath = findChromePath();
+  const chromiumPath = findChromiumPath();
 
-  log('chrome path:', chromePath);
+  log('chromium path:', chromiumPath);
   log('data path:', dataPath);
 
   const debugPort = 9222;
 
-  exec(`"${chromePath}" --app=${url} --remote-debugging-port=${debugPort} --user-data-dir="${dataPath}" --new-window --disable-extensions --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication ${presets.perf}`, (err, stdout, stderr) => {
+  exec(`"${chromiumPath}" --app=${url} --remote-debugging-port=${debugPort} --user-data-dir="${dataPath}" --new-window --disable-extensions --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication ${presets.perf}`, (err, stdout, stderr) => {
     log(err, stdout, stderr);
   });
 
@@ -55,9 +55,9 @@ const startChrome = url => new Promise(res => {
 });
 
 export const open = async (url, onLoad = () => {}) => {
-  log('starting chrome...');
+  log('starting chromium...');
 
-  const debugPort = await startChrome(url);
+  const debugPort = await startChromium(url);
   log('connecting to CDP...');
 
   const { Runtime, Page } = await CDP({ port: debugPort });
