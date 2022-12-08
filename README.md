@@ -4,7 +4,7 @@ Minimal library and integrated ecosystem for making "desktop apps" from websites
 <br>
 
 ## Ecosystem
-- [Gluon](gluon): the Gluon library
+- [Gluon](gluon): the Gluon library (NodeJS)
 - [Glugun](glugun): builds Gluon apps into releasable builds with optional bundling (soon)
 
 ### Apps
@@ -15,8 +15,8 @@ Minimal library and integrated ecosystem for making "desktop apps" from websites
 ### Internals
 | Part | Electron | Gluon |
 | ---- | -------- | ----- |
-| Frontend | Self-contained Chromium | System Installed Chromium |
-| Backend | Self-contained Node.JS | System Installed Node.JS |
+| Frontend | Self-contained Chromium | System installed Chromium |
+| Backend | Self-contained Node.JS | System installed Node.JS |
 | IPC | Electron's Internal API | Gluon's API via CDP |
 | Status | Production ready | Early in development |
 | Ecosystem | Distributed (many separate projects) | Integrated |
