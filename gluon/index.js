@@ -22,11 +22,16 @@ import CDP from 'chrome-remote-interface';
 
 
 const findChromePath = () => {
-  const whichChrome = process.argv.includes('--canary') ? 'canary' : 'stable';
+  let whichChrome = 'stable';
+
+  for (const x of [ 'canary', 'edge' ]) {
+    if (process.argv.includes('--' + x)) whichChrome = x;
+  }
 
   switch (whichChrome) {
     case 'stable': return join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe');
     case 'canary': return join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe');
+    case 'edge': return join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe');
   }
 };
 
