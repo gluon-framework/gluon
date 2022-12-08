@@ -1,5 +1,5 @@
 # Gluon
-Minimal library and self-contained ecosystem for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS, with optional bundling (soon). ***VERY*** early and probably never finished/production ready. *Not* an Electron alternative, mostly.
+Minimal library and integrated ecosystem for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS, with optional bundling (soon). ***VERY*** early and probably never finished/production ready. *Not* an Electron alternative, mostly.
 
 <br>
 
@@ -11,13 +11,17 @@ Minimal library and self-contained ecosystem for making "desktop apps" from webs
 - [Glucord](glucord): minimal Discord client loading official webapp (demo/example)
 
 
-## "Comparison"
+## Comparison
+### Internals
 | Part | Electron | Gluon |
 | ---- | -------- | ----- |
 | Frontend | Self-contained Chromium | System Installed Chromium |
 | Backend | Self-contained Node.JS | System Installed Node.JS |
 | IPC | Electron's Internal API | Gluon's API via CDP |
+| Status | Production ready | Early in development |
+| Ecosystem | Distributed (many separate projects) | Integrated |
 
+### Stats
 | Stat | Electron | Gluon |
 | ---- | -------- | ----- |
 | Build Size | ~190MB | ~2MB[^1] |
