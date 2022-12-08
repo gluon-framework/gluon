@@ -3,6 +3,12 @@
 
 <br>
 
+## Structure
+- [Gluon](gluon): the Gluon library
+- [Glugun](glugun): Gluon builder
+- [Glucord](glucord): minimal Discord client loading official webapp (demo/example)
+
+
 ## "Comparison"
 | Part | Electron | Gluon |
 | ---- | -------- | ----- |
