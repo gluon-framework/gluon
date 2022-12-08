@@ -1,6 +1,7 @@
-chrome_data
-
+# node
 node_modules
 package-lock.json
 
+# gluon
 build
+chrome_data
