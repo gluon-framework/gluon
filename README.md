@@ -1,5 +1,5 @@
 # Gluon
-Minimal library and integrated ecosystem for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS, with optional bundling (soon). ***VERY*** early and probably never finished/production ready. *Not* an Electron alternative, mostly.
+Minimal library and integrated ecosystem for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS, with optional bundling if you want that too (soon). ***VERY*** early and probably never finished/production ready. *Not* an Electron alternative, mostly.
 
 <br>
 
@@ -28,6 +28,7 @@ Minimal library and integrated ecosystem for making "desktop apps" from websites
 
 [^1]: Does not include system installed components
 [^2]: Early/WIP data, can be reduced in future
+
 
 ## Release Schedule
 Gluon (and it's subprojects) use a `major.patch` version format, with major releases being released at ~22:00 UTC daily if there are changes present in `main`, while using `X.0-dev` in the meantime. Patch releases may happen inbetween to fix bugs (not adding anything new or breaking).
