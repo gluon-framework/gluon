@@ -12,7 +12,7 @@ const presets = { // Presets from OpenAsar
 
 import { exec } from 'child_process';
 import { join, dirname } from 'path';
-
+import { exists } from 'fs/promises';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -20,19 +20,28 @@ const __dirname = dirname(__filename);
 
 import CDP from 'chrome-remote-interface';
 
+const chromiumPathsWin = {
+  stable: join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+  canary: join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
+  edge: join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe')
+};
 
-const findChromiumPath = () => {
-  let whichChromium = 'stable';
+const findChromiumPath = async () => {
+  let whichChromium = '';
 
-  for (const x of [ 'canary', 'edge' ]) {
+  for (const x of [ 'stable', 'canary', 'edge' ]) {
     if (process.argv.includes('--' + x)) whichChromium = x;
   }
 
-  switch (whichChromium) {
-    case 'stable': return join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe');
-    case 'canary': return join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe');
-    case 'edge': return join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe');
+  if (!whichChromium) {
+    for (const x in chromiumPathsWin) {
+      if (await exists(chromiumPathsWin[x])) whichChromium = x;
+    }
   }
+
+  if (!whichChromium) return null;
+
+  return chromiumPathsWin[whichChromium];
 };
 
 const getDataPath = () => join(__dirname, '..', 'chrome_data');
@@ -44,6 +53,8 @@ const startChromium = url => new Promise(res => {
 
   log('chromium path:', chromiumPath);
   log('data path:', dataPath);
+
+  if (!chromiumPath) return log('failed to find a good chromium install');
 
   const debugPort = 9222;
 
