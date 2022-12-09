@@ -20,7 +20,7 @@ const esbuildPlugin = { // esbuild to fix some things in src files
       let source = await readFile(args.path, 'utf8');
 
       source = source
-        .replace(`const __filename = fileURLToPath(import.meta.url);\nconst __dirname = dirname(__filename);`, ''); // remove setting __filename/__dirname cause ESM -> CJS
+        .replace(`const __filename = fileURLToPath(import.meta.url);\r\nconst __dirname = dirname(__filename);`, ''); // remove setting __filename/__dirname cause ESM -> CJS
 
       return { contents: source };
     });
