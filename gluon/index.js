@@ -12,7 +12,7 @@ const presets = { // Presets from OpenAsar
 
 import { exec } from 'child_process';
 import { join, dirname } from 'path';
-import { exists } from 'fs/promises';
+import { access } from 'fs/promises';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -26,6 +26,8 @@ const chromiumPathsWin = {
   edge: join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe')
 };
 
+const exists = path => access(path).then(() => true).catch(() => false);
+
 const findChromiumPath = async () => {
   let whichChromium = '';
 
@@ -35,7 +37,12 @@ const findChromiumPath = async () => {
 
   if (!whichChromium) {
     for (const x in chromiumPathsWin) {
-      if (await exists(chromiumPathsWin[x])) whichChromium = x;
+      log(x, chromiumPathsWin[x], await exists(chromiumPathsWin[x]));
+
+      if (await exists(chromiumPathsWin[x])) {
+        whichChromium = x;
+        break;
+      }
     }
   }
 
@@ -47,9 +54,9 @@ const findChromiumPath = async () => {
 const getDataPath = () => join(__dirname, '..', 'chrome_data');
 
 
-const startChromium = url => new Promise(res => {
+const startChromium = url => new Promise(async res => {
   const dataPath = getDataPath();
-  const chromiumPath = findChromiumPath();
+  const chromiumPath = await findChromiumPath();
 
   log('chromium path:', chromiumPath);
   log('data path:', dataPath);
