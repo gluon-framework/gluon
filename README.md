@@ -37,6 +37,7 @@ Basic (plain HTML) Hello World demo, measured on up to date Windows 10. Used lat
 | Build Size | ~0.5MB[^system][^gluon][^1] | ~190MB | ~1.8MB[^system] | ~2.6MB[^system] |
 | Memory Usage | ~90MB[^gluon] | ~100MB | ~90MB | ~90MB |
 | Backend[^2] Memory Usage | ~13MB[^gluon] | ~22MB | ~3MB | ~3MB |
+| Build Time | ~0.7s[^3] | ~20s[^4] | ~120s[^5] | ~2s[^3][^6] |
 
 *Extra info: All HTML/CSS/JS is unminified (including Gluon). Built in release configuration. All binaries were left as compiled with common size optimizations enabled for that language, no stripping/packing done.*
 
@@ -45,3 +46,7 @@ Basic (plain HTML) Hello World demo, measured on up to date Windows 10. Used lat
 
 [^1]: *How is Gluon so small?* Since NodeJS is expected as a system installed component, it is "just" bundled and minified Node code.
 [^2]: Backend like non-Web (not Chromium/WebView2/etc).
+[^3]: Includes Node.JS spinup time.
+[^4]: Built for win32 zip (not Squirrel) as a fairer comparison
+[^5]: Cold build (includes deps compiling) in release mode.
+[^6]: Using `neu build -r`
