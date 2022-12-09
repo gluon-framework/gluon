@@ -49,6 +49,6 @@ Basic (plain HTML) Hello World demo, measured on up to date Windows 10. Used lat
 [^1]: *How is Gluon so small?* Since NodeJS is expected as a system installed component, it is "just" bundled and minified Node code.
 [^2]: Backend like non-Web (not Chromium/WebView2/etc).
 [^3]: Includes Node.JS spinup time.
-[^4]: Built for win32 zip (not Squirrel) as a fairer comparison
+[^4]: Built for win32 zip (not Squirrel) as a fairer comparison.
 [^5]: Cold build (includes deps compiling) in release mode.
-[^6]: Using `neu build -r`
+[^6]: Using `neu build -r`.
