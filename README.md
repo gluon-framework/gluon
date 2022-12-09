@@ -30,7 +30,7 @@ Gluon (and it's subprojects) use a `major.patch` version format, with major rele
 
 
 ### Benchmark / Stats
-Basic (plain HTML) Hello World demo, measured on up to date Windows 10. Used latest stable versions of all frameworks as of 9th Dec 2022.
+Basic (plain HTML) Hello World demo, measured on up to date Windows 10. Used latest stable versions of all frameworks as of 9th Dec 2022. (You shouldn't actually use random stats in benchmarks to compare frameworks, this is more so you know what Gluon is like compared to other similar projects.)
 
 | Stat | Gluon | Electron | Tauri | Neutralinojs |
 | ---- | ----- | -------- | ------------ | ----- |
