@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "dependencies": {
+    "esbuild": "^0.16.3",
+    "html-minifier-terser": "^7.1.0"
+  }
+}
