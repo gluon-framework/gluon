@@ -10,7 +10,7 @@ Minimal integrated ecosystem for making "desktop apps" from websites easily usin
 - [Glugun](glugun): builds Gluon apps into releasable builds with optional bundling (soon)
 
 ### Apps
-- [Gluworld](gluworld): basic Hello World demo app
+- [Gluworld](gluworld): Hello World demo app with version info shown
 - [Glucord](glucord): minimal desktop Discord client loading official webapp (demo/example)
 
 <br>
