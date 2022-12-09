@@ -29,13 +29,15 @@ Gluon (and it's subprojects) use a `major.patch` version format, with major rele
 
 
 ### Benchmark / Stats
-*Basic (plain HTML) Hello World demo, measured on up to date Windows 10. Used latest stable versions of all frameworks as of 9th Dec 2022.*
+Basic (plain HTML) Hello World demo, measured on up to date Windows 10. Used latest stable versions of all frameworks as of 9th Dec 2022.
 
 | Stat | Gluon | Electron | Tauri | Neutralinojs |
 | ---- | ----- | -------- | ------------ | ----- |
 | Build Size | ~1.8MB[^system][^gluon] | ~190MB | ~1.8MB[^system] | ~2.6MB[^system] |
 | Memory Usage | ~90MB[^gluon] | ~100MB | ~90MB | ~90MB |
 | Backend[^1] Memory Usage | ~13MB[^gluon] | ~22MB | ~3MB | ~3MB |
+
+*Extra info: All HTML/CSS/JS is unminified (including Gluon). All binaries were left as compiled with common size optimizations enabled for that language, no stripping/packing done.*
 
 [^system]: Does not include system installed components
 [^gluon]: Early/WIP data, may change in future
