@@ -33,13 +33,14 @@ Basic (plain HTML) Hello World demo, measured on up to date Windows 10. Used lat
 
 | Stat | Gluon | Electron | Tauri | Neutralinojs |
 | ---- | ----- | -------- | ------------ | ----- |
-| Build Size | ~1.8MB[^system][^gluon] | ~190MB | ~1.8MB[^system] | ~2.6MB[^system] |
+| Build Size | ~0.5MB[^system][^gluon][^1] | ~190MB | ~1.8MB[^system] | ~2.6MB[^system] |
 | Memory Usage | ~90MB[^gluon] | ~100MB | ~90MB | ~90MB |
-| Backend[^1] Memory Usage | ~13MB[^gluon] | ~22MB | ~3MB | ~3MB |
+| Backend[^2] Memory Usage | ~13MB[^gluon] | ~22MB | ~3MB | ~3MB |
 
-*Extra info: All HTML/CSS/JS is unminified (including Gluon). All binaries were left as compiled with common size optimizations enabled for that language, no stripping/packing done.*
+*Extra info: All HTML/CSS/JS is unminified (including Gluon). Built in release configuration. All binaries were left as compiled with common size optimizations enabled for that language, no stripping/packing done.*
 
-[^system]: Does not include system installed components
-[^gluon]: Early/WIP data, may change in future
+[^system]: Does not include system installed components.
+[^gluon]: Early/WIP data, may change in future.
 
-[^1]: Backend like non-Web (not Chromium/WebView2/etc)
+[^1]: *How is Gluon so small?* Since NodeJS is expected as a system installed component, it is "just" bundled and minified Node code.
+[^2]: Backend like non-Web (not Chromium/WebView2/etc).
