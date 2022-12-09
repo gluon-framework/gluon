@@ -1,7 +1,7 @@
 const rgb = (r, g, b, msg) => `\x1b[38;2;${r};${g};${b}m${msg}\x1b[0m`;
 const log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args);
 
-process.versions.gluon = '2.0-dev';
+process.versions.gluon = '2.1';
 
 const presets = { // Presets from OpenAsar
   'base': '--autoplay-policy=no-user-gesture-required --disable-features=WinRetrieveSuggestionsOnlyOnDemand,HardwareMediaKeyHandling,MediaSessionService', // Base Discord
@@ -54,7 +54,7 @@ const findChromiumPath = async () => {
 const getDataPath = () => join(__dirname, '..', 'chrome_data');
 
 
-const startChromium = url => new Promise(async res => {
+const startChromium = (url, { windowSize }) => new Promise(async res => {
   const dataPath = getDataPath();
   const chromiumPath = await findChromiumPath();
 
@@ -65,17 +65,17 @@ const startChromium = url => new Promise(async res => {
 
   const debugPort = 9222;
 
-  exec(`"${chromiumPath}" --app=${url} --remote-debugging-port=${debugPort} --user-data-dir="${dataPath}" --new-window --disable-extensions --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication ${presets.perf}`, (err, stdout, stderr) => {
+  exec(`"${chromiumPath}" --app=${url} --remote-debugging-port=${debugPort} --user-data-dir="${dataPath}" ${windowSize ? `--window-size=${windowSize.join(',')}` : ''} --new-window --disable-extensions --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication ${presets.perf}`, (err, stdout, stderr) => {
     log(err, stdout, stderr);
   });
 
   setTimeout(() => res(debugPort), 500);
 });
 
-export const open = async (url, onLoad = () => {}) => {
+export const open = async (url, onLoad = () => {}, { windowSize } = {}) => {
   log('starting chromium...');
 
-  const debugPort = await startChromium(url);
+  const debugPort = await startChromium(url, { windowSize });
   log('connecting to CDP...');
 
   const { Runtime, Page } = await CDP({ port: debugPort });
