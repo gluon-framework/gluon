@@ -85,10 +85,10 @@ export const open = async (url, onLoad = () => {}) => {
 
   const toRun = `(() => {
     if (window.self !== window.top) return; // inside frame
-    (${onLoad.toString()
-      .replaceAll('GLUON_VERSION', process.versions.gluon)
-      .replaceAll('CHROMIUM_VERSION', '${navigator.userAgentData.brands.find(x => x.brand === \'Chromium\').version}')
-      .replaceAll('NODE_VERSION', process.versions.node)})();
+    const GLUON_VERSION = ${process.versions.gluon};
+    const CHROMIUM_VERSION = navigator.userAgentData.brands.find(x => x.brand === "Chromium").version;
+    const NODE_VERSION = ${process.versions.node};
+    (${onLoad.toString()})();
   })()`;
 
   run(toRun);
