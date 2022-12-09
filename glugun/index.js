@@ -76,7 +76,7 @@ const _buildWin32 = async (name, dir, attrs) => {
   await writeFile(join(buildDir, `${name}.bat`), `node %~dp0${minifyBackend ? 'out.js' : 'src'}`);
 
   if (minifyBackend) {
-    log(`pre-minify build size: ${((await dirSize(buildDir)) / 1024 / 1024).toFixed(2)}MB`);
+    log(`Pre-minify build size: ${((await dirSize(buildDir)) / 1024 / 1024).toFixed(2)}MB`);
 
     await Esbuild.build({ // bundle and minify into 1 file
       entryPoints: [ join(buildDir, 'src', 'index.js') ],
@@ -99,7 +99,7 @@ const _buildWin32 = async (name, dir, attrs) => {
 };
 
 export const build = async (name, dir, platform = 'win32', attrs = 'system-chromium,system-node') => {
-  log('building', name, 'on', platform, 'with', attrs.split(',').join(', ') + '...');
+  log('Building', name, 'on', platform, 'with', attrs.split(',').join(', ') + '...');
 
   console.log();
   const startTime = performance.now();
@@ -108,8 +108,8 @@ export const build = async (name, dir, platform = 'win32', attrs = 'system-chrom
   }
 
   console.log();
-  log(`finished build in: ${((performance.now() - startTime) / 1024).toFixed(2)}s`);
-  log(`final build size: ${((await dirSize(buildDir)) / 1024 / 1024).toFixed(2)}MB`);
+  log(`Finished build in: ${((performance.now() - startTime) / 1024).toFixed(2)}s`);
+  log(`Final build size: ${((await dirSize(buildDir)) / 1024 / 1024).toFixed(2)}MB`);
 };
 
 const [ name, dir ] = process.argv.slice(2);
