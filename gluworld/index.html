@@ -2,9 +2,77 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Welcome to Gluon!</title>
+    <link rel="icon" href="https://raw.githubusercontent.com/OpenAsar/gluon/main/assets/logo.png">
+    <title>Gluworld</title>
   </head>
   <body>
-    <h1>Welcome to Gluon!</h1>
+    <h1>
+      Gluon <code id="gluon_version"></code> <br>
+      built with <code id="glugun_version"></code>
+    </h1>
+
+    <div id="versions">
+      <h2>
+        Chromium <br>
+        <code id="chromium_version"></code>
+      </h2>
+
+      <h2>
+        Node <br>
+        <code id="node_version"></code>
+      </h2>
+    </div>
+
+    <style>
+      /* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:ital,wght@0,400;0,700;1,500&display=swap'); */
+      @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900');
+
+      html, body {
+        background: #101418;
+        color: #fff;
+        font-family: Inter, sans-serif;
+      }
+
+      body {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        width: 90%;
+        padding: 12px;
+      }
+
+      h1, h2, code {
+        text-align: center;
+      }
+
+      h1 {
+        font-weight: 900;
+        font-size: 34px;
+      }
+
+      h1 > code {
+        margin-left: 8px;
+      }
+
+      h2 {
+        font-weight: 800;
+        font-size: 28px;
+      }
+
+      code {
+        font-size: 100%;
+        font-family: Fira Code;
+      }
+
+      #versions {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+
+        margin-top: 20vh;
+      }
+    </style>
   </body>
 </html>
