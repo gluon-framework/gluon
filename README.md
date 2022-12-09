@@ -1,5 +1,5 @@
 # Gluon
-Minimal library and integrated ecosystem for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS, with optional bundling if you want that too (soon). ***VERY*** early and probably never finished/production ready. *Not* an Electron alternative, mostly.
+Minimal library and integrated ecosystem for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS, with optional bundling if you want that too (soon). ***VERY*** early and probably never finished/production ready. Doesn't use WebView2.
 
 <br>
 
