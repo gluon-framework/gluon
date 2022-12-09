@@ -10,9 +10,12 @@ Minimal integrated ecosystem for making "desktop apps" from websites easily usin
 ### Apps
 - [Glucord](glucord): minimal Discord client loading official webapp (demo/example)
 
+<br>
+
 ## Release Schedule
 Gluon (and it's subprojects) use a `major.patch` version format, with major releases being released daily if there are changes present in `main`, while using `X.0-dev` in the meantime. Patch releases may happen inbetween to fix bugs (not adding anything new or breaking).
 
+<br>
 
 ## Comparisons
 ### Internals
