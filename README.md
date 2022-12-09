@@ -37,7 +37,7 @@ Basic (plain HTML) Hello World demo, measured on up to date Windows 10. Used lat
 | Stat | Gluon | Electron | Tauri | Neutralinojs |
 | ---- | ----- | -------- | ------------ | ----- |
 | Build Size | ~0.5MB[^system][^gluon][^1] | ~220MB | ~1.8MB[^system] | ~2.6MB[^system] |
-| Memory Usage | ~90MB[^gluon] | ~100MB | ~90MB | ~90MB |
+| Memory Usage | ~80MB[^gluon] | ~100MB | ~90MB | ~90MB |
 | Backend[^2] Memory Usage | ~13MB[^gluon] (Node) | ~22MB (Node) | ~3MB (Native) | ~3MB (Native) |
 | Build Time | ~0.7s[^3] | ~20s[^4] | ~120s[^5] | ~2s[^3][^6] |
 
