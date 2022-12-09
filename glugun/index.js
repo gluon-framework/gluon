@@ -101,6 +101,8 @@ const _buildWin32 = async (name, dir, attrs) => {
 export const build = async (name, dir, platform = 'win32', attrs = 'system-chromium,system-node') => {
   log('Building', name, 'on', platform, 'with', attrs.split(',').join(', ') + '...');
 
+  if (minifyBackend) log(`Minifying is experimental!`);
+
   console.log();
   const startTime = performance.now();
   switch (platform) {
