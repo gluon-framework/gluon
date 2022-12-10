@@ -57,12 +57,17 @@ const _buildWin32 = async (name, dir, attrs) => {
   // await writeFile(join(buildDir, 'gluon_info.txt'), `Gluon 0.1, built with Glugun 0.1 (win32 ${attrs.join(',')})`);
   let indexContent = await readFile(join(buildDir, 'src', 'index.js'), 'utf8');
 
-  indexContent = indexContent.replace('../gluon/', './gluon/')
-    .replaceAll('GLUGUN_VERSION', '2.2')
+  indexContent = indexContent.replace('../gluon/', './gluon/');
+
+  await writeFile(join(buildDir, 'src', 'index.js'), indexContent);
+
+  indexContent = await readFile(join(buildDir, 'src', 'gluon', 'index.js'), 'utf8');
+
+  indexContent = indexContent.replaceAll('GLUGUN_VERSION', '2.3')
     .replaceAll('SYSTEM_CHROMIUM', attrs.includes('system-chromium'))
     .replaceAll('SYSTEM_NODE', attrs.includes('system-node'));
 
-  await writeFile(join(buildDir, 'src', 'index.js'), indexContent);
+  await writeFile(join(buildDir, 'src', 'gluon', 'index.js'), indexContent)
 
   await writeFile(join(buildDir, `${name}.bat`), `node %~dp0${minifyBackend ? 'out.js' : 'src'}`);
 
