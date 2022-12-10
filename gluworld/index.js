@@ -8,6 +8,6 @@ const __dirname = dirname(__filename);
 
 (async () => {
   const Chromium = await Gluon.open(pathToFileURL(join(__dirname, 'index.html')).href, {
-    windowSize: [ 800, 450 ]
+    windowSize: [ 800, 500 ]
   });
 })();
