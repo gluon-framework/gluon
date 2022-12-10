@@ -18,6 +18,25 @@ Minimal integrated ecosystem for making "desktop apps" from websites easily usin
 <!-- ## Release Schedule
 Gluon (and it's subprojects) use a `major.patch` version format, with major releases being released daily if there are changes present in `main`, while using `X.0-dev` in the meantime. Patch releases may happen inbetween to fix bugs (not adding anything new or breaking). -->
 
+## IPC API
+Gluon has an easy to use, but powerful asynchronous IPC API. Example:
+```js
+// In your website's JS
+const reply = await Gluon.ipc.send('my type', { more: 'data' });
+console.log(reply); // { give: 'back', different: 'stuff' }
+```
+
+```js
+// In your Node backend
+import * as Gluon from '...';
+const Window = await Gluon.open(...);
+
+Window.ipc.on('my type', data => { // { more: 'data' }
+  return { give: 'back', different: 'stuff' };
+});
+```
+
+
 <br>
 
 ## Comparisons
