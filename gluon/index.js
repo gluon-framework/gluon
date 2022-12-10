@@ -1,7 +1,7 @@
 const rgb = (r, g, b, msg) => `\x1b[38;2;${r};${g};${b}m${msg}\x1b[0m`;
 const log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args);
 
-process.versions.gluon = '3.1';
+process.versions.gluon = '3.2';
 
 const presets = { // Presets from OpenAsar
   'base': '--autoplay-policy=no-user-gesture-required --disable-features=WinRetrieveSuggestionsOnlyOnDemand,HardwareMediaKeyHandling,MediaSessionService', // Base Discord
@@ -261,7 +261,7 @@ delete window._gluonSend;
   };
 };
 
-export const open = async (url, onLoad = undefined, { windowSize } = {}) => {
+export const open = async (url, { windowSize, onLoad } = {}) => {
   log('starting chromium...');
 
   const Chromium = await startChromium(url, { windowSize });
