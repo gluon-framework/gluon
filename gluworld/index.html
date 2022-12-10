@@ -8,7 +8,7 @@
   <body>
     <h1>
       Gluon <code id="gluon_version"></code> <br>
-      built with <code id="glugun_version"></code>
+      built with <code id="builder"></code>
     </h1>
 
     <div id="versions">
@@ -24,7 +24,6 @@
     </div>
 
     <style>
-      /* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:ital,wght@0,400;0,700;1,500&display=swap'); */
       @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900');
 
       html, body {
@@ -74,5 +73,12 @@
         margin-top: 20vh;
       }
     </style>
+
+    <script>
+      chromium_version.textContent = Gluon.versions.chromium;
+      node_version.textContent = Gluon.versions.node;
+      gluon_version.textContent = Gluon.versions.gluon;
+      builder.textContent = Gluon.versions.builder;
+    </script>
   </body>
 </html>
