@@ -64,7 +64,7 @@ const _buildWin32 = async (name, dir, attrs) => {
 
   indexContent = await readFile(join(buildDir, 'src', 'gluon', 'index.js'), 'utf8');
 
-  indexContent = indexContent.replaceAll('GLUGUN_VERSION', '3.0')
+  indexContent = indexContent.replaceAll('GLUGUN_VERSION', '3.1')
     .replaceAll('SYSTEM_CHROMIUM', attrs.includes('system-chromium'))
     .replaceAll('SYSTEM_NODE', attrs.includes('system-node'));
 
@@ -121,7 +121,8 @@ switch (cmd) {
 
   case 'run':
     await build(dir);
-    execSync(`.\\build\\${name}.bat`);
+    log('Running...');
+    execSync(`.\\build\\${name}.bat`, { stdio: 'inherit' });
     break;
 
   default:
