@@ -1,5 +1,5 @@
 # Gluon
-Minimal integrated ecosystem for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS, with optional bundling if you want that too (soon). ***VERY*** early and probably never finished/production ready. Finds system installed Chromium binary (doesn't use WebView2).
+Minimal integrated ecosystem for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS, with optional bundling if you want that too (soon). ***VERY*** early and probably never finished/production ready. Finds system installed Chromium binaries (doesn't use WebView2).
 
 ![Gluworld Screenshot](https://user-images.githubusercontent.com/19228318/206796827-5f19addb-a063-4603-b242-6e8f915e8932.png)
 
@@ -26,7 +26,7 @@ Gluon (and it's subprojects) use a `major.patch` version format, with major rele
 | ---- | ----- | -------- | ------------ | ----- |
 | Frontend | System installed Chromium | Self-contained Chromium | System installed webview | System installed webview |
 | Backend | System installed Node.JS | Self-contained Node.JS | Native (Rust) | Native (Any) |
-| IPC | None (WIP) | Preload | Window object | Window object |
+| IPC | Window object | Preload | Window object | Window object |
 | Status | Early in development | "Production ready" | Usable | Usable |
 | Ecosystem | Integrated | Distributed | Integrated | Integrated |
 
@@ -36,7 +36,7 @@ Basic (plain HTML) Hello World demo, measured on up to date Windows 10. Used lat
 
 | Stat | Gluon | Electron | Tauri | Neutralinojs |
 | ---- | ----- | -------- | ------------ | ----- |
-| Build Size | ~0.5MB[^system][^gluon][^1] | ~220MB | ~1.8MB[^system] | ~2.6MB[^system] |
+| Build Size | ~7KB[^system][^gluon][^1] | ~220MB | ~1.8MB[^system] | ~2.6MB[^system] |
 | Memory Usage | ~80MB[^gluon] | ~100MB | ~90MB | ~90MB |
 | Backend[^2] Memory Usage | ~13MB[^gluon] (Node) | ~22MB (Node) | ~3MB (Native) | ~3MB (Native) |
 | Build Time | ~0.7s[^3] | ~20s[^4] | ~120s[^5] | ~2s[^3][^6] |

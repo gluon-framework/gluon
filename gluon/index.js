@@ -1,7 +1,7 @@
 const rgb = (r, g, b, msg) => `\x1b[38;2;${r};${g};${b}m${msg}\x1b[0m`;
 const log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args);
 
-process.versions.gluon = '2.1';
+process.versions.gluon = '3.0';
 
 const presets = { // Presets from OpenAsar
   'base': '--autoplay-policy=no-user-gesture-required --disable-features=WinRetrieveSuggestionsOnlyOnDemand,HardwareMediaKeyHandling,MediaSessionService', // Base Discord
@@ -10,7 +10,7 @@ const presets = { // Presets from OpenAsar
   'memory': '--in-process-gpu --js-flags="--lite-mode --optimize_for_size --wasm_opt --wasm_lazy_compilation --wasm_lazy_validation --always_compact" --renderer-process-limit=2 --enable-features=QuickIntensiveWakeUpThrottlingAfterLoading' // Less (?) memory usage
 };
 
-import { exec } from 'child_process';
+import { spawn } from 'child_process';
 import { join, dirname } from 'path';
 import { access } from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -18,12 +18,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-import CDP from 'chrome-remote-interface';
-
 const chromiumPathsWin = {
   stable: join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
   canary: join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
-  edge: join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe')
+  edge: join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+  // todo: add more common good paths/browsers here
 };
 
 const exists = path => access(path).then(() => true).catch(() => false);
@@ -37,7 +36,7 @@ const findChromiumPath = async () => {
 
   if (!whichChromium) {
     for (const x in chromiumPathsWin) {
-      log(x, chromiumPathsWin[x], await exists(chromiumPathsWin[x]));
+      log('checking if ' + x + ' exists:', chromiumPathsWin[x], await exists(chromiumPathsWin[x]));
 
       if (await exists(chromiumPathsWin[x])) {
         whichChromium = x;
@@ -54,7 +53,7 @@ const findChromiumPath = async () => {
 const getDataPath = () => join(__dirname, '..', 'chrome_data');
 
 
-const startChromium = (url, { windowSize }) => new Promise(async res => {
+const startChromium = async (url, { windowSize }) => {
   const dataPath = getDataPath();
   const chromiumPath = await findChromiumPath();
 
@@ -63,38 +62,147 @@ const startChromium = (url, { windowSize }) => new Promise(async res => {
 
   if (!chromiumPath) return log('failed to find a good chromium install');
 
-  const debugPort = 9222;
-
-  exec(`"${chromiumPath}" --app=${url} --remote-debugging-port=${debugPort} --user-data-dir="${dataPath}" ${windowSize ? `--window-size=${windowSize.join(',')}` : ''} --new-window --disable-extensions --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication ${presets.perf}`, (err, stdout, stderr) => {
-    log(err, stdout, stderr);
+  const process = spawn(chromiumPath, [
+    `--app=${url}`,
+    `--remote-debugging-pipe`,
+    `--user-data-dir=${dataPath}`,
+    windowSize ? `--window-size=${windowSize.join(',')}` : '',
+    ...`--new-window --disable-extensions --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication ${presets.perf}`.split(' ')
+  ].filter(x => x), {
+    detached: false,
+    stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe']
   });
 
-  setTimeout(() => res(debugPort), 500);
-});
+  process.stdout.pipe(process.stdout);
+  process.stderr.pipe(process.stderr);
+
+  // todo: move this to it's own library
+  const { 3: pipeWrite, 4: pipeRead } = process.stdio;
+
+  let onReply = {};
+  const onMessage = msg => {
+    msg = JSON.parse(msg);
+
+    log('received', msg);
+    if (onReply[msg.id]) {
+      onReply[msg.id](msg);
+      delete onReply[msg.id];
+    }
+
+    if (msg.method === 'Runtime.bindingCalled' && msg.name === 'gluonSend') onWindowMessage(JSON.parse(msg.payload));
+  };
+
+  let msgId = 0;
+  const sendMessage = async (method, params = {}, sessionId = undefined) => {
+    const id = msgId++;
+
+    const msg = {
+      id,
+      method,
+      params
+    };
+
+    if (sessionId) msg.sessionId = sessionId;
+
+    pipeWrite.write(JSON.stringify(msg));
+    pipeWrite.write('\0');
+
+    log('sent', msg);
+
+    const reply = await new Promise(res => {
+      onReply[id] = msg => res(msg);
+    });
+
+    return reply.result;
+  };
+
+  let pending = '';
+  pipeRead.on('data', buf => {
+    let end = buf.indexOf('\0'); // messages are null separated
+
+    if (end === -1) { // no complete message yet
+      pending += buf.toString();
+      return;
+    }
+
+    let start = 0;
+    while (end !== -1) { // while we have pending complete messages, dispatch them
+      const message = pending + buf.toString(undefined, start, end); // get next whole message
+      onMessage(message);
+
+      start = end + 1; // find next ending
+      end = buf.indexOf('\0', start);
+      pending = '';
+    }
+
+    pending = buf.toString(undefined, start); // update pending with current pending
+  });
+
+  pipeRead.on('close', () => log('pipe read closed'));
+
+  // await new Promise(res => setTimeout(res, 1000));
+
+  const target = (await sendMessage('Target.getTargets')).targetInfos[0];
+
+  const { sessionId } = await sendMessage('Target.attachToTarget', {
+    targetId: target.targetId,
+    flatten: true
+  });
+
+  (await sendMessage('Runtime.enable', {}, sessionId)); // enable runtime API
+
+  (await sendMessage('Runtime.addBinding', { // setup sending from window to Node via Binding
+    name: 'gluonSend'
+  }, sessionId));
+
+  const evalInWindow = async func => {
+    return await sendMessage(`Runtime.evaluate`, {
+      expression: typeof func === 'string' ? func : `(${func.toString()})()`
+    }, sessionId);
+  };
+
+  // evalInWindow(`window.gluonRecieve = msg => console.log('STUB gluonRecieve', msg)`); // make stub reciever
+
+  const sendToWindow = msg => evalInWindow(`window.gluonRecieve(${JSON.stringify(msg)})`);
+
+  let onWindowMessage = () => {};
+
+  return {
+    window: {
+      onMessage: cb => {
+        onWindowMessage = cb;
+      },
+      send: sendToWindow,
+
+      eval: evalInWindow,
+    },
+
+    CDP: {
+      send: (method, params) => sendMessage(method, params, sessionId)
+    }
+  };
+};
 
 export const open = async (url, onLoad = () => {}, { windowSize } = {}) => {
   log('starting chromium...');
 
-  const debugPort = await startChromium(url, { windowSize });
-  log('connecting to CDP...');
-
-  const { Runtime, Page } = await CDP({ port: debugPort });
-
-  // const run = async js => (await Runtime.evaluate({ expression: js })).result.value;
-  const run = async js => log(await Runtime.evaluate({ expression: js }));
+  const Chromium = await startChromium(url, { windowSize });
 
   const toRun = `(() => {
-    if (window.self !== window.top) return; // inside frame
+  if (window.self !== window.top) return; // inside frame
+  const GLUON_VERSION = '${process.versions.gluon}';
+  const NODE_VERSION = '${process.versions.node}';
+  const CHROMIUM_VERSION = navigator.userAgentData.brands.find(x => x.brand === "Chromium").version;
 
-    const GLUON_VERSION = '${process.versions.gluon}';
-    const NODE_VERSION = '${process.versions.node}';
-    const CHROMIUM_VERSION = navigator.userAgentData.brands.find(x => x.brand === "Chromium").version;
+  (${onLoad.toString()})();
+})();`;
 
-    (${onLoad.toString()})();
-  })()`;
+  Chromium.window.eval(toRun);
 
-  run(toRun);
+  await Chromium.CDP.send(`Page.enable`);
+  await Chromium.CDP.send(`Page.addScriptToEvaluateOnNewDocument`, {
+    source: toRun
+  });
 
-  await Page.enable();
-  await Page.addScriptToEvaluateOnNewDocument({ source: toRun });
+  return Chromium;
 };
