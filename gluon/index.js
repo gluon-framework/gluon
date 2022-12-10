@@ -1,7 +1,7 @@
 const rgb = (r, g, b, msg) => `\x1b[38;2;${r};${g};${b}m${msg}\x1b[0m`;
 const log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args);
 
-process.versions.gluon = '3.2';
+process.versions.gluon = '4.0';
 
 const presets = { // Presets from OpenAsar
   'base': '--autoplay-policy=no-user-gesture-required --disable-features=WinRetrieveSuggestionsOnlyOnDemand,HardwareMediaKeyHandling,MediaSessionService', // Base Discord
@@ -47,14 +47,24 @@ const findChromiumPath = async () => {
 
   if (!whichChromium) return null;
 
-  return chromiumPathsWin[whichChromium];
+  return [ chromiumPathsWin[whichChromium], whichChromium ];
+};
+
+const getFriendlyName = whichChromium => {
+  switch (whichChromium) {
+    case 'stable': return 'Chrome';
+    case 'canary': return 'Chrome Canary';
+    case 'edge': return 'Edge';
+  }
 };
 
 const getDataPath = () => join(__dirname, '..', 'chrome_data');
 
 const startChromium = async (url, { windowSize }) => {
   const dataPath = getDataPath();
-  const chromiumPath = await findChromiumPath();
+  const [ chromiumPath, chromiumName ] = await findChromiumPath();
+
+  const friendlyProductName = getFriendlyName(chromiumName);
 
   log('chromium path:', chromiumPath);
   log('data path:', dataPath);
@@ -82,7 +92,7 @@ const startChromium = async (url, { windowSize }) => {
   const onMessage = msg => {
     msg = JSON.parse(msg);
 
-    log('received', msg);
+    // log('received', msg);
     if (onReply[msg.id]) {
       onReply[msg.id](msg);
       delete onReply[msg.id];
@@ -106,7 +116,7 @@ const startChromium = async (url, { windowSize }) => {
     pipeWrite.write(JSON.stringify(msg));
     pipeWrite.write('\0');
 
-    log('sent', msg);
+    // log('sent', msg);
 
     const reply = await new Promise(res => {
       onReply[id] = msg => res(msg);
@@ -141,6 +151,12 @@ const startChromium = async (url, { windowSize }) => {
 
   // await new Promise(res => setTimeout(res, 1000));
 
+  let browserInfo;
+  sendMessage('Browser.getVersion').then(x => { // get browser info async as not important
+    browserInfo = x;
+    log('browser:', x.product);
+  });
+
   const target = (await sendMessage('Target.getTargets')).targetInfos[0];
 
   const { sessionId } = await sendMessage('Target.attachToTarget', {
@@ -148,11 +164,17 @@ const startChromium = async (url, { windowSize }) => {
     flatten: true
   });
 
-  (await sendMessage('Runtime.enable', {}, sessionId)); // enable runtime API
+  // sendMessage('Page.enable', {}, sessionId); // pause page execution until we inject
+  // sendMessage('Page.waitForDebugger', {}, sessionId);
 
-  (await sendMessage('Runtime.addBinding', { // setup sending from window to Node via Binding
+  // (await sendMessage('Page.enable', {}, sessionId));
+  // (await sendMessage('Page.stopLoading', {}, sessionId));
+
+  sendMessage('Runtime.enable', {}, sessionId); // enable runtime API
+
+  sendMessage('Runtime.addBinding', { // setup sending from window to Node via Binding
     name: '_gluonSend'
-  }, sessionId));
+  }, sessionId);
 
   const evalInWindow = async func => {
     return await sendMessage(`Runtime.evaluate`, {
@@ -160,63 +182,95 @@ const startChromium = async (url, { windowSize }) => {
     }, sessionId);
   };
 
-  evalInWindow(`(() => {
-let onIPCReply = {};
+  const windowInjectionSource = `(() => {
+let onIPCReply = {}, ipcListeners = {};
 window.Gluon = {
   versions: {
     gluon: '${process.versions.gluon}',
     builder: '${'GLUGUN_VERSION' === 'G\LUGUN_VERSION' ? 'nothing' : 'Glugun GLUGUN_VERSION'}',
     node: '${process.versions.node}',
-    chromium: navigator.userAgentData.brands.find(x => x.brand === "Chromium").version,
+    chromium: '${browserInfo.product.split('/')[1]}' ?? navigator.userAgentData.brands.find(x => x.brand === "Chromium").version,
+    product: '${friendlyProductName}',
 
     v8: {
-      node: '${process.versions.v8}'
+      node: '${process.versions.v8}',
+      chromium: '${browserInfo.jsVersion}'
     }
   },
 
-  send: async (type, data, id = undefined) => {
-    id = id ?? Math.random().toString().split('.')[1];
+  ipc: {
+    send: async (type, data, id = undefined) => {
+      id = id ?? Math.random().toString().split('.')[1];
 
-    window._gluonSend(JSON.stringify({
-      id,
-      type,
-      data
-    }));
+      window.Gluon.ipc._send(JSON.stringify({
+        id,
+        type,
+        data
+      }));
 
-    if (id) return;
+      if (id) return;
 
-    const reply = await new Promise(res => {
-      onIPCReply[id] = msg => res(msg);
-    });
+      const reply = await new Promise(res => {
+        onIPCReply[id] = msg => res(msg);
+      });
 
-    return reply;
+      return reply;
+    },
+
+    on: (type, cb) => {
+      if (!ipcListeners[type]) ipcListeners[type] = [];
+      ipcListeners[type].push(cb);
+    },
+
+    removeListener: (type, cb) => {
+      if (!ipcListeners[type]) return false;
+      ipcListeners[type].splice(ipcListeners[type].indexOf(cb), 1);
+    },
+
+    _recieve: msg => {
+      const { id, type, data } = msg;
+
+      if (onIPCReply[id]) {
+        onIPCReply[id]({ type, data });
+        delete onIPCReply[id];
+        return;
+      }
+
+      if (ipcListeners[type]) {
+        let reply;
+
+        for (const cb of ipcListeners[type]) {
+          const ret = cb(data);
+          if (!reply) reply = ret; // use first returned value as reply
+        }
+
+        if (reply) return Gluon.ipc.send('reply', reply, id); // reply with wanted reply
+      }
+
+      Gluon.ipc.send('pong', {}, id);
+    },
+
+    _send: window._gluonSend
   },
-
-  _recieve: msg => {
-    const { id, type, data } = msg;
-
-    if (onIPCReply[id]) {
-      onIPCReply[id]({ type, data });
-      delete onIPCReply[id];
-      return;
-    }
-
-    if (window.Gluon.recieve?.(type, data) !== true) {
-      window.Gluon.send('pong', {}, id);
-    }
-  },
-
-  _send: window._gluonSend
 };
 
 delete window._gluonSend;
-})();`); // inject nice reciever and sender wrappers
+})();`;
+  evalInWindow(windowInjectionSource); // inject nice reciever and sender wrappers
 
-  let onIPCReply = {};
+  // sendMessage('Runtime.runIfWaitingForDebugger', {}, sessionId);
+
+
+  sendMessage(`Page.enable`, {}, sessionId);
+  sendMessage(`Page.addScriptToEvaluateOnNewDocument`, {
+    source: windowInjectionSource
+  }, sessionId);
+
+  let onIPCReply = {}, ipcListeners = {};
   const sendToWindow = async (type, data, id = undefined) => {
     id = id ?? Math.random().toString().split('.')[1];
 
-    evalInWindow(`window.Gluon._recieve(${JSON.stringify({
+    evalInWindow(`window.Gluon.ipc._recieve(${JSON.stringify({
       id,
       type,
       data
@@ -238,24 +292,40 @@ delete window._gluonSend;
       return;
     }
 
-    if (windowMessageCallback(type, data) !== true) { // true = replied itself, otherwise simply pong
-      sendToWindow('pong', {}, id);
-    }
-  };
+    if (ipcListeners[type]) {
+      let reply;
 
-  let windowMessageCallback = () => {};
+      for (const cb of ipcListeners[type]) {
+        const ret = cb(data);
+        if (!reply) reply = ret; // use first returned value as reply
+      }
+
+      if (reply) return sendToWindow('reply', reply, id); // reply with wanted reply
+    }
+
+    sendToWindow('pong', {}, id); // send simple pong to confirm
+  };
 
   return {
     window: {
-      onMessage: cb => {
-        windowMessageCallback = cb;
-      },
-      send: sendToWindow,
-
       eval: evalInWindow,
     },
 
-    CDP: {
+    ipc: {
+      on: (type, cb) => {
+        if (!ipcListeners[type]) ipcListeners[type] = [];
+        ipcListeners[type].push(cb);
+      },
+
+      removeListener: (type, cb) => {
+        if (!ipcListeners[type]) return false;
+        ipcListeners[type].splice(ipcListeners[type].indexOf(cb), 1);
+      },
+
+      send: sendToWindow,
+    },
+
+    cdp: {
       send: (method, params) => sendMessage(method, params, sessionId)
     }
   };
@@ -275,12 +345,11 @@ export const open = async (url, { windowSize, onLoad } = {}) => {
 
     Chromium.window.eval(toRun);
 
-    await Chromium.CDP.send(`Page.enable`);
-    await Chromium.CDP.send(`Page.addScriptToEvaluateOnNewDocument`, {
+    await Chromium.cdp.send(`Page.enable`);
+    await Chromium.cdp.send(`Page.addScriptToEvaluateOnNewDocument`, {
       source: toRun
     });
   }
-
 
   return Chromium;
 };
