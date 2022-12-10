@@ -1,6 +1,7 @@
 import { cp, writeFile, readFile, readdir, rm, mkdir, stat, access } from 'fs/promises';
-import { join, dirname } from 'path';
+import { join, dirname, basename } from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 import * as Esbuild from 'esbuild';
 import * as HTMLMinifier from 'html-minifier-terser';
@@ -63,7 +64,7 @@ const _buildWin32 = async (name, dir, attrs) => {
 
   indexContent = await readFile(join(buildDir, 'src', 'gluon', 'index.js'), 'utf8');
 
-  indexContent = indexContent.replaceAll('GLUGUN_VERSION', '2.3')
+  indexContent = indexContent.replaceAll('GLUGUN_VERSION', '3.0')
     .replaceAll('SYSTEM_CHROMIUM', attrs.includes('system-chromium'))
     .replaceAll('SYSTEM_NODE', attrs.includes('system-node'));
 
@@ -94,7 +95,8 @@ const _buildWin32 = async (name, dir, attrs) => {
   }
 };
 
-export const build = async (name, dir, platform = 'win32', attrs = 'system-chromium,system-node') => {
+export const build = async (dir, platform = 'win32', attrs = 'system-chromium,system-node') => {
+  const name = basename(dir);
   log('Building', name, 'on', platform, 'with', attrs.split(',').join(', ') + '...');
 
   if (minifyBackend) log(`Minifying is experimental!`);
@@ -105,10 +107,25 @@ export const build = async (name, dir, platform = 'win32', attrs = 'system-chrom
     case 'win32': await _buildWin32(name, dir, attrs.split(','));
   }
 
-  console.log();
   log(`Finished build in: ${((performance.now() - startTime) / 1024).toFixed(2)}s`);
   log(`Final build size: ${((await dirSize(buildDir)) / 1024 / 1024).toFixed(2)}MB`);
 };
 
-const [ name, dir ] = process.argv.slice(2);
-build(name, dir);
+const [ cmd, dir ] = process.argv.slice(2);
+const name = dir && basename(dir);
+
+switch (cmd) {
+  case 'build':
+    await build(dir);
+    break;
+
+  case 'run':
+    await build(dir);
+    execSync(`.\\build\\${name}.bat`);
+    break;
+
+  default:
+    if (cmd) log(`No command "${cmd}"!`);
+    console.log(`glugun [build/run] {path} [--minify] (extra args to pass if running)`);
+    break;
+}
