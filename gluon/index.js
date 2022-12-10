@@ -1,7 +1,7 @@
 const rgb = (r, g, b, msg) => `\x1b[38;2;${r};${g};${b}m${msg}\x1b[0m`;
 const log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args);
 
-process.versions.gluon = '3.0';
+process.versions.gluon = '3.1';
 
 const presets = { // Presets from OpenAsar
   'base': '--autoplay-policy=no-user-gesture-required --disable-features=WinRetrieveSuggestionsOnlyOnDemand,HardwareMediaKeyHandling,MediaSessionService', // Base Discord
@@ -52,7 +52,6 @@ const findChromiumPath = async () => {
 
 const getDataPath = () => join(__dirname, '..', 'chrome_data');
 
-
 const startChromium = async (url, { windowSize }) => {
   const dataPath = getDataPath();
   const chromiumPath = await findChromiumPath();
@@ -62,7 +61,7 @@ const startChromium = async (url, { windowSize }) => {
 
   if (!chromiumPath) return log('failed to find a good chromium install');
 
-  const process = spawn(chromiumPath, [
+  const proc = spawn(chromiumPath, [
     `--app=${url}`,
     `--remote-debugging-pipe`,
     `--user-data-dir=${dataPath}`,
@@ -73,11 +72,11 @@ const startChromium = async (url, { windowSize }) => {
     stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe']
   });
 
-  process.stdout.pipe(process.stdout);
-  process.stderr.pipe(process.stderr);
+  proc.stdout.pipe(proc.stdout);
+  proc.stderr.pipe(proc.stderr);
 
   // todo: move this to it's own library
-  const { 3: pipeWrite, 4: pipeRead } = process.stdio;
+  const { 3: pipeWrite, 4: pipeRead } = proc.stdio;
 
   let onReply = {};
   const onMessage = msg => {
@@ -152,7 +151,7 @@ const startChromium = async (url, { windowSize }) => {
   (await sendMessage('Runtime.enable', {}, sessionId)); // enable runtime API
 
   (await sendMessage('Runtime.addBinding', { // setup sending from window to Node via Binding
-    name: 'gluonSend'
+    name: '_gluonSend'
   }, sessionId));
 
   const evalInWindow = async func => {
@@ -161,16 +160,95 @@ const startChromium = async (url, { windowSize }) => {
     }, sessionId);
   };
 
-  // evalInWindow(`window.gluonRecieve = msg => console.log('STUB gluonRecieve', msg)`); // make stub reciever
+  evalInWindow(`(() => {
+let onIPCReply = {};
+window.Gluon = {
+  versions: {
+    gluon: '${process.versions.gluon}',
+    builder: '${'GLUGUN_VERSION' === 'G\LUGUN_VERSION' ? 'nothing' : 'Glugun GLUGUN_VERSION'}',
+    node: '${process.versions.node}',
+    chromium: navigator.userAgentData.brands.find(x => x.brand === "Chromium").version,
 
-  const sendToWindow = msg => evalInWindow(`window.gluonRecieve(${JSON.stringify(msg)})`);
+    v8: {
+      node: '${process.versions.v8}'
+    }
+  },
 
-  let onWindowMessage = () => {};
+  send: async (type, data, id = undefined) => {
+    id = id ?? Math.random().toString().split('.')[1];
+
+    window._gluonSend(JSON.stringify({
+      id,
+      type,
+      data
+    }));
+
+    if (id) return;
+
+    const reply = await new Promise(res => {
+      onIPCReply[id] = msg => res(msg);
+    });
+
+    return reply;
+  },
+
+  _recieve: msg => {
+    const { id, type, data } = msg;
+
+    if (onIPCReply[id]) {
+      onIPCReply[id]({ type, data });
+      delete onIPCReply[id];
+      return;
+    }
+
+    if (window.Gluon.recieve?.(type, data) !== true) {
+      window.Gluon.send('pong', {}, id);
+    }
+  },
+
+  _send: window._gluonSend
+};
+
+delete window._gluonSend;
+})();`); // inject nice reciever and sender wrappers
+
+  let onIPCReply = {};
+  const sendToWindow = async (type, data, id = undefined) => {
+    id = id ?? Math.random().toString().split('.')[1];
+
+    evalInWindow(`window.Gluon._recieve(${JSON.stringify({
+      id,
+      type,
+      data
+    })})`);
+
+    if (id) return; // we are replying, don't expect reply back
+
+    const reply = await new Promise(res => {
+      onIPCReply[id] = msg => res(msg);
+    });
+
+    return reply;
+  };
+
+  const onWindowMessage = ({ id, type, data }) => {
+    if (onIPCReply[id]) {
+      onIPCReply[id]({ type, data });
+      delete onIPCReply[id];
+      return;
+    }
+
+    if (windowMessageCallback(type, data) !== true) { // true = replied itself, otherwise simply pong
+      sendToWindow('pong', {}, id);
+    }
+  };
+
+  let windowMessageCallback = () => {};
 
   return {
     window: {
       onMessage: cb => {
-        onWindowMessage = cb;
+        windowMessageCallback = cb;
       },
       send: sendToWindow,
 
@@ -183,26 +261,26 @@ const startChromium = async (url, { windowSize }) => {
   };
 };
 
-export const open = async (url, onLoad = () => {}, { windowSize } = {}) => {
+export const open = async (url, onLoad = undefined, { windowSize } = {}) => {
   log('starting chromium...');
 
   const Chromium = await startChromium(url, { windowSize });
 
-  const toRun = `(() => {
-  if (window.self !== window.top) return; // inside frame
-  const GLUON_VERSION = '${process.versions.gluon}';
-  const NODE_VERSION = '${process.versions.node}';
-  const CHROMIUM_VERSION = navigator.userAgentData.brands.find(x => x.brand === "Chromium").version;
+  if (onLoad) {
+    const toRun = `(() => {
+      if (window.self !== window.top) return; // inside frame
 
-  (${onLoad.toString()})();
-})();`;
+      (${onLoad.toString()})();
+    })();`;
 
-  Chromium.window.eval(toRun);
+    Chromium.window.eval(toRun);
 
-  await Chromium.CDP.send(`Page.enable`);
-  await Chromium.CDP.send(`Page.addScriptToEvaluateOnNewDocument`, {
-    source: toRun
-  });
+    await Chromium.CDP.send(`Page.enable`);
+    await Chromium.CDP.send(`Page.addScriptToEvaluateOnNewDocument`, {
+      source: toRun
+    });
+  }
+
 
   return Chromium;
 };
