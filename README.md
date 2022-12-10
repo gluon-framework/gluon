@@ -1,7 +1,7 @@
 # Gluon
 Minimal integrated ecosystem for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS, with optional bundling if you want that too (soon). ***VERY*** early and probably never finished/production ready. Finds system installed Chromium binaries (doesn't use WebView2).
 
-![Gluworld Screenshot](https://user-images.githubusercontent.com/19228318/206796827-5f19addb-a063-4603-b242-6e8f915e8932.png)
+![Gluworld Screenshot](https://user-images.githubusercontent.com/19228318/206822047-022b4aed-f018-42ec-a224-f8b6d50b1d91.png)
 
 <br>
 
