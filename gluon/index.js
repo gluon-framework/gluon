@@ -196,6 +196,11 @@ window.Gluon = {
     v8: {
       node: '${process.versions.v8}',
       chromium: '${browserInfo.jsVersion}'
+    },
+
+    embedded: {
+      node: ${'EMBEDDED_NODE' === 'true' ? 'true' : 'false'},
+      chromium: false
     }
   },
 
