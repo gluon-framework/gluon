@@ -88,7 +88,7 @@ const startChromium = async (url, { windowSize }) => {
   // todo: move this to it's own library
   const { 3: pipeWrite, 4: pipeRead } = proc.stdio;
 
-  let onReply = {};
+  let onReply = {}, pageLoadCallback = () => {};
   const onMessage = msg => {
     msg = JSON.parse(msg);
 
@@ -99,6 +99,7 @@ const startChromium = async (url, { windowSize }) => {
     }
 
     if (msg.method === 'Runtime.bindingCalled' && msg.name === 'gluonSend') onWindowMessage(JSON.parse(msg.payload));
+    if (msg.method === 'Page.frameStoppedLoading') pageLoadCallback(msg.params);
   };
 
   let msgId = 0;
@@ -266,10 +267,15 @@ delete window._gluonSend;
     source: windowInjectionSource
   }, sessionId);
 
+  const pageLoadPromise = new Promise(res => {
+    pageLoadCallback = res;
+  });
+
   let onIPCReply = {}, ipcListeners = {};
   const sendToWindow = async (type, data, id = undefined) => {
     id = id ?? Math.random().toString().split('.')[1];
 
+    await pageLoadPromise; // wait for page to load before sending, otherwise messages won't be heard
     evalInWindow(`window.Gluon.ipc._recieve(${JSON.stringify({
       id,
       type,
