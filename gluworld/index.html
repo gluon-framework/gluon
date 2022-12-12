@@ -121,8 +121,8 @@
         // main.innerHTML = main.innerHTML.replace(`built with <code id="builder">nothing</code> <br>`, '');
       }
 
-      engine_name.textContent = Gluon.versions.product.startsWith('Firefox') ? 'Firefox' : 'Chromium';
-      js_engine_name.textContent = Gluon.versions.product.startsWith('Firefox') ? 'SpiderMonkey' : 'V8';
+      engine_name.textContent = Gluon.versions.browserType === 'firefox' ? 'Firefox' : 'Chromium';
+      js_engine_name.textContent = Gluon.versions.browserType === 'firefox' ? 'SpiderMonkey' : 'V8';
 
       Gluon.ipc.on('build size', size => {
         const kb = size / 1024;

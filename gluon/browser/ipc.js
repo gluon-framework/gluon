@@ -7,6 +7,7 @@ window.Gluon = {
     builder: '${'GLUGUN_VERSION' === 'G\LUGUN_VERSION' ? 'nothing' : 'Glugun GLUGUN_VERSION'}',
     node: '${process.versions.node}',
     browser: '${browserInfo.product.split('/')[1]}',
+    browserType: '${browserName.startsWith('Firefox') ? 'firefox' : 'chromium'}',
     product: '${browserName}',
 
     js: {
