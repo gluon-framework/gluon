@@ -6,23 +6,28 @@
     <title>Gluworld</title>
   </head>
   <body>
-    <h1>
+    <h1 id="main">
       Gluon <code id="gluon_version"></code> <br>
-      built with <code id="builder"></code> <br>
+      <span id="built_with">built with <code id="builder"></code> <br></span>
       running on <code id="product"></code>
     </h1>
 
     <div id="versions">
       <h2>
-        Chromium <br>
-        <code id="chromium_version"></code> <br>
-        <span>V8 <code id="chromium_v8"></code></span>
+        <span id="engine_name"></span> <br>
+        <code id="browser_version"></code> <br>
+        <p><span id="js_engine_name"></span> <code id="browser_v8"></code></p>
+      </h2>
+
+      <h2 id="build">
+        Build Size <br>
+        <code id="build_size"></code>
       </h2>
 
       <h2>
         Node <br>
         <code id="node_version"></code> <br>
-        <span>V8 <code id="node_v8"></code></span>
+        <p>V8 <code id="node_v8"></code></p>
       </h2>
     </div>
 
@@ -59,7 +64,7 @@
         font-size: 34px;
       }
 
-      h1 > code, h2 > span > code {
+      h1 > code, h2 > p > code {
         margin-left: 8px;
       }
 
@@ -68,7 +73,7 @@
         font-size: 28px;
       }
 
-      h2 > span, h2 > span > code {
+      h2 > p, h2 > p > code {
         font-weight: 600;
         font-size: 18px;
         color: #bbb;
@@ -83,18 +88,49 @@
       #versions {
         display: flex;
         justify-content: space-around;
+        align-items: center;
         width: 100%;
+      }
+
+      #build, #built_with {
+        display: none;
       }
     </style>
 
-    <script>
-      chromium_version.textContent = Gluon.versions.chromium;
-      node_version.textContent = Gluon.versions.node;
+    <script> (async () => {
+      await new Promise(res => {
+        const check = () => {
+          if (!window.Gluon) return setTimeout(check, 100);
+          res();
+        };
+
+        check();
+      });
+
+      browser_version.textContent = Gluon.versions.browser;
+      node_version.textContent = `${Gluon.versions.embedded.node ? 'Embed' : 'System'} ${Gluon.versions.node}`;
       gluon_version.textContent = Gluon.versions.gluon;
       builder.textContent = Gluon.versions.builder;
       product.textContent = Gluon.versions.product;
-      node_v8.textContent = Gluon.versions.v8.node;
-      chromium_v8.textContent = Gluon.versions.v8.chromium;
+      node_v8.textContent = Gluon.versions.js.node;
+      browser_v8.textContent = Gluon.versions.js.browser;
+
+      if (Gluon.versions.builder !== 'nothing') {
+        build.style.display = 'block';
+        built_with.style.display = 'block';
+        // main.innerHTML = main.innerHTML.replace(`built with <code id="builder">nothing</code> <br>`, '');
+      }
+
+      engine_name.textContent = Gluon.versions.product.startsWith('Firefox') ? 'Firefox' : 'Chromium';
+      js_engine_name.textContent = Gluon.versions.product.startsWith('Firefox') ? 'SpiderMonkey' : 'V8';
+
+      Gluon.ipc.on('build size', size => {
+        const kb = size / 1024;
+        const mb = kb / 1024;
+
+        build_size.textContent = mb > 0.1 ? `${mb.toFixed(2)}MB` : `${kb.toFixed(0)}KB`;
+      });
+    })();
     </script>
   </body>
 </html>
