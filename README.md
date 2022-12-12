@@ -1,12 +1,34 @@
 # Gluon
-Minimal integrated ecosystem for making "desktop apps" from websites easily using Chromium and NodeJS. Uses system installed Chromium and NodeJS, with optional bundling if you want that too (soon). ***VERY*** early and probably never finished/production ready. Finds system installed Chromium binaries (doesn't use WebView2).
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/l) ![GitHub Sponsors](https://img.shields.io/github/sponsors/CanadaHonk?label=Sponsors&logo=github) [![Discord](https://img.shields.io/discord/1051940602704564244.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/RFtUCA8fST)
 
-![Gluworld Screenshot](https://user-images.githubusercontent.com/19228318/206863066-a29dc12d-a122-4c82-9407-7771aab69ef3.png)
+**Gluon is a framework for creating "desktop apps" from websites**, using **system installed browsers** *(not webviews)* and NodeJS, differing a lot from other existing active projects - opening up innovation and allowing some major advantages. Instead of other similar frameworks bundling a browser like Chromium or using webviews (like Edge Webview2 on Windows), **Gluon just uses system installed browsers** like Chrome, Edge, Firefox, etc. Gluon supports Chromium ***and Firefox*** based browsers as the frontend, while Gluon's backend uses NodeJS to be versatile and easy to develop.
+
+## Features
+- **Uses normal system installed browsers** - allows user choice by **supporting most Chromium *and Firefox*** based browsers,  no webviews
+- **Tiny bundle sizes** - <0.1MB using system Node, <10MB when bundling it
+- **Chromium *and Firefox* supported as browser engine**, unlike any other active framework
+- **Minimal and easy to use** - Gluon has a simple yet powerful API to make apps with a Node backend
+- **Fast build times** - Gluon has build times under 1 second on most machines for small projects
+- **Actively developed** and **listening to feedback** - already on 5th major revision in ~1 week of development, quickly adding unplanned requested features if liked by the community (like Firefox support!)
+- **Lower memory usage** - compared to most other frameworks Gluon should have a slightly lower average memory usage by using browser flags to squeeze out more performance
+<!-- - **No forks needed** - Gluon doesn't need forks of Node or Chromium/etc to use them, it just uses normal versions -->
+
+![Gluworld Screenshot showing Chrome Canary and Firefox Nightly being used at once.](https://user-images.githubusercontent.com/19228318/207103757-fd5c9428-a927-4986-8c6c-02d9961ad422.png)
+
+<br>
+
+## Status
+Gluon is currently **barely 1 week old**, so is still in an **early and experimental state**. But it works and shows (in my opinion) potential! I am open to opinions, suggestions, feedback, ideas, etc. Currently you cannot easily test it yourself. If you're interested and want to talk to me and others about Gluon, you can [join our Discord server](https://discord.gg/RFtUCA8fST).
+
+### Specific feature statuses
+- Using Chromium based browsers: Stable
+- Using Firefox based browsers: Experimental
+- Web-Node IPC: Stable
 
 <br>
 
 ## Ecosystem
-- [Gluon](gluon): the Gluon library (NodeJS)
+- [Gluon](gluon): the Gluon framework (NodeJS)
 - [Glugun](glugun): builds Gluon apps into releasable builds with optional bundling (soon)
 
 ### Apps
@@ -14,9 +36,6 @@ Minimal integrated ecosystem for making "desktop apps" from websites easily usin
 - [Glucord](glucord): minimal desktop Discord client loading official webapp (demo/example)
 
 <br>
-
-<!-- ## Release Schedule
-Gluon (and it's subprojects) use a `major.patch` version format, with major releases being released daily if there are changes present in `main`, while using `X.0-dev` in the meantime. Patch releases may happen inbetween to fix bugs (not adding anything new or breaking). -->
 
 ## IPC API
 Gluon has an easy to use, but powerful asynchronous IPC API. Example:
@@ -43,19 +62,19 @@ Window.ipc.on('my type', data => { // { more: 'data' }
 ### Internals
 | Part | Gluon | Electron | Tauri | Neutralinojs |
 | ---- | ----- | -------- | ------------ | ----- |
-| Frontend | System installed Chromium | Self-contained Chromium | System installed webview | System installed webview |
-| Backend | System installed Node.JS | Self-contained Node.JS | Native (Rust) | Native (Any) |
+| Frontend | System installed Chromium *or Firefox* | Self-contained Chromium | System installed webview | System installed webview |
+| Backend | System installed *or bundled* Node.JS | Self-contained Node.JS | Native (Rust) | Native (Any) |
 | IPC | Window object | Preload | Window object | Window object |
-| Status | Early in development | "Production ready" | Usable | Usable |
+| Status | Early in development | Production ready | Usable | Usable |
 | Ecosystem | Integrated | Distributed | Integrated | Integrated |
 
 
 ### Benchmark / Stats
-Basic (plain HTML) Hello World demo, measured on up to date Windows 10. Used latest stable versions of all frameworks as of 9th Dec 2022. (You shouldn't actually use random stats in benchmarks to compare frameworks, this is more so you know what Gluon is like compared to other similar projects.)
+Basic (plain HTML) Hello World demo, measured on up to date Windows 10, on my machine (your experience will probably differ). Used latest stable versions of all frameworks as of 9th Dec 2022. (You shouldn't actually use random stats in benchmarks to compare frameworks, this is more so you know what Gluon is like compared to other similar projects.)
 
 | Stat | Gluon | Electron | Tauri | Neutralinojs |
 | ---- | ----- | -------- | ------------ | ----- |
-| Build Size | ~0.01MB[^system][^gluon][^1] | ~220MB | ~1.8MB[^system] | ~2.6MB[^system] |
+| Build Size | <0.1MB[^system][^gluon][^1] | ~220MB | ~1.8MB[^system] | ~2.6MB[^system] |
 | Memory Usage | ~80MB[^gluon] | ~100MB | ~90MB | ~90MB |
 | Backend[^2] Memory Usage | ~13MB[^gluon] (Node) | ~22MB (Node) | ~3MB (Native) | ~3MB (Native) |
 | Build Time | ~0.7s[^3] | ~20s[^4] | ~120s[^5] | ~2s[^3][^6] |
@@ -63,7 +82,7 @@ Basic (plain HTML) Hello World demo, measured on up to date Windows 10. Used lat
 *Extra info: All HTML/CSS/JS is unminified (including Gluon). Built in release configuration. All binaries were left as compiled with common size optimizations enabled for that language, no stripping/packing done.*
 
 [^system]: Does not include system installed components.
-[^gluon]: Early/WIP data, may change in future.
+[^gluon]: Using Chrome as system browser. Early/WIP data, may change in future.
 
 [^1]: *How is Gluon so small?* Since NodeJS is expected as a system installed component, it is "just" bundled and minified Node code.
 [^2]: Backend like non-Web (not Chromium/WebView2/etc).
