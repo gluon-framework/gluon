@@ -13,6 +13,9 @@ const rgb = (r, g, b, msg) => `\x1b[38;2;${r};${g};${b}m${msg}\x1b[0m`;
 const log = (...args) => console.log(`[${rgb(235, 69, 158, 'Glugun')}]`, ...args);
 
 const minifyBackend = process.argv.includes('--minify');
+const minifyBinary = process.argv.includes('--minify-binary');
+const embedNode = process.argv.includes('--embed-node');
+const supportFirefox = process.argv.includes('--support-firefox');
 
 const esbuildPlugin = { // esbuild to fix some things in src files
   name: 'glugun-esbuild',
@@ -22,6 +25,8 @@ const esbuildPlugin = { // esbuild to fix some things in src files
 
       source = source
         .replace(`const __filename = fileURLToPath(import.meta.url);\r\nconst __dirname = dirname(__filename);`, ''); // remove setting __filename/__dirname cause ESM -> CJS
+
+      if (!supportFirefox) source = source.replace(`import CDP from 'chrome-remote-interface';`, '');
 
       return { contents: source };
     });
@@ -47,13 +52,25 @@ const dirSize = async dir => {
 
 
 const buildDir = join(__dirname, '..', 'build');
-const _buildWin32 = async (name, dir, attrs) => {
+const _buildWin32 = async (name, dir) => {
   // reset build dir
   await rm(buildDir, { recursive: true, force: true });
   await mkdir(buildDir, { recursive: true });
 
   await cp(dir, join(buildDir, 'src'), { recursive: true }); // copy project src to build
   await cp(join(__dirname, '..', 'gluon'), join(buildDir, 'src', 'gluon'), { recursive: true }); // copy gluon into build
+
+  await rm(join(buildDir, 'src', 'gluon', 'node_modules'), { recursive: true });
+  if (supportFirefox) for (const m of [ 'ws', 'chrome-remote-interface' ]) {
+    const dest = join(buildDir, 'src', 'gluon', 'node_modules', m);
+    await cp(join(__dirname, '..', 'gluon', 'node_modules', m), dest, { recursive: true }); // copy gluon deps into build
+
+    for (const x of await readdir(dest)) {
+      if ([ 'bin', 'README.md', 'webpack.config.json', 'browser.js', 'chrome-remote-interface.js' ].includes(x)) await rm(join(dest, x), { recursive: true, force: true });
+    }
+
+    if (m === 'chrome-remote-interface') await rm(join(dest, 'lib', 'protocol.json'), { force: true });
+  }
 
   // await writeFile(join(buildDir, 'gluon_info.txt'), `Gluon 0.1, built with Glugun 0.1 (win32 ${attrs.join(',')})`);
   let indexContent = await readFile(join(buildDir, 'src', 'index.js'), 'utf8');
@@ -64,9 +81,10 @@ const _buildWin32 = async (name, dir, attrs) => {
 
   indexContent = await readFile(join(buildDir, 'src', 'gluon', 'index.js'), 'utf8');
 
-  indexContent = indexContent.replaceAll('GLUGUN_VERSION', '3.1')
-    .replaceAll('SYSTEM_CHROMIUM', attrs.includes('system-chromium'))
-    .replaceAll('SYSTEM_NODE', attrs.includes('system-node'));
+  indexContent = indexContent.replaceAll('GLUGUN_VERSION', '4.0-dev')
+    .replaceAll('EMBEDDED_NODE', embedNode);
+    // .replaceAll('SYSTEM_CHROMIUM', attrs.includes('system-chromium'))
+    // .replaceAll('SYSTEM_NODE', attrs.includes('system-node'));
 
   await writeFile(join(buildDir, 'src', 'gluon', 'index.js'), indexContent)
 
@@ -93,18 +111,37 @@ const _buildWin32 = async (name, dir, attrs) => {
 
     await rm(join(buildDir, 'src'), { recursive: true }); // delete original src
   }
+
+  if (embedNode) {
+    log('Embedding Node...');
+
+    const binary = name + '.exe';
+    const hasHtml = false; // await exists(join(buildDir, 'index.html'));
+
+    execSync(`nexe -t 19.2.0 -o "${binary}" ${hasHtml ? `-r "index.html"` : ''} --build -m=without-intl -m=nonpm -m=nocorepack --verbose -i "${minifyBackend ? 'out.js' : join('src', 'index.js')}"`, {
+      cwd: buildDir,
+      // stdio: 'inherit'
+    });
+
+    // execSync(`nexe -t 19.2.0 -o "${join(buildDir, binary)}" --build --verbose -i "${entryPoint}"`, { stdio: 'inherit' });
+    if (minifyBinary) execSync(`upx --best --lzma "${join(buildDir, binary)}"`, { stdio: 'inherit' });
+
+    for (const x of await readdir(buildDir)) {
+      if (x !== binary && x !== 'index.html') await rm(join(buildDir, x), { recursive: true });
+    }
+  }
 };
 
-export const build = async (dir, platform = 'win32', attrs = 'system-chromium,system-node') => {
+export const build = async (dir, platform = 'win32') => {
   const name = basename(dir);
-  log('Building', name, 'on', platform, 'with', attrs.split(',').join(', ') + '...');
+  log('Building', name, 'on', platform + '...');
 
   if (minifyBackend) log(`Minifying is experimental!`);
 
   console.log();
   const startTime = performance.now();
   switch (platform) {
-    case 'win32': await _buildWin32(name, dir, attrs.split(','));
+    case 'win32': await _buildWin32(name, dir);
   }
 
   log(`Finished build in: ${((performance.now() - startTime) / 1024).toFixed(2)}s`);
@@ -122,7 +159,10 @@ switch (cmd) {
   case 'run':
     await build(dir);
     log('Running...');
-    execSync(`.\\build\\${name}.bat`, { stdio: 'inherit' });
+
+    if (embedNode) execSync(`build\\${name}.exe`, { stdio: 'inherit' });
+      else execSync(`.\\build\\${name}.bat`, { stdio: 'inherit' });
+
     break;
 
   default:
