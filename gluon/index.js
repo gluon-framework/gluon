@@ -15,7 +15,7 @@ const __dirname = dirname(__filename);
 
 const browserPaths = ({
   win32: process.platform === 'win32' && {
-    chrome_stable: join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    chrome: join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
     chrome_canary: join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
     edge: join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
 
@@ -75,7 +75,7 @@ const findBrowserPath = async (forceBrowser) => {
   return [ browserPaths[whichBrowser], whichBrowser ];
 };
 
-const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase()).replace(' Stable', '');
+const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase());
 const getDataPath = () => join(__dirname, '..', 'chrome_data');
 
 const startBrowser = async (url, { windowSize, forceBrowser }) => {
