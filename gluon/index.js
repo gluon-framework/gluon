@@ -31,7 +31,10 @@ const findBrowserPath = async (forceBrowser) => {
   let whichBrowser = '';
 
   for (const x of Object.keys(browserPathsWin)) {
-    if (process.argv.includes('--' + x)) whichBrowser = x;
+    if (process.argv.includes('--' + x) || process.argv.includes('--' + x.split('_')[0])) {
+      whichBrowser = x;
+      break;
+    }
   }
 
   if (!whichBrowser) {
