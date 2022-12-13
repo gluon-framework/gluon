@@ -5,7 +5,7 @@
 
 ## Features
 - **Uses normal system installed browsers** - allows user choice by **supporting most Chromium *and Firefox*** based browsers,  no webviews
-- **Tiny bundle sizes** - <0.1MB using system Node, <10MB when bundling it
+- **Tiny bundle sizes** - <1MB using system Node, <10MB when bundling it
 - **Chromium *and Firefox* supported as browser engine**, unlike any other active framework
 - **Minimal and easy to use** - Gluon has a simple yet powerful API to make apps with a Node backend
 - **Fast build times** - Gluon has build times under 1 second on most machines for small projects
@@ -75,7 +75,7 @@ Basic (plain HTML) Hello World demo, measured on up to date Windows 10, on my ma
 
 | Stat | Gluon | Electron | Tauri | Neutralinojs |
 | ---- | ----- | -------- | ------------ | ----- |
-| Build Size | <0.1MB[^system][^gluon][^1] | ~220MB | ~1.8MB[^system] | ~2.6MB[^system] |
+| Build Size | <1MB[^system][^gluon][^1] | ~220MB | ~1.8MB[^system] | ~2.6MB[^system] |
 | Memory Usage | ~80MB[^gluon] | ~100MB | ~90MB | ~90MB |
 | Backend[^2] Memory Usage | ~13MB[^gluon] (Node) | ~22MB (Node) | ~3MB (Native) | ~3MB (Native) |
 | Build Time | ~0.7s[^3] | ~20s[^4] | ~120s[^5] | ~2s[^3][^6] |
