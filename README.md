@@ -38,6 +38,26 @@ Gluon is currently **barely 1 week old**, so is still in an **early and experime
 
 <br>
 
+## Trying Gluon
+1. Clone this GitHub repo
+2. Inside of the `gluon` folder (inside the repo), do `npm install`
+3. Back out into the root of the repo, do `node gluworld`
+
+<details>
+<summary>Shell example</summary>
+```sh
+$ git clone https://github.com/gluon-framework/gluon.git
+$ cd gloun
+gluon $ cd gluon
+gluon/gluon $ npm install
+...
+gluon/gluon $ cd ..
+gluon $ node gluworld
+```
+</details>
+
+<br>
+
 ## IPC API
 Gluon has an easy to use, but powerful asynchronous IPC API. Example:
 ```js
