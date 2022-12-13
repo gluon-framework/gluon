@@ -14,13 +14,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const browserPaths = ({
-  win32: {
-    chrome_stable: join(process.env.PROGRAMFILES ?? '', 'Google', 'Chrome', 'Application', 'chrome.exe'),
-    chrome_canary: join(process.env.LOCALAPPDATA ?? '', 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
-    edge: join(process.env['PROGRAMFILES(x86)'] ?? '', 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+  win32: process.platform === 'win32' && {
+    chrome_stable: join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    chrome_canary: join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
+    edge: join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
 
-    firefox: join(process.env.PROGRAMFILES ?? '', 'Mozilla Firefox', 'firefox.exe'),
-    firefox_nightly: join(process.env.PROGRAMFILES ?? '', 'Firefox Nightly', 'firefox.exe'),
+    firefox: join(process.env.PROGRAMFILES, 'Mozilla Firefox', 'firefox.exe'),
+    firefox_nightly: join(process.env.PROGRAMFILES, 'Firefox Nightly', 'firefox.exe'),
   },
 
   linux: { // these should be in path so just use the name of the binary
