@@ -64,21 +64,12 @@ user_pref('privacy.window.maxInnerHeight', ${windowSize[1]}); */
 `);
 
   const proc = spawn(browserPath, [
-    // `--window-size=${windowSize.join(',')}`,
-    // `--remote-debugging-port`, '9228',
     `--remote-debugging-port=${debugPort}`,
     `-window-size`, windowSize.join(','),
-    // `--width=${windowSize[0]}`,
-    // `--height=${windowSize[1]}`
-    // '-width', windowSize[0],
-    // '-height', windowSize[1],
     `-profile`, dataPath,
-    // `-P`, `gluon`,
     `-new-window`, url,
-    // `-ssb`, url,
     `-new-instance`,
-    `-no-remote`,
-    `-shell`
+    `-no-remote`
   ].filter(x => x), {
     detached: false,
     stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe']
