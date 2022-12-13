@@ -1,39 +1,18 @@
-import { cp, writeFile, readFile, readdir, rm, mkdir, stat, access } from 'fs/promises';
-import { join, dirname, basename } from 'path';
-import { fileURLToPath } from 'url';
+import { readdir, stat } from 'fs/promises';
+import { join, basename } from 'path';
 import { execSync } from 'child_process';
 
-import * as Esbuild from 'esbuild';
-import * as HTMLMinifier from 'html-minifier-terser';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import Build from './build.js';
+import Wrap from './wrap.js';
 
 const rgb = (r, g, b, msg) => `\x1b[38;2;${r};${g};${b}m${msg}\x1b[0m`;
-const log = (...args) => console.log(`[${rgb(235, 69, 158, 'Glugun')}]`, ...args);
+global.log = (...args) => console.log(`[${rgb(235, 69, 158, 'Glugun')}]`, ...args);
 
-const minifyBackend = process.argv.includes('--minify');
-const minifyBinary = process.argv.includes('--minify-binary');
-const embedNode = process.argv.includes('--embed-node');
-const supportFirefox = process.argv.includes('--support-firefox');
+global.minifyBackend = process.argv.includes('--minify');
+global.minifyBinary = process.argv.includes('--minify-binary');
+global.embedNode = process.argv.includes('--embed-node');
+global.supportFirefox = process.argv.includes('--support-firefox');
 
-const esbuildPlugin = { // esbuild to fix some things in src files
-  name: 'glugun-esbuild',
-  setup(build) {
-    build.onLoad({ filter: /\.js$/ }, async (args) => {
-      let source = await readFile(args.path, 'utf8');
-
-      source = source
-        .replace(`const __filename = fileURLToPath(import.meta.url);\r\nconst __dirname = dirname(__filename);`, ''); // remove setting __filename/__dirname cause ESM -> CJS
-
-      if (!supportFirefox) source = source.replace(`import CDP from 'chrome-remote-interface';`, '');
-
-      return { contents: source };
-    });
-  }
-};
-
-const exists = path => access(path).then(() => true).catch(() => false);
 
 const dirSize = async dir => {
   const files = await readdir(dir, { withFileTypes: true });
@@ -51,88 +30,7 @@ const dirSize = async dir => {
 };
 
 
-const buildDir = join(__dirname, '..', 'build');
-const _buildWin32 = async (name, dir) => {
-  // reset build dir
-  await rm(buildDir, { recursive: true, force: true });
-  await mkdir(buildDir, { recursive: true });
-
-  await cp(dir, join(buildDir, 'src'), { recursive: true }); // copy project src to build
-  await cp(join(__dirname, '..', 'gluon'), join(buildDir, 'src', 'gluon'), { recursive: true }); // copy gluon into build
-
-  await rm(join(buildDir, 'src', 'gluon', 'node_modules'), { recursive: true });
-  if (supportFirefox) for (const m of [ 'ws', 'chrome-remote-interface' ]) {
-    const dest = join(buildDir, 'src', 'gluon', 'node_modules', m);
-    await cp(join(__dirname, '..', 'gluon', 'node_modules', m), dest, { recursive: true }); // copy gluon deps into build
-
-    for (const x of await readdir(dest)) {
-      if ([ 'bin', 'README.md', 'webpack.config.json', 'browser.js', 'chrome-remote-interface.js' ].includes(x)) await rm(join(dest, x), { recursive: true, force: true });
-    }
-
-    if (m === 'chrome-remote-interface') await rm(join(dest, 'lib', 'protocol.json'), { force: true });
-  }
-
-  // await writeFile(join(buildDir, 'gluon_info.txt'), `Gluon 0.1, built with Glugun 0.1 (win32 ${attrs.join(',')})`);
-  let indexContent = await readFile(join(buildDir, 'src', 'index.js'), 'utf8');
-
-  indexContent = indexContent.replace('../gluon/', './gluon/');
-
-  await writeFile(join(buildDir, 'src', 'index.js'), indexContent);
-
-  indexContent = await readFile(join(buildDir, 'src', 'gluon', 'index.js'), 'utf8');
-
-  indexContent = indexContent.replaceAll('GLUGUN_VERSION', '4.0-dev')
-    .replaceAll('EMBEDDED_NODE', embedNode);
-    // .replaceAll('SYSTEM_CHROMIUM', attrs.includes('system-chromium'))
-    // .replaceAll('SYSTEM_NODE', attrs.includes('system-node'));
-
-  await writeFile(join(buildDir, 'src', 'gluon', 'index.js'), indexContent)
-
-  await writeFile(join(buildDir, `${name}.bat`), `node %~dp0${minifyBackend ? 'out.js' : 'src'}`);
-
-  if (minifyBackend) {
-    log(`Pre-minify build size: ${((await dirSize(buildDir)) / 1024 / 1024).toFixed(2)}MB`);
-
-    await Esbuild.build({ // bundle and minify into 1 file
-      entryPoints: [ join(buildDir, 'src', 'index.js') ],
-      bundle: true,
-      minify: true,
-      format: 'iife',
-      platform: 'node',
-      outfile: join(buildDir, 'out.js'),
-      plugins: [ esbuildPlugin ]
-    });
-
-    const htmlPath = join(buildDir, 'src', 'index.html');
-    if (await exists(htmlPath)) {
-      const content = await readFile(htmlPath, 'utf8');
-      writeFile(join(buildDir, 'index.html'), await HTMLMinifier.minify(content));
-    }
-
-    await rm(join(buildDir, 'src'), { recursive: true }); // delete original src
-  }
-
-  if (embedNode) {
-    log('Embedding Node... (VERY EXPERIMENTAL!)');
-
-    const binary = name + '.exe';
-    const hasHtml = false; // await exists(join(buildDir, 'index.html'));
-
-    execSync(`nexe -t 19.2.0 -o "${binary}" ${hasHtml ? `-r "index.html"` : ''} --build -m=without-intl -m=nonpm -m=nocorepack --verbose -i "${minifyBackend ? 'out.js' : join('src', 'index.js')}"`, {
-      cwd: buildDir,
-      // stdio: 'inherit'
-    });
-
-    // execSync(`nexe -t 19.2.0 -o "${join(buildDir, binary)}" --build --verbose -i "${entryPoint}"`, { stdio: 'inherit' });
-    if (minifyBinary) execSync(`upx --best --lzma "${join(buildDir, binary)}"`, { stdio: 'inherit' });
-
-    for (const x of await readdir(buildDir)) {
-      if (x !== binary && x !== 'index.html') await rm(join(buildDir, x), { recursive: true });
-    }
-  }
-};
-
-export const build = async (dir, platform = 'win32') => {
+const build = async (dir, platform = 'win32') => {
   const name = basename(dir);
   log('Building', name, 'on', platform + '...');
 
@@ -141,7 +39,7 @@ export const build = async (dir, platform = 'win32') => {
   console.log();
   const startTime = performance.now();
   switch (platform) {
-    case 'win32': await _buildWin32(name, dir);
+    case 'win32': await Build(name, dir);
   }
 
   log(`Finished build in: ${((performance.now() - startTime) / 1024).toFixed(2)}s`);
@@ -163,6 +61,9 @@ switch (cmd) {
     if (embedNode) execSync(`build\\${name}.exe`, { stdio: 'inherit' });
       else execSync(`.\\build\\${name}.bat`, { stdio: 'inherit' });
 
+    break;
+
+  case 'wrap':
     break;
 
   default:
