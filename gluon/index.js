@@ -3,8 +3,8 @@ global.log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args
 
 process.versions.gluon = '5.1-dev';
 
-import { join, dirname } from 'path';
-import { access } from 'fs/promises';
+import { join, dirname, delimiter, sep } from 'path';
+import { access, readdir } from 'fs/promises';
 import { fileURLToPath } from 'url';
 
 import Chromium from './browser/chromium.js';
@@ -29,7 +29,23 @@ const browserPaths = ({
   }
 })[process.platform];
 
-const exists = path => access(path).then(() => true).catch(() => false);
+let _binariesInPath; // cache as to avoid excessive reads
+const getBinariesInPath = async () => {
+  if (_binariesInPath) return _binariesInPath;
+
+  return _binariesInPath = (await Promise.all(process.env.PATH
+    .replaceAll('"', '')
+    .split(delimiter)
+    .filter(Boolean)
+    .map(x => readdir(x.replace(/"+/g, '')).catch(() => [])))).flat();
+};
+
+const exists = async path => {
+  if (path.includes(sep)) return await access(path).then(() => true).catch(() => false);
+
+  // just binary name, so check path
+  return (await getBinariesInPath()).some(x => x.includes(path));
+};
 
 const findBrowserPath = async (forceBrowser) => {
   if (forceBrowser) return [ browserPaths[forceBrowser], forceBrowser ];
