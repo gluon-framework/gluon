@@ -24,14 +24,19 @@ const dirSize = async dir => {
 };
 
 (async () => {
-  const Chromium = await Gluon.open(pathToFileURL(join(__dirname, 'index.html')).href, {
-    windowSize: [ 800, 500 ],
-    forceBrowser: 'chrome_canary'
-  });
+  if (process.argv.length > 2) { // use argv as browsers to use
+    for (const forceBrowser of process.argv.slice(2)) {
+      await Gluon.open(pathToFileURL(join(__dirname, 'index.html')).href, {
+        windowSize: [ 800, 500 ],
+        forceBrowser
+      });
+    }
 
-  const Firefox = await Gluon.open(pathToFileURL(join(__dirname, 'index.html')).href, {
-    windowSize: [ 800, 500 ],
-    forceBrowser: 'firefox_nightly'
+    return;
+  }
+
+  const Browser = await Gluon.open(pathToFileURL(join(__dirname, 'index.html')).href, {
+    windowSize: [ 800, 500 ]
   });
 
   // const buildSize = await dirSize(__dirname);
