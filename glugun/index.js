@@ -113,7 +113,7 @@ const _buildWin32 = async (name, dir) => {
   }
 
   if (embedNode) {
-    log('Embedding Node...');
+    log('Embedding Node... (VERY EXPERIMENTAL!)');
 
     const binary = name + '.exe';
     const hasHtml = false; // await exists(join(buildDir, 'index.html'));
