@@ -1,7 +1,7 @@
 const rgb = (r, g, b, msg) => `\x1b[38;2;${r};${g};${b}m${msg}\x1b[0m`;
 global.log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args);
 
-process.versions.gluon = '5.0-dev';
+process.versions.gluon = '5.1-dev';
 
 import { join, dirname } from 'path';
 import { access } from 'fs/promises';
@@ -13,24 +13,30 @@ import Firefox from './browser/firefox.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const browserPathsWin = {
-  chrome_stable: join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
-  chrome_canary: join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
-  edge: join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+const browserPaths = ({
+  win32: {
+    chrome_stable: join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    chrome_canary: join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
+    edge: join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
 
-  firefox: join(process.env.PROGRAMFILES, 'Mozilla Firefox', 'firefox.exe'),
-  firefox_nightly: join(process.env.PROGRAMFILES, 'Firefox Nightly', 'firefox.exe'),
-  // todo: add more common good paths/browsers here
-};
+    firefox: join(process.env.PROGRAMFILES, 'Mozilla Firefox', 'firefox.exe'),
+    firefox_nightly: join(process.env.PROGRAMFILES, 'Firefox Nightly', 'firefox.exe'),
+  },
+
+  linux: {
+    chromium: 'chromium',
+    firefox: 'firefox',
+  }
+})[process.platform];
 
 const exists = path => access(path).then(() => true).catch(() => false);
 
 const findBrowserPath = async (forceBrowser) => {
-  if (forceBrowser) return [ browserPathsWin[forceBrowser], forceBrowser ];
+  if (forceBrowser) return [ browserPaths[forceBrowser], forceBrowser ];
 
   let whichBrowser = '';
 
-  for (const x of Object.keys(browserPathsWin)) {
+  for (const x of Object.keys(browserPaths)) {
     if (process.argv.includes('--' + x) || process.argv.includes('--' + x.split('_')[0])) {
       whichBrowser = x;
       break;
@@ -38,10 +44,10 @@ const findBrowserPath = async (forceBrowser) => {
   }
 
   if (!whichBrowser) {
-    for (const x in browserPathsWin) {
-      log('checking if ' + x + ' exists:', browserPathsWin[x], await exists(browserPathsWin[x]));
+    for (const x in browserPaths) {
+      log('checking if ' + x + ' exists:', browserPaths[x], await exists(browserPaths[x]));
 
-      if (await exists(browserPathsWin[x])) {
+      if (await exists(browserPaths[x])) {
         whichBrowser = x;
         break;
       }
@@ -50,7 +56,7 @@ const findBrowserPath = async (forceBrowser) => {
 
   if (!whichBrowser) return null;
 
-  return [ browserPathsWin[whichBrowser], whichBrowser ];
+  return [ browserPaths[whichBrowser], whichBrowser ];
 };
 
 const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase()).replace(' Stable', '');
