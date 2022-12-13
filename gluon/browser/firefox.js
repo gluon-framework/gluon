@@ -61,6 +61,15 @@ user_pref('privacy.window.maxInnerHeight', ${windowSize[1]}); */
 .tab-content {
   height: 42px;
 }
+
+:not(html[tabsintitlebar="true"]) #titlebar,
+:not(html[tabsintitlebar="true"]) .tabbrowser-tab,
+:not(html[tabsintitlebar="true"]) .tab-background,
+:not(html[tabsintitlebar="true"]) .tab-content,
+:not(html[tabsintitlebar="true"]) #tabbrowser-tabs,
+:not(html[tabsintitlebar="true"]) .tab-icon-image {
+  display: none !important;
+}
 `);
 
   const proc = spawn(browserPath, [
