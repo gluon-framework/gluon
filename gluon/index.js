@@ -50,7 +50,7 @@ const findBrowserPath = async (forceBrowser) => {
   return [ browserPathsWin[whichBrowser], whichBrowser ];
 };
 
-const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase());
+const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase()).replace(' Stable', '');
 const getDataPath = () => join(__dirname, '..', 'chrome_data');
 
 const startBrowser = async (url, { windowSize, forceBrowser }) => {
