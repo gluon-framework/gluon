@@ -33,6 +33,7 @@ Gluon is currently **barely 1 week old**, so is still in an **early and experime
 
 ### Apps
 - [Gluworld](gluworld): Hello World demo app with version info shown
+- [Gludoom](gludoom): Simple demo app - Doom running as WASM, made into a native looking app with Gluon
 - [Glucord](glucord): minimal desktop Discord client loading official webapp (demo/example)
 
 <br>
