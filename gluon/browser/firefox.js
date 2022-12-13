@@ -1,7 +1,13 @@
 import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { spawn } from 'child_process';
-import CDP from 'chrome-remote-interface';
+
+let CDP;
+try {
+  CDP = await import('chrome-remote-interface');
+} catch {
+  console.warn('Dependencies for Firefox are not installed!');
+}
 
 import makeIPCApi from './ipc.js';
 
