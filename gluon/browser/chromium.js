@@ -31,7 +31,7 @@ export default async ({ browserName, browserPath, dataPath }, { url, windowSize 
   const onMessage = msg => {
     msg = JSON.parse(msg);
 
-    log('received', msg);
+    // log('received', msg);
     if (onReply[msg.id]) {
       onReply[msg.id](msg);
       delete onReply[msg.id];
@@ -57,7 +57,7 @@ export default async ({ browserName, browserPath, dataPath }, { url, windowSize 
     pipeWrite.write(JSON.stringify(msg));
     pipeWrite.write('\0');
 
-    log('sent', msg);
+    // log('sent', msg);
 
     const reply = await new Promise(res => {
       onReply[id] = msg => res(msg);
