@@ -39,6 +39,7 @@ export default async ({ browserName, browserPath, dataPath }, { url, windowSize 
 
     if (msg.method === 'Runtime.bindingCalled' && msg.name === 'gluonSend') onWindowMessage(JSON.parse(msg.payload));
     if (msg.method === 'Page.frameStoppedLoading') pageLoadCallback(msg.params);
+    if (msg.method === 'Runtime.executionContextCreated') injectIPC(); // ensure IPC injection again
   };
 
   let msgId = 0;
@@ -117,7 +118,7 @@ export default async ({ browserName, browserPath, dataPath }, { url, windowSize 
   };
 
 
-  const [ ipcMessageCallback, IPCApi ] = await makeIPCApi({
+  const [ ipcMessageCallback, injectIPC, IPCApi ] = await makeIPCApi({
     browserName,
     browserInfo
   }, {

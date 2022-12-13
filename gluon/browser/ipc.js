@@ -1,5 +1,6 @@
 export default ({ browserName, browserInfo }, { evaluate, addScriptToEvaluateOnNewDocument, pageLoadPromise }) => {
   const injection = `(() => {
+if (window.Gluon) return;
 let onIPCReply = {}, ipcListeners = {};
 window.Gluon = {
   versions: {
@@ -129,7 +130,9 @@ delete window._gluonSend;
     sendToWindow('pong', {}, id); // send simple pong to confirm
   };
 
-  return [ onWindowMessage, {
+  return [ onWindowMessage, () => evaluate({
+    expression: injection
+  }), {
     on: (type, cb) => {
       if (!ipcListeners[type]) ipcListeners[type] = [];
       ipcListeners[type].push(cb);

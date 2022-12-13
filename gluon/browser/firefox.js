@@ -111,7 +111,7 @@ user_pref('privacy.window.maxInnerHeight', ${windowSize[1]}); */
     name: '_gluonSend'
   }); */
 
-  const [ ipcMessageCallback, IPCApi ] = await makeIPCApi({
+  const [ ipcMessageCallback, injectIPC, IPCApi ] = await makeIPCApi({
     browserName,
     browserInfo
   }, {
