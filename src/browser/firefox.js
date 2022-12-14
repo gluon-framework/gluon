@@ -4,7 +4,7 @@ import { spawn } from 'child_process';
 
 let CDP;
 try {
-  CDP = await import('chrome-remote-interface');
+  CDP = (await import('chrome-remote-interface')).default;
 } catch {
   console.warn('Dependencies for Firefox are not installed!');
 }
