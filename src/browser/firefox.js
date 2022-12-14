@@ -2,14 +2,8 @@ import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { spawn } from 'child_process';
 
-let CDP;
-try {
-  CDP = (await import('chrome-remote-interface')).default;
-} catch {
-  console.warn('Dependencies for Firefox are not installed!');
-}
-
 import makeIPCApi from './ipc.js';
+import ConnectCDP from './cdp.js';
 
 const portRange = [ 10000, 60000 ];
 
@@ -99,28 +93,21 @@ html:not([tabsintitlebar="true"]) .tab-icon-image {
 
   log(`connecting to CDP over websocket (${debugPort})...`);
 
-  let CDPInstance;
-  const connect = async () => {
-    try {
-      CDPInstance = await CDP({
-        port: debugPort
-      });
-    } catch {
-      await new Promise(res => setTimeout(res));
-      await connect();
-    }
-  };
+  const CDP = await ConnectCDP({ port: debugPort });
 
-  await connect();
+  let pageLoadCallback = () => {}, onWindowMessage = () => {};
+  CDP.onMessage(msg => {
+    if (msg.method === 'Runtime.bindingCalled' && msg.name === 'gluonSend') onWindowMessage(JSON.parse(msg.payload));
+    if (msg.method === 'Page.frameStoppedLoading') pageLoadCallback(msg.params);
+    if (msg.method === 'Runtime.executionContextCreated') injectIPC(); // ensure IPC injection again
+  });
 
   log(`connected to CDP over websocket (${debugPort})`);
 
-  const { Browser, Runtime, Page } = CDPInstance;
-
-  const browserInfo = await Browser.getVersion();
+  const browserInfo = await CDP.sendMessage('Browser.getVersion');
   log('browser:', browserInfo.product);
 
-  await Runtime.enable();
+  await CDP.sendMessage('Runtime.enable');
 
   /* Runtime.addBinding({
     name: '_gluonSend'
@@ -130,9 +117,9 @@ html:not([tabsintitlebar="true"]) .tab-icon-image {
     browserName,
     browserInfo
   }, {
-    evaluate: Runtime.evaluate,
-    addScriptToEvaluateOnNewDocument: Page.addScriptToEvaluateOnNewDocument,
-    pageLoadPromise: new Promise(res => Page.frameStoppedLoading(res))
+    evaluate: params => CDP.sendMessage(`Runtime.evaluate`, params, sessionId),
+    addScriptToEvaluateOnNewDocument: params => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', params, sessionId),
+    pageLoadPromise: new Promise(res => pageLoadCallback = res)
   });
 
   // todo: IPC Node -> Web for Firefox
@@ -150,8 +137,8 @@ html:not([tabsintitlebar="true"]) .tab-icon-image {
 
     ipc: IPCApi,
 
-    cdp: { // todo: public CDP API for Firefox
-      send: () => {}
+    cdp: {
+      send: (method, params) => CDP.sendMessage(method, params, sessionId)
     }
   };
 };
