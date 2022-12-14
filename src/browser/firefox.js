@@ -68,12 +68,12 @@ user_pref('privacy.window.maxInnerHeight', ${windowSize[1]}); */
   height: 42px;
 }
 
-:not(html[tabsintitlebar="true"]) #titlebar,
-:not(html[tabsintitlebar="true"]) .tabbrowser-tab,
-:not(html[tabsintitlebar="true"]) .tab-background,
-:not(html[tabsintitlebar="true"]) .tab-content,
-:not(html[tabsintitlebar="true"]) #tabbrowser-tabs,
-:not(html[tabsintitlebar="true"]) .tab-icon-image {
+html:not([tabsintitlebar="true"]) #titlebar,
+html:not([tabsintitlebar="true"]) .tabbrowser-tab,
+html:not([tabsintitlebar="true"]) .tab-background,
+html:not([tabsintitlebar="true"]) .tab-content,
+html:not([tabsintitlebar="true"]) #tabbrowser-tabs,
+html:not([tabsintitlebar="true"]) .tab-icon-image {
   display: none !important;
 }
 `);
