@@ -1,0 +1,21 @@
+{
+  "name": "@gluon-framework/gluon",
+  "version": "5.1.0",
+  "description": "Make websites into desktop apps with system installed browsers and NodeJS.",
+  "main": "src/index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gluon-framework/gluon.git"
+  },
+  "author": "Gluon Framework",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gluon-framework/gluon/issues"
+  },
+  "homepage": "https://github.com/gluon-framework/gluon#readme",
+  "type": "module",
+  "dependencies": {
+    "chrome-remote-interface": "^0.31.3"
+  }
+}

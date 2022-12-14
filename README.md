@@ -28,31 +28,30 @@ Gluon is currently **barely 1 week old**, so is still in an **early and experime
 <br>
 
 ## Ecosystem
-- [Gluon](gluon): the Gluon framework (NodeJS)
-- [Glugun](glugun): builds Gluon apps into releasable builds with optional bundling (soon)
+- [Gluon](https://github.com/gluon-framework/gluon): the Gluon framework (NodeJS)
+- [Glugun](https://github.com/gluon-framework/glugun): builds Gluon apps into releasable builds with optional bundling (soon)
 
 ### Apps
-- [Gluworld](gluworld): Hello World demo app with version info shown
-- [Gludoom](gludoom): Simple demo app - Doom running as WASM, made into a native looking app with Gluon
-- [Glucord](glucord): minimal desktop Discord client loading official webapp (demo/example)
+- [Gluworld](https://github.com/gluon-framework/examples/tree/main/gluworld): Hello World demo app with version info shown
+- [Gludoom](https://github.com/gluon-framework/examples/tree/main/gludoom): Doom running as WASM, made into a native looking app with Gluon
+- [Glucord](https://github.com/gluon-framework/examples/tree/main/glucord): minimal desktop Discord client loading official webapp (demo/example)
 
 <br>
 
 ## Trying Gluon
-1. Clone this GitHub repo
-2. Inside of the `gluon` folder (inside the repo), do `npm install`
-3. Back out into the root of the repo, do `node gluworld`
+1. Clone [the Gluon examples repo](https://github.com/gluon-framework/examples)
+2. Inside of `gluworld`, run `npm install`
+3. Now do `node .` to run it!
 
 <details>
 <summary>Shell example</summary>
 ```sh
-$ git clone https://github.com/gluon-framework/gluon.git
-$ cd gloun
-gluon $ cd gluon
-gluon/gluon $ npm install
+$ git clone https://github.com/gluon-framework/examples.git
+$ cd examples
+examples $ cd gluworld
+examples/gluworld $ npm install
 ...
-gluon/gluon $ cd ..
-gluon $ node gluworld
+examples/gluworld $ node .
 ```
 </details>
 
@@ -68,14 +67,13 @@ console.log(reply); // { give: 'back', different: 'stuff' }
 
 ```js
 // In your Node backend
-import * as Gluon from '...';
+import * as Gluon from '@gluon-framework/gluon';
 const Window = await Gluon.open(...);
 
 Window.ipc.on('my type', data => { // { more: 'data' }
   return { give: 'back', different: 'stuff' };
 });
 ```
-
 
 <br>
 
