@@ -114,6 +114,7 @@ user_pref('privacy.window.maxInnerHeight', ${windowSize[1]}); */
   const { Browser, Runtime, Page } = CDPInstance;
 
   const browserInfo = await Browser.getVersion();
+  log('browser:', browserInfo.product);
 
   await Runtime.enable();
 
