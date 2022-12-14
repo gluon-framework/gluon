@@ -60,6 +60,10 @@ user_pref('privacy.window.maxInnerHeight', ${windowSize[1]}); */
   height: 16px;
 }
 
+.tabbrowser-tab { /* Stop being able to drag around tab like browser, acts as part of titlebar */
+  pointer-events: none;
+}
+
 #titlebar, .tabbrowser-tab {
   height: 20px;
 }
