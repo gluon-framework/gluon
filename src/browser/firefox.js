@@ -93,6 +93,8 @@ user_pref('privacy.window.maxInnerHeight', ${windowSize[1]}); */
   proc.stdout.pipe(proc.stdout);
   proc.stderr.pipe(proc.stderr);
 
+  log(`connecting to CDP over websocket (${debugPort})...`);
+
   let CDPInstance;
   const connect = async () => {
     try {
@@ -106,6 +108,8 @@ user_pref('privacy.window.maxInnerHeight', ${windowSize[1]}); */
   };
 
   await connect();
+
+  log(`connected to CDP over websocket (${debugPort})`);
 
   const { Browser, Runtime, Page } = CDPInstance;
 
@@ -127,6 +131,8 @@ user_pref('privacy.window.maxInnerHeight', ${windowSize[1]}); */
   });
 
   // todo: IPC Node -> Web for Firefox
+
+  log('finished setup');
 
   return {
     window: {

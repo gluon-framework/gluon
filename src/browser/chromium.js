@@ -27,6 +27,8 @@ export default async ({ browserName, browserPath, dataPath }, { url, windowSize 
   // todo: move this to it's own library
   const { 3: pipeWrite, 4: pipeRead } = proc.stdio;
 
+  log('connected to CDP over stdio pipe');
+
   let onReply = {}, pageLoadCallback = () => {}, onWindowMessage = () => {};
   const onMessage = msg => {
     msg = JSON.parse(msg);
@@ -117,7 +119,6 @@ export default async ({ browserName, browserPath, dataPath }, { url, windowSize 
     }, sessionId);
   };
 
-
   const [ ipcMessageCallback, injectIPC, IPCApi ] = await makeIPCApi({
     browserName,
     browserInfo
@@ -127,6 +128,8 @@ export default async ({ browserName, browserPath, dataPath }, { url, windowSize 
     pageLoadPromise: new Promise(res => pageLoadCallback = res)
   });
   onWindowMessage = ipcMessageCallback;
+
+  log('finished setup');
 
   return {
     window: {
