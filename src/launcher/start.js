@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 
-import ConnectCDP from './cdp.js';
-import InjectInto from './inject.js';
+import ConnectCDP from '../lib/cdp.js';
+import InjectInto from '../browser/inject.js';
 
 const portRange = [ 10000, 60000 ];
 

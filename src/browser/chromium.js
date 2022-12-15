@@ -1,4 +1,4 @@
-import StartBrowser from './start.js';
+import StartBrowser from '../launcher/start.js';
 
 const presets = { // Presets from OpenAsar
   'base': '--autoplay-policy=no-user-gesture-required --disable-features=WinRetrieveSuggestionsOnlyOnDemand,HardwareMediaKeyHandling,MediaSessionService', // Base Discord

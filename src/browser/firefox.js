@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
 
-import StartBrowser from './start.js';
+import StartBrowser from '../launcher/start.js';
 
 
 export default async ({ browserName, browserPath, dataPath }, { url, windowSize }) => {
