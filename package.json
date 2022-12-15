@@ -16,6 +16,6 @@
   "homepage": "https://github.com/gluon-framework/gluon#readme",
   "type": "module",
   "dependencies": {
-    "chrome-remote-interface": "^0.31.3"
+    "ws": "^8.11.0"
   }
 }
