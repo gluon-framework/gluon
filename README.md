@@ -45,14 +45,16 @@ Gluon is currently **barely 1 week old**, so is still in an **early and experime
 
 <details>
 <summary>Shell example</summary>
+
 ```sh
 $ git clone https://github.com/gluon-framework/examples.git
 $ cd examples
-examples $ cd gluworld
-examples/gluworld $ npm install
+$ cd gluworld
+$ npm install
 ...
-examples/gluworld $ node .
+$ node .
 ```
+
 </details>
 
 <br>
