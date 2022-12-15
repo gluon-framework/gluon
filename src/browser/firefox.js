@@ -1,15 +1,10 @@
 import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
-import { spawn } from 'child_process';
 
-import makeIPCApi from './ipc.js';
-import ConnectCDP from './cdp.js';
+import StartBrowser from './start.js';
 
-const portRange = [ 10000, 60000 ];
 
 export default async ({ browserName, browserPath, dataPath }, { url, windowSize }) => {
-  const debugPort = Math.floor(Math.random() * (portRange[1] - portRange[0] + 1)) + portRange[0];
-
   await mkdir(dataPath, { recursive: true });
   await writeFile(join(dataPath, 'user.js'), `
 user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
@@ -76,69 +71,11 @@ html:not([tabsintitlebar="true"]) .tab-icon-image {
 }
 `);
 
-  const proc = spawn(browserPath, [
-    `--remote-debugging-port=${debugPort}`,
+  return await StartBrowser(browserPath, [
     `-window-size`, windowSize.join(','),
     `-profile`, dataPath,
     `-new-window`, url,
     `-new-instance`,
     `-no-remote`
-  ].filter(x => x), {
-    detached: false,
-    stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe']
-  });
-
-  proc.stdout.pipe(proc.stdout);
-  proc.stderr.pipe(proc.stderr);
-
-  log(`connecting to CDP over websocket (${debugPort})...`);
-
-  const CDP = await ConnectCDP({ port: debugPort });
-
-  let pageLoadCallback = () => {}, onWindowMessage = () => {};
-  CDP.onMessage(msg => {
-    if (msg.method === 'Runtime.bindingCalled' && msg.name === 'gluonSend') onWindowMessage(JSON.parse(msg.payload));
-    if (msg.method === 'Page.frameStoppedLoading') pageLoadCallback(msg.params);
-    if (msg.method === 'Runtime.executionContextCreated') injectIPC(); // ensure IPC injection again
-  });
-
-  log(`connected to CDP over websocket (${debugPort})`);
-
-  const browserInfo = await CDP.sendMessage('Browser.getVersion');
-  log('browser:', browserInfo.product);
-
-  await CDP.sendMessage('Runtime.enable');
-
-  /* Runtime.addBinding({
-    name: '_gluonSend'
-  }); */
-
-  const [ ipcMessageCallback, injectIPC, IPCApi ] = await makeIPCApi({
-    browserName,
-    browserInfo
-  }, {
-    evaluate: params => CDP.sendMessage(`Runtime.evaluate`, params),
-    addScriptToEvaluateOnNewDocument: params => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', params),
-    pageLoadPromise: new Promise(res => pageLoadCallback = res)
-  });
-
-  // todo: IPC Node -> Web for Firefox
-
-  log('finished setup');
-
-  return {
-    window: {
-      eval:  async func => {
-        return await Runtime.evaluate({
-          expression: typeof func === 'string' ? func : `(${func.toString()})()`
-        });
-      }
-    },
-
-    ipc: IPCApi,
-
-    cdp: {
-      send: (method, params) => CDP.sendMessage(method, params, sessionId)
-    }
-  };
+  ], 'websocket', { browserName });
 };

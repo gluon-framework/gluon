@@ -45,13 +45,10 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
   if (port) {
     const continualTrying = func => new Promise(resolve => {
       const attempt = async () => {
-        // console.log('attempting', func);
         try {
           process.stdout.write('.');
-          // console.log('try', await func().catch(() => {}));
           resolve(await func());
         } catch (e) { // fail, wait 100ms and try again
-          // console.log('fail', e);
           await new Promise(res => setTimeout(res, 200));
           await attempt();
         }
@@ -74,28 +71,9 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
 
     console.log();
 
-    /* const targets = await new Promise(resolve => {
-      const attempt = () => {
-        const req = get(`http://localhost:${port}/json/list`, res => {
-          let body = '';
-          res.on('data', chunk => body += chunk.toString());
-          res.on('end', () => resolve(JSON.parse(body)));
-        });
-
-        req.on('error', attempt);
-      };
-
-      attempt();
-    )); */
-
-    const target = targets[0]; // targets.find(x => x.type === 'browser');
+    const target = targets[0];
 
     log('got target', target);
-
-    /* const ws = await continualTrying(() => new Promise(resolve => {
-      const _ws = new WebSocket(target.webSocketDebuggerUrl);
-      _ws.on('open', () => resolve(_ws));
-    })); */
 
     const ws = new WebSocket(target.webSocketDebuggerUrl);
     await new Promise(resolve => ws.on('open', resolve));
