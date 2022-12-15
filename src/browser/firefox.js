@@ -117,8 +117,8 @@ html:not([tabsintitlebar="true"]) .tab-icon-image {
     browserName,
     browserInfo
   }, {
-    evaluate: params => CDP.sendMessage(`Runtime.evaluate`, params, sessionId),
-    addScriptToEvaluateOnNewDocument: params => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', params, sessionId),
+    evaluate: params => CDP.sendMessage(`Runtime.evaluate`, params),
+    addScriptToEvaluateOnNewDocument: params => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', params),
     pageLoadPromise: new Promise(res => pageLoadCallback = res)
   });
 

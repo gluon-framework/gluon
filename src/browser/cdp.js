@@ -43,16 +43,62 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
   };
 
   if (port) {
-    const targets = await new Promise(resolve => get(`http://localhost:${port}/json/list`, res => {
+    const continualTrying = func => new Promise(resolve => {
+      const attempt = async () => {
+        // console.log('attempting', func);
+        try {
+          process.stdout.write('.');
+          // console.log('try', await func().catch(() => {}));
+          resolve(await func());
+        } catch (e) { // fail, wait 100ms and try again
+          // console.log('fail', e);
+          await new Promise(res => setTimeout(res, 200));
+          await attempt();
+        }
+      };
+
+      attempt();
+    });
+
+    const targets = await continualTrying(() => new Promise((resolve, reject) => get(`http://127.0.0.1:${port}/json/list`, res => {
       let body = '';
       res.on('data', chunk => body += chunk.toString());
-      res.on('end', () => resolve(JSON.parse(body)));
-    }));
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(body))
+        } catch {
+          reject();
+        }
+      });
+    }).on('error', reject)));
+
+    console.log();
+
+    /* const targets = await new Promise(resolve => {
+      const attempt = () => {
+        const req = get(`http://localhost:${port}/json/list`, res => {
+          let body = '';
+          res.on('data', chunk => body += chunk.toString());
+          res.on('end', () => resolve(JSON.parse(body)));
+        });
+
+        req.on('error', attempt);
+      };
+
+      attempt();
+    )); */
 
     const target = targets[0]; // targets.find(x => x.type === 'browser');
 
+    log('got target', target);
+
+    /* const ws = await continualTrying(() => new Promise(resolve => {
+      const _ws = new WebSocket(target.webSocketDebuggerUrl);
+      _ws.on('open', () => resolve(_ws));
+    })); */
+
     const ws = new WebSocket(target.webSocketDebuggerUrl);
-    await new Promise(res => ws.on('open', res));
+    await new Promise(resolve => ws.on('open', resolve));
 
     _send = data => ws.send(data);
 
