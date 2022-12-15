@@ -46,7 +46,7 @@ const exists = async path => {
   if (path.includes(sep)) return await access(path).then(() => true).catch(() => false);
 
   // just binary name, so check path
-  return (await getBinariesInPath()).some(x => x.includes(path));
+  return (await getBinariesInPath()).includes(path);
 };
 
 const findBrowserPath = async (forceBrowser) => {
