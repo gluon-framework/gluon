@@ -13,8 +13,8 @@ user_pref('devtools.debugger.prompt-connection', false);
 user_pref('devtools.debugger.remote-enabled', true);
 user_pref('toolkit.telemetry.reportingpolicy.firstRun', false);
 user_pref('browser.shell.checkDefaultBrowser', false);
-user_pref('privacy.window.maxInnerWidth', ${windowSize[0]});
-user_pref('privacy.window.maxInnerHeight', ${windowSize[1]});
+${!windowSize ? '' : `user_pref('privacy.window.maxInnerWidth', ${windowSize[0]});
+user_pref('privacy.window.maxInnerHeight', ${windowSize[1]});`}
 user_pref('privacy.resistFingerprinting', true);
 user_pref('fission.bfcacheInParent', false);
 user_pref('fission.webContentIsolationStrategy', 0);
@@ -72,7 +72,7 @@ html:not([tabsintitlebar="true"]) .tab-icon-image {
 `);
 
   return await StartBrowser(browserPath, [
-    `-window-size`, windowSize.join(','),
+    ...(!windowSize ? [] : [ `-window-size`, windowSize.join(',') ]),
     `-profile`, dataPath,
     `-new-window`, url,
     `-new-instance`,
