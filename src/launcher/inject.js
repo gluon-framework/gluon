@@ -1,4 +1,4 @@
-import IPCApi from './ipc.js';
+import IPCApi from '../lib/ipc.js';
 
 export default async (CDP, injectionType = 'browser', { browserName }) => {
   let pageLoadCallback = () => {}, onWindowMessage = () => {};
