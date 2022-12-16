@@ -1,6 +1,6 @@
 {
   "name": "@gluon-framework/gluon",
-  "version": "5.1.0",
+  "version": "0.6.0",
   "description": "Make websites into desktop apps with system installed browsers and NodeJS.",
   "main": "src/index.js",
   "scripts": {},
