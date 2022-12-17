@@ -13,10 +13,6 @@ import Firefox from './browser/firefox.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-/**
- * @typedef {'chrome'|'chrome_canary'|'chromium'|'edge'|'firefox'|'firefox_nightly'} Browser
- */
-
 const browserPaths = ({
   win32: process.platform === 'win32' && {
     chrome: join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
@@ -108,15 +104,6 @@ const startBrowser = async (url, { windowSize, forceBrowser }) => {
   });
 };
 
-/**
- * Open a new Gluon window.
- *
- * @param {string} url - URL to load in the browser.
- * @param {Object} options - Optional further options.
- * @param {Function} [options.onLoad] - This function is evaluated in the web context once loaded.
- * @param {Browser} [options.forceBrowser] - Force window to use a certain browser.
- * @returns {any} - Instance of a Gluon window.
- */
 export const open = async (url, { windowSize, onLoad, forceBrowser } = {}) => {
   log('starting browser...');
 
