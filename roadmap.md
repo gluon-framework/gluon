@@ -5,6 +5,7 @@
 
 ## December 2022 - January 2023
 - [X] Total internal rewrite
+- [X] Type definitions
 - [ ] "Hibernation" feasibility study
 - [ ] Automated PR/commit CI testing
 - [ ] System Tray API
