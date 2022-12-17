@@ -71,7 +71,7 @@ window.Gluon = {
         if (reply) return Gluon.ipc.send('reply', reply, id); // reply with wanted reply
       }
 
-      Gluon.ipc.send('pong', {}, id);
+      Gluon.ipc.send('pong', null, id);
     },
 
     _send: window._gluonSend
@@ -127,7 +127,7 @@ delete window._gluonSend;
       if (reply) return sendToWindow('reply', reply, id); // reply with wanted reply
     }
 
-    sendToWindow('pong', {}, id); // send simple pong to confirm
+    sendToWindow('pong', null, id); // send simple pong to confirm
   };
 
   return [ onWindowMessage, () => evaluate({
