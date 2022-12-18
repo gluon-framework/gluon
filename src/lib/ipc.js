@@ -125,19 +125,21 @@ delete window._gluonSend;
     sendToWindow('pong', null, id); // send simple pong to confirm
   };
 
-  return [ onWindowMessage, () => evaluate({
-    expression: injection
-  }), {
-    on: (type, cb) => {
-      if (!ipcListeners[type]) ipcListeners[type] = [];
-      ipcListeners[type].push(cb);
-    },
+  return [
+    onWindowMessage,
+    () => evalInWindow(injection),
 
-    removeListener: (type, cb) => {
-      if (!ipcListeners[type]) return false;
-      ipcListeners[type].splice(ipcListeners[type].indexOf(cb), 1);
-    },
+    {
+      on: (type, cb) => {
+        if (!ipcListeners[type]) ipcListeners[type] = [];
+        ipcListeners[type].push(cb);
+      },
 
-    send: sendToWindow,
+      removeListener: (type, cb) => {
+        if (!ipcListeners[type]) return false;
+        ipcListeners[type].splice(ipcListeners[type].indexOf(cb), 1);
+      },
+
+      send: sendToWindow,
   } ];
 };
