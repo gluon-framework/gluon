@@ -20,7 +20,7 @@ type IPCApi = {
 
     /** Data of event to send. */
     data: any
-  ): Promise<any?>,
+  ): Promise<any>,
 
   /**
    * Subscribe to IPC events of a specific type with a callback.
@@ -48,7 +48,7 @@ type CDPApi = {
     method: string,
 
     /** Parameters of CDP command. */
-    params: Object?
+    params?: Object
   ): Promise<any>
 };
 
@@ -65,7 +65,7 @@ type Browser = 'chrome'|'chrome_canary'|'chromium'|'edge'|'firefox'|'firefox_nig
 /** Additional options for opening */
 type OpenOptions = {
   /** Function to evaluate in the web context once loaded. */
-  onLoad?: function,
+  onLoad?: Function,
 
   /** Force Gluon to use a browser instead of automatically finding. */
   forceBrowser?: Browser,
