@@ -30,7 +30,7 @@ type IPCApi = {
     type: string,
 
     /**
-     * Ran whenever an IPC event of type specified is recieved. Should return optionally with what to reply with.
+     * Ran whenever an IPC event of type specified is received. Should return optionally with what to reply with.
      * @returns Optionally with what to reply with, otherwise null by default.
      */
     callback: (data: any) => any
