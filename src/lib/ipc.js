@@ -51,7 +51,7 @@ window.Gluon = {
       ipcListeners[type].splice(ipcListeners[type].indexOf(cb), 1);
     },
 
-    _recieve: msg => {
+    _receive: async msg => {
       const { id, type, data } = msg;
 
       if (onIPCReply[id]) {
@@ -64,7 +64,7 @@ window.Gluon = {
         let reply;
 
         for (const cb of ipcListeners[type]) {
-          const ret = cb(data);
+          const ret = await cb(data);
           if (!reply) reply = ret; // use first returned value as reply
         }
 
@@ -94,7 +94,7 @@ delete window._gluonSend;
     id = id ?? Math.random().toString().split('.')[1];
 
     await pageLoadPromise; // wait for page to load before sending, otherwise messages won't be heard
-    evalInWindow(`window.Gluon.ipc._recieve(${JSON.stringify({
+    evalInWindow(`window.Gluon.ipc._receive(${JSON.stringify({
       id,
       type,
       data
@@ -109,7 +109,7 @@ delete window._gluonSend;
     return reply;
   };
 
-  const onWindowMessage = ({ id, type, data }) => {
+  const onWindowMessage = async ({ id, type, data }) => {
     if (onIPCReply[id]) {
       onIPCReply[id]({ type, data });
       delete onIPCReply[id];
@@ -120,7 +120,7 @@ delete window._gluonSend;
       let reply;
 
       for (const cb of ipcListeners[type]) {
-        const ret = cb(data);
+        const ret = await cb(data);
         if (!reply) reply = ret; // use first returned value as reply
       }
 
