@@ -24,6 +24,7 @@ window.Gluon = {
 
   ipc: {
     send: async (type, data, id = undefined) => {
+      const isReply = !!id;
       id = id ?? Math.random().toString().split('.')[1];
 
       window.Gluon.ipc._send(JSON.stringify({
@@ -32,7 +33,7 @@ window.Gluon = {
         data
       }));
 
-      if (id) return;
+      if (isReply) return;
 
       const reply = await new Promise(res => {
         onIPCReply[id] = msg => res(msg);
@@ -86,6 +87,7 @@ delete window._gluonSend;
 
   let onIPCReply = {}, ipcListeners = {};
   const sendToWindow = async (type, data, id = undefined) => {
+    const isReply = !!id;
     id = id ?? Math.random().toString().split('.')[1];
 
     await pageLoadPromise; // wait for page to load before sending, otherwise messages won't be heard
@@ -95,7 +97,7 @@ delete window._gluonSend;
       data
     })})`);
 
-    if (id) return; // we are replying, don't expect reply back
+    if (isReply) return; // we are replying, don't expect reply back
 
     const reply = await new Promise(res => {
       onIPCReply[id] = msg => res(msg);
