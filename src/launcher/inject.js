@@ -3,7 +3,7 @@ import IPCApi from '../lib/ipc.js';
 export default async (CDP, injectionType = 'browser', { browserName }) => {
   let pageLoadCallback = () => {}, onWindowMessage = () => {};
   CDP.onMessage(msg => {
-    if (msg.method === 'Runtime.bindingCalled' && msg.name === '_gluonSend') onWindowMessage(JSON.parse(msg.payload));
+    if (msg.method === 'Runtime.bindingCalled' && msg.name === '_gluonSend') onWindowMessage(JSON.parse(msg.params.payload));
     if (msg.method === 'Page.frameStoppedLoading') pageLoadCallback(msg.params);
     if (msg.method === 'Runtime.executionContextCreated') injectIPC(); // ensure IPC injection again
   });
