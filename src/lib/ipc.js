@@ -1,4 +1,4 @@
-export default ({ browserName, browserInfo }, { evaluate, addScriptToEvaluateOnNewDocument, pageLoadPromise }) => {
+export default ({ browserName, browserInfo }, { evalInWindow, evalOnNewDocument, pageLoadPromise }) => {
   const injection = `(() => {
 if (window.Gluon) return;
 let onIPCReply = {}, ipcListeners = {};
@@ -81,13 +81,8 @@ window.Gluon = {
 delete window._gluonSend;
 })();`;
 
-  evaluate({
-    expression: injection
-  });
-
-  addScriptToEvaluateOnNewDocument({
-    source: injection
-  });
+  evalInWindow(injection);
+  evalOnNewDocument(injection);
 
   let onIPCReply = {}, ipcListeners = {};
   const sendToWindow = async (type, data, id = undefined) => {
