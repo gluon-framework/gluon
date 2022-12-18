@@ -39,7 +39,7 @@ window.Gluon = {
         onIPCReply[id] = msg => res(msg);
       });
 
-      return reply;
+      return reply.data;
     },
 
     on: (type, cb) => {
@@ -103,7 +103,7 @@ delete window._gluonSend;
       onIPCReply[id] = msg => res(msg);
     });
 
-    return reply;
+    return reply.data;
   };
 
   const onWindowMessage = async ({ id, type, data }) => {
