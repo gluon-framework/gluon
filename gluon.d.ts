@@ -52,10 +52,49 @@ type CDPApi = {
   ): Promise<any>
 };
 
+type IdleAutoOptions = {
+  /**
+   * How long the window should be minimized before hibernating, in seconds.
+   * @default 5
+   */
+  timeMinimizedToHibernate?: Number
+};
+
+type IdleApi = {
+  /** Put the window into hibernation. */
+  hibernate(): void,
+
+  /** Put the window to sleep. */
+  sleep(): void,
+
+  /**
+   * Wake up the window from hibernation or sleep.
+   * @todo Unimplemented (for Idle v2).
+   */
+  wake(): void,
+
+  /** Enable/disable automatic idle management, and set its options. */
+  auto(
+    /** Whether to use automatic idle management. */
+    enabled: bool,
+
+    /** Set options for automatic behavior. */
+    options?: IdleAutoOptions
+  )
+};
+
 type Window = {
+  /** API for accessing the window itself. */
   window: WindowApi,
+
+  /** API for IPC. */
   ipc: IPCApi,
-  cdp: CDPApi
+
+  /** API for manually using CDP with the browser. */
+  cdp: CDPApi,
+
+  /** API for Gluon idle management (like hibernation). */
+  idle: IdleApi
 };
 
 
