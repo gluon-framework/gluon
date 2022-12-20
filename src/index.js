@@ -10,6 +10,8 @@ import { fileURLToPath } from 'url';
 import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
 
+import IdleAPI from './lib/idle.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -94,7 +96,7 @@ const startBrowser = async (url, { windowSize, forceBrowser }) => {
 
   const browserType = browserName.startsWith('firefox') ? 'firefox' : 'chromium';
 
-  return await (browserType === 'firefox' ? Firefox : Chromium)({
+  const Browser = await (browserType === 'firefox' ? Firefox : Chromium)({
     browserName: browserFriendlyName,
     dataPath,
     browserPath
@@ -102,6 +104,10 @@ const startBrowser = async (url, { windowSize, forceBrowser }) => {
     url,
     windowSize
   });
+
+  Browser.idle = await IdleAPI(Browser.cdp, { browserType, dataPath });
+
+  return Browser;
 };
 
 export const open = async (url, { windowSize, onLoad, forceBrowser } = {}) => {
