@@ -93,7 +93,10 @@ type Window = {
   /** API for manually using CDP with the browser. */
   cdp: CDPApi,
 
-  /** API for Gluon idle management (like hibernation). */
+  /**
+   * API for Gluon idle management (like hibernation).
+   * @experimental
+   */
   idle: IdleApi
 };
 
