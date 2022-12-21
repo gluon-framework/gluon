@@ -64,13 +64,13 @@ type IdleApi = {
   /** Put the window into hibernation. */
   hibernate(): void,
 
-  /** Put the window to sleep. */
-  sleep(): void,
-
   /**
-   * Wake up the window from hibernation or sleep.
+   * Put the window to sleep.
    * @todo Unimplemented (for Idle v2).
    */
+  sleep(): void,
+
+  /** Wake up the window from hibernation or sleep. */
   wake(): void,
 
   /** Enable/disable automatic idle management, and set its options. */
