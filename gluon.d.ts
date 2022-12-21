@@ -80,7 +80,7 @@ type IdleApi = {
 
     /** Set options for automatic behavior. */
     options?: IdleAutoOptions
-  )
+  ): void
 };
 
 type Window = {
