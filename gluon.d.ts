@@ -76,7 +76,7 @@ type IdleApi = {
   /** Enable/disable automatic idle management, and set its options. */
   auto(
     /** Whether to use automatic idle management. */
-    enabled: bool,
+    enabled: Boolean,
 
     /** Set options for automatic behavior. */
     options?: IdleAutoOptions
