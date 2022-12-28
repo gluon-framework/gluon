@@ -26,9 +26,9 @@ const browserPaths = ({
   },
 
   linux: { // these should be in path so just use the name of the binary
-    chrome: 'chrome',
-    chrome_canary: 'chrome-canary',
-    chromium: 'chromium',
+    chrome: [ 'chrome', 'google-chrome', 'chrome-browser', 'google-chrome-stable' ],
+    chrome_canary: [ 'chrome-canary', 'google-chrome-canary', 'google-chrome-unstable', 'chrome-unstable' ],
+    chromium: [ 'chromium', 'chromium-browser' ],
     firefox: 'firefox',
   }
 })[process.platform];
