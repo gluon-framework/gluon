@@ -4,6 +4,7 @@
 > Want more info on what some of these mean/are? Ask in [our Discord](https://discord.gg/RFtUCA8fST)!
 
 ## v0.8.0
+- [X] Rewrite browser detection to support more setups
 - [ ] Resources Window API
 - [ ] On/await load Window API
 
