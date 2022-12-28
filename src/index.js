@@ -51,32 +51,30 @@ const exists = async path => {
   return (await getBinariesInPath()).includes(path);
 };
 
+const getBrowserPath = async browser => {
+  for (const path of Array.isArray(browserPaths[browser]) ? browserPaths[browser] : [ browserPaths[browser] ]) {
+    log('checking if ' + browser + ' exists:', path, await exists(path));
+
+    if (await exists(path)) return path;
+  }
+
+  return null;
+};
+
 const findBrowserPath = async (forceBrowser) => {
-  if (forceBrowser) return [ browserPaths[forceBrowser], forceBrowser ];
+  if (forceBrowser) return [ await getBrowserPath(forceBrowser), forceBrowser ];
 
-  let whichBrowser = '';
-
-  for (const x of Object.keys(browserPaths)) {
-    if (process.argv.includes('--' + x) || process.argv.includes('--' + x.split('_')[0])) {
-      whichBrowser = x;
-      break;
-    }
+  for (const x in browserPaths) {
+    if (process.argv.includes('--' + x) || process.argv.includes('--' + x.split('_')[0])) return [ await getBrowserPath(x), x ];
   }
 
-  if (!whichBrowser) {
-    for (const x in browserPaths) {
-      log('checking if ' + x + ' exists:', browserPaths[x], await exists(browserPaths[x]));
+  for (const x in browserPaths) {
+    const path = await getBrowserPath(x);
 
-      if (await exists(browserPaths[x])) {
-        whichBrowser = x;
-        break;
-      }
-    }
+    if (path) return [ path, x ];
   }
 
-  if (!whichBrowser) return null;
-
-  return [ browserPaths[whichBrowser], whichBrowser ];
+  return null;
 };
 
 const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase());
