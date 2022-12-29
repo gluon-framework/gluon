@@ -4,20 +4,20 @@ if (window.Gluon) return;
 let onIPCReply = {}, ipcListeners = {};
 window.Gluon = {
   versions: {
-    gluon: '${process.versions.gluon}',
+    gluon: '${Deno.version.gluon}',
     builder: '${'GLUGUN_VERSION' === 'G\LUGUN_VERSION' ? 'nothing' : 'Glugun GLUGUN_VERSION'}',
-    node: '${process.versions.node}',
-    browser: '${browserInfo.product.split('/')[1]}',
+    deno: '${Deno.version.deno}',
+    browser: '${browserInfo?.product.split('/')[1]}',
     browserType: '${browserName.startsWith('Firefox') ? 'firefox' : 'chromium'}',
     product: '${browserName}',
 
     js: {
-      node: '${process.versions.v8}',
-      browser: '${browserInfo.jsVersion}'
+      deno: '${Deno.version.v8}',
+      browser: '${browserInfo?.jsVersion}'
     },
 
     embedded: {
-      node: ${'EMBEDDED_NODE' === 'true' ? 'true' : 'false'},
+      deno: ${'EMBEDDED_DENO' === 'true' ? 'true' : 'false'},
       browser: false
     }
   },

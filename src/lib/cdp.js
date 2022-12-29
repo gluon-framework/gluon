@@ -1,5 +1,4 @@
-import WebSocket from 'ws';
-import { get } from 'http';
+import { get } from 'https://deno.land/std@0.170.0/node/http.ts';
 
 export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
   let messageCallbacks = [], onReply = {};
@@ -46,7 +45,8 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
     const continualTrying = func => new Promise(resolve => {
       const attempt = async () => {
         try {
-          process.stdout.write('.');
+          console.log('a');
+          // process.stdout.write('.');
           resolve(await func());
         } catch (e) { // fail, wait 100ms and try again
           await new Promise(res => setTimeout(res, 200));
@@ -75,12 +75,13 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
 
     log('got target', target);
 
+    // await new Promise(res => setTimeout(res, 2000));
+
     const ws = new WebSocket(target.webSocketDebuggerUrl);
-    await new Promise(resolve => ws.on('open', resolve));
+    await new Promise(resolve => ws.onopen = resolve);
 
     _send = data => ws.send(data);
-
-    ws.on('message', data => onMessage(data));
+    ws.onmessage = ({ data }) => onMessage(data);
   } else {
     let pending = '';
     pipeRead.on('data', buf => {

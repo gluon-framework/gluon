@@ -1,6 +1,6 @@
-import { exec } from 'child_process';
+import { exec } from 'https://deno.land/std@0.170.0/node/child_process.ts';
 
-const getProcesses = async containing => process.platform !== 'win32' ? Promise.resolve([]) : new Promise(resolve => exec(`wmic process get Commandline,ProcessID /format:csv`, (e, out) => {
+const getProcesses = async containing => Deno.build.os !== 'windows' ? Promise.resolve([]) : new Promise(resolve => exec(`wmic process get Commandline,ProcessID /format:csv`, (e, out) => {
   resolve(out.toString().split('\r\n').slice(2).map(x => {
     const parsed = x.trim().split(',').slice(1).reverse();
 
@@ -11,7 +11,7 @@ const getProcesses = async containing => process.platform !== 'win32' ? Promise.
   }).filter(x => x[1] && x[1].includes(containing)));
 }));
 
-const killProcesses = async pids => process.platform !== 'win32' ? Promise.resolve('') : new Promise(resolve => exec(`taskkill /F ${pids.map(x => `/PID ${x}`).join(' ')}`, (e, out) => resolve(out)));
+const killProcesses = async pids => Deno.build.os !== 'windows' ? Promise.resolve('') : new Promise(resolve => exec(`taskkill /F ${pids.map(x => `/PID ${x}`).join(' ')}`, (e, out) => resolve(out)));
 
 export default async (CDP, { browserType, dataPath }) => {
   if (browserType !== 'chromium') { // current implementation is for chromium-based only
@@ -57,7 +57,7 @@ export default async (CDP, { browserType, dataPath }) => {
 
   const { windowId } = await CDP.send('Browser.getWindowForTarget');
 
-  let autoEnabled = process.argv.includes('--force-auto-idle'), autoOptions = {
+  let autoEnabled = Deno.args.includes('--force-auto-idle'), autoOptions = {
     timeMinimizedToHibernate: 5
   };
 

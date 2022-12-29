@@ -1,4 +1,4 @@
-import { spawn } from 'child_process';
+import { spawn } from 'https://deno.land/std@0.170.0/node/child_process.ts';
 
 import ConnectCDP from '../lib/cdp.js';
 import InjectInto from './inject.js';
@@ -16,9 +16,6 @@ export default async (browserPath, args, transport, extra) => {
     stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe']
   });
 
-  proc.stdout.pipe(proc.stdout);
-  proc.stderr.pipe(proc.stderr);
-
   log(`connecting to CDP over ${transport === 'stdio' ? 'stdio pipe' : `websocket (${port})`}...`);
 
   let CDP;
@@ -28,6 +25,7 @@ export default async (browserPath, args, transport, extra) => {
       break;
 
     case 'stdio':
+      console.log('pain', proc.stdio);
       const { 3: pipeWrite, 4: pipeRead } = proc.stdio;
       CDP = await ConnectCDP({ pipe: { pipeWrite, pipeRead } });
       break;

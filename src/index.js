@@ -1,11 +1,15 @@
 const rgb = (r, g, b, msg) => `\x1b[38;2;${r};${g};${b}m${msg}\x1b[0m`;
-global.log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args);
+window.log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args);
 
-process.versions.gluon = '0.8.0-dev';
+Deno.version = { // have to do this because... Deno
+  ...Deno.version,
+  gluon: '0.8.0-deno-dev'
+};
 
-import { join, dirname, delimiter, sep } from 'path';
-import { access, readdir } from 'fs/promises';
-import { fileURLToPath } from 'url';
+
+import { join, dirname, delimiter, sep } from 'https://deno.land/std@0.170.0/node/path.ts';
+import { access, readdir } from 'https://deno.land/std@0.170.0/node/fs/promises.ts';
+import { fileURLToPath } from 'https://deno.land/std@0.170.0/node/url.ts';
 
 import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
@@ -16,13 +20,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const browserPaths = ({
-  win32: process.platform === 'win32' && {
-    chrome: join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
-    chrome_canary: join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
-    edge: join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+  windows: Deno.build.os === 'windows' && {
+    chrome: join(Deno.env.get('PROGRAMFILES'), 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    chrome_canary: join(Deno.env.get('LOCALAPPDATA'), 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
+    edge: join(Deno.env.get('PROGRAMFILES(x86)'), 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
 
-    firefox: join(process.env.PROGRAMFILES, 'Mozilla Firefox', 'firefox.exe'),
-    firefox_nightly: join(process.env.PROGRAMFILES, 'Firefox Nightly', 'firefox.exe'),
+    firefox: join(Deno.env.get('PROGRAMFILES'), 'Mozilla Firefox', 'firefox.exe'),
+    firefox_nightly: join(Deno.env.get('PROGRAMFILES'), 'Firefox Nightly', 'firefox.exe'),
   },
 
   linux: { // these should be in path so just use the name of the binary
@@ -31,13 +35,13 @@ const browserPaths = ({
     chromium: [ 'chromium', 'chromium-browser' ],
     firefox: 'firefox',
   }
-})[process.platform];
+})[Deno.build.os];
 
 let _binariesInPath; // cache as to avoid excessive reads
 const getBinariesInPath = async () => {
   if (_binariesInPath) return _binariesInPath;
 
-  return _binariesInPath = (await Promise.all(process.env.PATH
+  return _binariesInPath = (await Promise.all(Deno.env.get('PATH')
     .replaceAll('"', '')
     .split(delimiter)
     .filter(Boolean)
@@ -65,7 +69,7 @@ const findBrowserPath = async (forceBrowser) => {
   if (forceBrowser) return [ await getBrowserPath(forceBrowser), forceBrowser ];
 
   for (const x in browserPaths) {
-    if (process.argv.includes('--' + x) || process.argv.includes('--' + x.split('_')[0])) return [ await getBrowserPath(x), x ];
+    if (Deno.args.includes('--' + x) || Deno.args.includes('--' + x.split('_')[0])) return [ await getBrowserPath(x), x ];
   }
 
   for (const x in browserPaths) {

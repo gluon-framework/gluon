@@ -10,9 +10,8 @@ const presets = { // Presets from OpenAsar
 export default async ({ browserName, browserPath, dataPath }, { url, windowSize }) => {
   return await StartBrowser(browserPath, [
     `--app=${url}`,
-    `--remote-debugging-pipe`,
     `--user-data-dir=${dataPath}`,
     windowSize ? `--window-size=${windowSize.join(',')}` : '',
     ...`--new-window --disable-extensions --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication ${presets.perf}`.split(' ')
-  ], 'stdio', { browserName });
+  ], 'websocket', { browserName });
 };
