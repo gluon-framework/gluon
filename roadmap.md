@@ -5,6 +5,7 @@
 
 ## v0.8.0
 - [X] Rewrite browser detection to support more setups
+- [X] Close API
 - [ ] Resources Window API
 - [ ] On/await load Window API
 
