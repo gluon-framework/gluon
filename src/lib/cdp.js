@@ -45,8 +45,7 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
     const continualTrying = func => new Promise(resolve => {
       const attempt = async () => {
         try {
-          console.log('a');
-          // process.stdout.write('.');
+          Deno.stdout.write(new TextEncoder().encode('.'));
           resolve(await func());
         } catch (e) { // fail, wait 100ms and try again
           await new Promise(res => setTimeout(res, 200));
