@@ -25,7 +25,6 @@ export default async (browserPath, args, transport, extra) => {
       break;
 
     case 'stdio':
-      console.log('pain', proc.stdio);
       const { 3: pipeWrite, 4: pipeRead } = proc.stdio;
       CDP = await ConnectCDP({ pipe: { pipeWrite, pipeRead } });
       break;
