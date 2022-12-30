@@ -33,5 +33,5 @@ export default async (browserPath, args, transport, extra) => {
       break;
   }
 
-  return await InjectInto(CDP, transport === 'stdio' ? 'browser' : 'target', extra);
+  return await InjectInto(CDP, proc, transport === 'stdio' ? 'browser' : 'target', extra);
 };

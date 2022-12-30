@@ -1,6 +1,6 @@
 import IPCApi from '../lib/ipc.js';
 
-export default async (CDP, injectionType = 'browser', { browserName }) => {
+export default async (CDP, proc, injectionType = 'browser', { browserName } = { browserName: 'unknown' }) => {
   let pageLoadCallback = () => {}, onWindowMessage = () => {};
   CDP.onMessage(msg => {
     if (msg.method === 'Runtime.bindingCalled' && msg.params.name === '_gluonSend') onWindowMessage(JSON.parse(msg.params.payload));
@@ -62,6 +62,11 @@ export default async (CDP, injectionType = 'browser', { browserName }) => {
 
     cdp: {
       send: (method, params) => CDP.sendMessage(method, params, sessionId)
+    },
+
+    close: () => {
+      CDP.close();
+      proc.kill();
     }
   };
 };
