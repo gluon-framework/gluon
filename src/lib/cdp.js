@@ -4,6 +4,8 @@ import { get } from 'http';
 export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
   let messageCallbacks = [], onReply = {};
   const onMessage = msg => {
+    if (closed) return; // closed, ignore
+
     msg = JSON.parse(msg);
 
     // log('received', msg);
@@ -17,10 +19,13 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
     for (const callback of messageCallbacks) callback(msg);
   };
 
-  let _send;
+  let closed = false;
+  let _send, _close;
 
   let msgId = 0;
   const sendMessage = async (method, params = {}, sessionId = undefined) => {
+    if (closed) throw new Error('CDP connection closed');
+
     const id = msgId++;
 
     const msg = {
@@ -78,12 +83,16 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
     const ws = new WebSocket(target.webSocketDebuggerUrl);
     await new Promise(resolve => ws.on('open', resolve));
 
+    ws.on('message', data => onMessage(data));
+
     _send = data => ws.send(data);
 
-    ws.on('message', data => onMessage(data));
+    _close = () => ws.close();
   } else {
     let pending = '';
     pipeRead.on('data', buf => {
+      if (closed) return; // closed, ignore
+
       let end = buf.indexOf('\0'); // messages are null separated
 
       if (end === -1) { // no complete message yet
@@ -110,6 +119,8 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
       pipeWrite.write(data);
       pipeWrite.write('\0');
     };
+
+    _close = () => {};
   }
 
   return {
@@ -121,6 +132,12 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
 
       messageCallbacks.push(callback);
     },
-    sendMessage
+
+    sendMessage,
+
+    close: () => {
+      closed = true;
+      _close();
+    }
   };
 };
