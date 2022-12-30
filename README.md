@@ -13,7 +13,7 @@
 - **Lower memory usage** - compared to most other frameworks Gluon should have a slightly lower average memory usage by using browser flags to squeeze out more performance
 <!-- - **No forks needed** - Gluon doesn't need forks of Deno or Chromium/etc to use them, it just uses normal versions -->
 
-![Gluworld Screenshot showing Chrome Canary and Firefox Nightly being used at once.](https://user-images.githubusercontent.com/19228318/207103757-fd5c9428-a927-4986-8c6c-02d9961ad422.png)
+![Gluworld Screenshot showing Chrome Canary and Firefox Nightly being used at once using Deno.](https://user-images.githubusercontent.com/19228318/210020320-ff62e67f-0eb5-4e9e-989b-3ba4edc0fe35.png)
 
 <br>
 
