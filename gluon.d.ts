@@ -97,7 +97,10 @@ type Window = {
    * API for Gluon idle management (like hibernation).
    * @experimental
    */
-  idle: IdleApi
+  idle: IdleApi,
+
+  /** Close the Gluon window. */
+  close(): void
 };
 
 
