@@ -9,7 +9,7 @@
 - **Chromium *and Firefox* supported as browser engine**, unlike any other active framework
 - **Minimal and easy to use** - Gluon has a simple yet powerful API to make apps with a Node backend
 - **Fast build times** - Gluon has build times under 1 second on most machines for small projects
-- **Actively developed** and **listening to feedback** - already on 5th major revision in ~1 week of development, quickly adding unplanned requested features if liked by the community (like Firefox support!)
+- **Actively developed** and **listening to feedback** - new updates are coming around weekly, quickly adding unplanned requested features if liked by the community (like Firefox support!)
 - **Lower memory usage** - compared to most other frameworks Gluon should have a slightly lower average memory usage by using browser flags to squeeze out more performance
 <!-- - **No forks needed** - Gluon doesn't need forks of Node or Chromium/etc to use them, it just uses normal versions -->
 
@@ -18,7 +18,7 @@
 <br>
 
 ## Status
-Gluon is currently **barely 1 week old**, so is still in an **early and experimental state**. But it works and shows (in my opinion) potential! I am open to opinions, suggestions, feedback, ideas, etc. Currently you cannot easily test it yourself. If you're interested and want to talk to me and others about Gluon, you can [join our Discord server](https://discord.gg/RFtUCA8fST).
+Gluon is currently **barely a month old**, so is still in an **early and experimental state**. But it works and shows (in my opinion) potential! I am open to opinions, suggestions, feedback, ideas, etc. Currently you cannot easily test it yourself. If you're interested and want to talk to me and others about Gluon, you can [join our Discord server](https://discord.gg/RFtUCA8fST).
 
 ### Specific feature statuses
 - Using Chromium based browsers: Stable
