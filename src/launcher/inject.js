@@ -57,6 +57,12 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
 
   log('finished setup');
 
+  const generateVersionInfo = (name, version) => ({
+    name,
+    version,
+    major: parseInt(version.split('.')[0])
+  });
+
   return {
     window: {
       eval: evalInWindow,
@@ -71,6 +77,12 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
     close: () => {
       CDP.close();
       proc.kill();
+    },
+
+    versions: {
+      product: generateVersionInfo(browserName, browserInfo.product.split('/')[1]),
+      engine: generateVersionInfo(browserEngine, browserInfo.product.split('/')[1]),
+      jsEngine: generateVersionInfo(browserEngine === 'chromium' ? 'v8' : 'spidermonkey', browserInfo.jsVersion)
     }
   };
 };
