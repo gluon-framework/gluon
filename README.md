@@ -80,7 +80,7 @@ Window.ipc.on('my type', data => { // { more: 'data' }
 | Part | Gluon | Electron | Tauri | Neutralinojs |
 | ---- | ----- | -------- | ------------ | ----- |
 | Frontend | System installed Chromium *or Firefox* | Self-contained Chromium | System installed webview | System installed webview |
-| Backend | System installed *or bundled* Deno | Self-contained Node.JS | Native (Rust) | Native (Any) |
+| Backend | System installed Deno | Self-contained Node.JS | Native (Rust) | Native (Any) |
 | IPC | Window object | Preload | Window object | Window object |
 | Status | Early in development | Production ready | Usable | Usable |
 | Ecosystem | Integrated | Distributed | Integrated | Integrated |
@@ -93,7 +93,7 @@ Basic (plain HTML) Hello World demo, measured on up to date Windows 10, on my ma
 | ---- | ----- | -------- | ------------ | ----- |
 | Build Size | <1MB[^system][^gluon][^1] | ~220MB | ~1.8MB[^system] | ~2.6MB[^system] |
 | Memory Usage | ~80MB[^gluon] | ~100MB | ~90MB | ~90MB |
-| Backend[^2] Memory Usage | ~13MB[^gluon] (Deno) | ~22MB (Node) | ~3MB (Native) | ~3MB (Native) |
+| Backend[^2] Memory Usage | Not measured[^gluon] (Deno) | ~22MB (Node) | ~3MB (Native) | ~3MB (Native) |
 | Build Time | ~0.7s[^3] | ~20s[^4] | ~120s[^5] | ~2s[^3][^6] |
 
 *Extra info: All HTML/CSS/JS is unminified (including Gluon). Built in release configuration. All binaries were left as compiled with common size optimizations enabled for that language, no stripping/packing done.*
