@@ -69,7 +69,6 @@ type IdleApi = {
 
   /**
    * Put the window to sleep.
-   * @todo Unimplemented (for Idle v2).
    */
   sleep(): void,
 
