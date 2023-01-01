@@ -86,6 +86,40 @@ type IdleApi = {
   ): void
 };
 
+type VersionInfo = {
+  /** Name of component. */
+  name: string,
+
+  /** Full version of component. */
+  version: string,
+
+  /** Major version of component as a number. */
+  major: number
+};
+
+type BrowserVersions = {
+  /**
+   * Product (browser) version and name.
+   * @example
+   * Window.versions.product // { name: 'Chrome Canary', version: '111.0.5513.0', major: 111 }
+   */
+  product: VersionInfo,
+
+  /**
+   * Browser engine (Chromium/Firefox) version and name.
+   * @example
+   * Window.versions.engine // { name: 'chromium', version: '111.0.5513.0', major: 111 }
+   */
+  engine: VersionInfo,
+
+  /**
+   * JS engine (V8/SpiderMonkey) version and name.
+   * @example
+   * Window.versions.jsEngine // { name: 'v8', version: '11.1.86', major: 11 }
+   */
+  jsEngine: VersionInfo
+};
+
 type Window = {
   /** API for accessing the window itself. */
   window: WindowApi,
@@ -101,6 +135,9 @@ type Window = {
    * @experimental
    */
   idle: IdleApi,
+
+  /** Browser version info of the window: product (browser), engine (Chromium/Firefox), and JS engine (V8/SpiderMonkey). */
+  versions: BrowserVersions,
 
   /** Close the Gluon window. */
   close(): void
