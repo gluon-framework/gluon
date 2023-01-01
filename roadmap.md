@@ -3,9 +3,14 @@
 > **Note** |
 > Want more info on what some of these mean/are? Ask in [our Discord](https://discord.gg/RFtUCA8fST)!
 
-## v0.9.0
+## v0.10.0
 - [ ] Resources Window API
 - [ ] On/await load Window API
+
+## v0.9.0
+- [X] Browser version info API
+- [X] Idle API v2
+- [ ] Window show/hide API
 
 ## v0.8.0
 - [X] Rewrite browser detection to support more setups
