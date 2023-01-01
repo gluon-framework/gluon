@@ -12,37 +12,87 @@ export default async (CDP, { browserType }) => {
       wake: warning,
       auto: warning
     };
-  };
+  }
 
-  const killNonCrit = async () => {
+  const killNonCrit = async () => { // kill non-critical processes to save memory - crashes chromium internally but not fully
     const procs = (await CDP.send('SystemInfo.getProcessInfo', {}, false)).processInfo;
-    const nonCriticalProcs = procs.filter(x => x.type !== 'browser');
+    const nonCriticalProcs = procs.filter(x => x.type !== 'browser'); // browser = the actual main chromium binary
 
     await killProcesses(nonCriticalProcs.map(x => x.id));
     log(`killed ${nonCriticalProcs.length} processes`);
   };
 
-  let hibernating = false;
-  const hibernate = async () => {
+  const purgeMemory = async () => { // purge most memory we can
+    await CDP.send('Memory.forciblyPurgeJavaScriptMemory');
+    await CDP.send('HeapProfiler.collectGarbage');
+  };
+
+  const getScreenshot = async () => { // get a screenshot a webm base64 data url
+    const { data } = await CDP.send(`Page.captureScreenshot`, {
+      format: 'webp'
+    });
+
+    return `data:image/webp;base64,${data}`;
+  };
+
+  const getLastUrl = async () => {
+    const history = await CDP.send('Page.getNavigationHistory');
+    return history.entries[history.currentIndex].url;
+  };
+
+
+  let wakeUrl, hibernating = false;
+  const hibernate = async () => { // hibernate - crashing chromium internally to save max memory. users will see a crash/gone wrong page but we hopefully "reload" quick enough once visible again for not much notice.
+    if (hibernating) return;
+    if (process.platform !== 'win32') return sleep(); // sleep instead - full hibernation is windows only for now due to needing to do native things
+
     hibernating = true;
 
     const startTime = performance.now();
 
+    wakeUrl = await getLastUrl();
+
+    purgeMemory();
     await killNonCrit();
-    // await killNonCrit();
+    purgeMemory();
 
     log(`hibernated in ${(performance.now() - startTime).toFixed(2)}ms`);
   };
 
-  const wake = async () => {
+  const sleep = async () => { // light hibernate - instead of killing chromium processes we just navigate to a screenshot of the current page.
+    if (hibernating) return;
+    hibernating = true;
+
     const startTime = performance.now();
 
-    await CDP.send('Page.reload');
+    wakeUrl = await getLastUrl();
+
+    purgeMemory();
+
+    await CDP.send(`Page.navigate`, {
+      url: lastScreenshot
+    });
+
+    purgeMemory();
+
+    log(`slept in ${(performance.now() - startTime).toFixed(2)}ms`);
+  };
+
+
+  const wake = async () => { // wake up from hibernation/sleep by navigating to the original page
+    if (!hibernating) return;
+
+    const startTime = performance.now();
+
+    await CDP.send('Page.navigate', {
+      url: wakeUrl
+    });
 
     log(`began wake in ${(performance.now() - startTime).toFixed(2)}ms`);
 
     hibernating = false;
   };
+
 
   const { windowId } = await CDP.send('Browser.getWindowForTarget');
 
@@ -79,12 +129,23 @@ export default async (CDP, { browserType }) => {
     log('stopped auto idle');
   };
 
+  let lastScreenshot, takingScreenshot = false;
+  const screenshotInterval = setInterval(async () => {
+    if (takingScreenshot) return;
+
+    takingScreenshot = true;
+    lastScreenshot = await getScreenshot();
+    takingScreenshot = false;
+  }, 10000);
+
+  getScreenshot().then(x => lastScreenshot = x);
+
   log(`idle API active (window id: ${windowId})`);
   if (autoEnabled) startAuto();
 
   return {
     hibernate,
-    sleep: () => {},
+    sleep,
     wake,
 
     auto: (enabled, options) => {
