@@ -61,7 +61,7 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
     ipc: IPC,
 
     cdp: {
-      send: (method, params) => CDP.sendMessage(method, params, sessionId)
+      send: (method, params, useSessionId = true) => CDP.sendMessage(method, params, useSessionId ? sessionId : undefined)
     },
 
     close: () => {
