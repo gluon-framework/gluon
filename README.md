@@ -42,11 +42,13 @@ $ node .
 Gluon is currently **barely a month old**, so is still in an **early and experimental state**. But it works and shows (in my opinion) potential! I am open to opinions, suggestions, feedback, ideas, etc. Currently you cannot easily test it yourself. If you're interested and want to talk to me and others about Gluon, you can [join our Discord server](https://discord.gg/RFtUCA8fST).
 
 ### Specific feature statuses
-- Using Chromium based browsers: Stable
-- Using Firefox based browsers: Experimental
-- Web-Node IPC: Stable
-- Idle API: Experimental
-- Using other JS runtimes ([Deno](https://github.com/gluon-framework/gluon/tree/deno)/[Bun](https://github.com/gluon-framework/gluon/tree/bun)): Experimental
+| Feature | Status |
+| ------- | :----: |
+| Using Chromium based browsers | Stable |
+| Using Firefox based browsers | Experimental |
+| Web-Node IPC | Stable |
+| Idle API | Experimental |
+| Using other JS runtimes ([Deno](https://github.com/gluon-framework/gluon/tree/deno)/[Bun](https://github.com/gluon-framework/gluon/tree/bun)) | Experimental |
 
 <br>
 
