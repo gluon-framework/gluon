@@ -45,6 +45,8 @@ Gluon is currently **barely a month old**, so is still in an **early and experim
 - Using Chromium based browsers: Stable
 - Using Firefox based browsers: Experimental
 - Web-Node IPC: Stable
+- Idle API: Experimental
+- Using other JS runtimes ([Deno](https://github.com/gluon-framework/gluon/tree/deno)/[Bun](https://github.com/gluon-framework/gluon/tree/bun)): Experimental
 
 <br>
 
