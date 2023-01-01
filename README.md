@@ -17,27 +17,6 @@
 
 <br>
 
-## Status
-Gluon is currently **barely a month old**, so is still in an **early and experimental state**. But it works and shows (in my opinion) potential! I am open to opinions, suggestions, feedback, ideas, etc. Currently you cannot easily test it yourself. If you're interested and want to talk to me and others about Gluon, you can [join our Discord server](https://discord.gg/RFtUCA8fST).
-
-### Specific feature statuses
-- Using Chromium based browsers: Stable
-- Using Firefox based browsers: Experimental
-- Web-Node IPC: Stable
-
-<br>
-
-## Ecosystem
-- [Gluon](https://github.com/gluon-framework/gluon): the Gluon framework (NodeJS)
-- [Glugun](https://github.com/gluon-framework/glugun): builds Gluon apps into releasable builds with optional bundling (soon)
-
-### Apps
-- [Gluworld](https://github.com/gluon-framework/examples/tree/main/gluworld): Hello World demo app with version info shown
-- [Gludoom](https://github.com/gluon-framework/examples/tree/main/gludoom): Doom running as WASM, made into a native looking app with Gluon
-- [Glucord](https://github.com/gluon-framework/examples/tree/main/glucord): minimal desktop Discord client loading official webapp (demo/example)
-
-<br>
-
 ## Trying Gluon
 1. Clone [the Gluon examples repo](https://github.com/gluon-framework/examples)
 2. Inside of `gluworld`, run `npm install`
@@ -56,6 +35,27 @@ $ node .
 ```
 
 </details>
+
+<br>
+
+## Status
+Gluon is currently **barely a month old**, so is still in an **early and experimental state**. But it works and shows (in my opinion) potential! I am open to opinions, suggestions, feedback, ideas, etc. Currently you cannot easily test it yourself. If you're interested and want to talk to me and others about Gluon, you can [join our Discord server](https://discord.gg/RFtUCA8fST).
+
+### Specific feature statuses
+- Using Chromium based browsers: Stable
+- Using Firefox based browsers: Experimental
+- Web-Node IPC: Stable
+
+<br>
+
+## Ecosystem
+- [Gluon](https://github.com/gluon-framework/gluon): the Gluon framework (NodeJS)
+- [Glugun](https://github.com/gluon-framework/glugun): builds Gluon apps into releasable builds with optional bundling (soon)
+
+### Apps
+- [Gluworld](https://github.com/gluon-framework/examples/tree/main/gluworld): Hello World demo app with version info shown
+- [Gludoom](https://github.com/gluon-framework/examples/tree/main/gludoom): Doom running as WASM, made into a native looking app with Gluon
+- [Glucord](https://github.com/gluon-framework/examples/tree/main/glucord): minimal desktop Discord client loading official webapp (demo/example)
 
 <br>
 
