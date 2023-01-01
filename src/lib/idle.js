@@ -1,19 +1,8 @@
 import { exec } from 'child_process';
 
-const getProcesses = async containing => process.platform !== 'win32' ? Promise.resolve([]) : new Promise(resolve => exec(`wmic process get Commandline,ProcessID /format:csv`, (e, out) => {
-  resolve(out.toString().split('\r\n').slice(2).map(x => {
-    const parsed = x.trim().split(',').slice(1).reverse();
-
-    return [
-      parseInt(parsed[0]) || parsed[0], // pid to int
-      parsed.slice(1).join(',')
-    ];
-  }).filter(x => x[1] && x[1].includes(containing)));
-}));
-
 const killProcesses = async pids => process.platform !== 'win32' ? Promise.resolve('') : new Promise(resolve => exec(`taskkill /F ${pids.map(x => `/PID ${x}`).join(' ')}`, (e, out) => resolve(out)));
 
-export default async (CDP, { browserType, dataPath }) => {
+export default async (CDP, { browserType }) => {
   if (browserType !== 'chromium') { // current implementation is for chromium-based only
     const warning = () => log(`Warning: Idle API is currently only for Chromium (running on ${browserType})`);
 
@@ -26,10 +15,10 @@ export default async (CDP, { browserType, dataPath }) => {
   };
 
   const killNonCrit = async () => {
-    const procs = await getProcesses(dataPath);
-    const nonCriticalProcs = procs.filter(x => x[1].includes('type='));
+    const procs = (await CDP.send('SystemInfo.getProcessInfo', {}, false)).processInfo;
+    const nonCriticalProcs = procs.filter(x => x.type !== 'browser');
 
-    await killProcesses(nonCriticalProcs.map(x => x[0]));
+    await killProcesses(nonCriticalProcs.map(x => x.id));
     log(`killed ${nonCriticalProcs.length} processes`);
   };
 
