@@ -27,6 +27,9 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
     log('browser:', browserInfo.product);
   }
 
+  const browserEngine = browserInfo.jsVersion.startsWith('1.') ? 'firefox' : 'chromium';
+
+
   CDP.sendMessage('Runtime.enable', {}, sessionId); // enable runtime API
 
   CDP.sendMessage('Runtime.addBinding', { // setup sending from window to Node via Binding
@@ -42,14 +45,15 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
 
   const [ ipcMessageCallback, injectIPC, IPC ] = await IPCApi({
     browserName,
-    browserInfo
+    browserInfo,
+    browserEngine
   }, {
     evalInWindow,
     evalOnNewDocument: source => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', { source }, sessionId),
     pageLoadPromise: new Promise(res => pageLoadCallback = res)
   });
-  onWindowMessage = ipcMessageCallback;
 
+  onWindowMessage = ipcMessageCallback;
 
   log('finished setup');
 
