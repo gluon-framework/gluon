@@ -1,4 +1,4 @@
-import { spawn } from 'child_process';
+import { spawn } from 'node:child_process';
 
 import ConnectCDP from '../lib/cdp.js';
 import InjectInto from './inject.js';
@@ -15,9 +15,6 @@ export default async (browserPath, args, transport, extra) => {
     detached: false,
     stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe']
   });
-
-  proc.stdout.pipe(proc.stdout);
-  proc.stderr.pipe(proc.stderr);
 
   log(`connecting to CDP over ${transport === 'stdio' ? 'stdio pipe' : `websocket (${port})`}...`);
 

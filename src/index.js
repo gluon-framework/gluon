@@ -1,28 +1,26 @@
 const rgb = (r, g, b, msg) => `\x1b[38;2;${r};${g};${b}m${msg}\x1b[0m`;
 global.log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args);
 
-process.versions.gluon = '0.8.0';
+process.versions.gluon = '0.8.0-bun-dev';
 
-import { join, dirname, delimiter, sep } from 'path';
-import { access, readdir } from 'fs/promises';
-import { fileURLToPath } from 'url';
+import { join, delimiter, sep } from 'node:path';
+import { access, readdir } from 'node:fs/promises';
 
 import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
 
 import IdleAPI from './lib/idle.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = import.meta.dir;
 
 const browserPaths = ({
-  win32: process.platform === 'win32' && {
-    chrome: join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
-    chrome_canary: join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
+  windows: process.platform === 'win32' && {
+    chrome: join(process.env['PROGRAMFILES'], 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    chrome_canary: join(process.env['LOCALAPPDATA'], 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
     edge: join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
 
-    firefox: join(process.env.PROGRAMFILES, 'Mozilla Firefox', 'firefox.exe'),
-    firefox_nightly: join(process.env.PROGRAMFILES, 'Firefox Nightly', 'firefox.exe'),
+    firefox: join(process.env['PROGRAMFILES'], 'Mozilla Firefox', 'firefox.exe'),
+    firefox_nightly: join(process.env['PROGRAMFILES'], 'Firefox Nightly', 'firefox.exe'),
   },
 
   linux: { // these should be in path so just use the name of the binary
@@ -37,7 +35,7 @@ let _binariesInPath; // cache as to avoid excessive reads
 const getBinariesInPath = async () => {
   if (_binariesInPath) return _binariesInPath;
 
-  return _binariesInPath = (await Promise.all(process.env.PATH
+  return _binariesInPath = (await Promise.all(process.env['PATH']
     .replaceAll('"', '')
     .split(delimiter)
     .filter(Boolean)

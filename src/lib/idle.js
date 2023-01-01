@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { exec } from 'node:child_process';
 
 const getProcesses = async containing => process.platform !== 'win32' ? Promise.resolve([]) : new Promise(resolve => exec(`wmic process get Commandline,ProcessID /format:csv`, (e, out) => {
   resolve(out.toString().split('\r\n').slice(2).map(x => {

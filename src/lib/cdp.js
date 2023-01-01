@@ -1,6 +1,3 @@
-import WebSocket from 'ws';
-import { get } from 'http';
-
 export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
   let messageCallbacks = [], onReply = {};
   const onMessage = msg => {
@@ -62,17 +59,7 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
       attempt();
     });
 
-    const targets = await continualTrying(() => new Promise((resolve, reject) => get(`http://127.0.0.1:${port}/json/list`, res => {
-      let body = '';
-      res.on('data', chunk => body += chunk.toString());
-      res.on('end', () => {
-        try {
-          resolve(JSON.parse(body))
-        } catch {
-          reject();
-        }
-      });
-    }).on('error', reject)));
+    const targets = await continualTrying(async () => await (await fetch(`http://127.0.0.1:${port}/json/list`)).json());
 
     console.log();
 
@@ -81,11 +68,10 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
     log('got target', target);
 
     const ws = new WebSocket(target.webSocketDebuggerUrl);
-    await new Promise(resolve => ws.on('open', resolve));
-
-    ws.on('message', data => onMessage(data));
+    await new Promise(resolve => ws.onopen = resolve);
 
     _send = data => ws.send(data);
+    ws.onmessage = ({ data }) => onMessage(data);
 
     _close = () => ws.close();
   } else {

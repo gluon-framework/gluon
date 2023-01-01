@@ -6,18 +6,18 @@ window.Gluon = {
   versions: {
     gluon: '${process.versions.gluon}',
     builder: '${'GLUGUN_VERSION' === 'G\LUGUN_VERSION' ? 'nothing' : 'Glugun GLUGUN_VERSION'}',
-    node: '${process.versions.node}',
-    browser: '${browserInfo.product.split('/')[1]}',
+    bun: '${Bun.version}',
+    browser: '${browserInfo?.product.split('/')[1]}',
     browserType: '${browserName.startsWith('Firefox') ? 'firefox' : 'chromium'}',
     product: '${browserName}',
 
     js: {
-      node: '${process.versions.v8}',
-      browser: '${browserInfo.jsVersion}'
+      bun: '${process.versions.webkit.slice(0, 7)}',
+      browser: '${browserInfo?.jsVersion}'
     },
 
     embedded: {
-      node: ${'EMBEDDED_NODE' === 'true' ? 'true' : 'false'},
+      bun: ${'EMBEDDED_BUN' === 'true' ? 'true' : 'false'},
       browser: false
     }
   },
