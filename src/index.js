@@ -98,7 +98,7 @@ const startBrowser = async (url, { windowSize, forceBrowser }) => {
 
   const browserType = browserName.startsWith('firefox') ? 'firefox' : 'chromium';
 
-  const Browser = await (browserType === 'firefox' ? Firefox : Chromium)({
+  const Window = await (browserType === 'firefox' ? Firefox : Chromium)({
     browserName: browserFriendlyName,
     dataPath,
     browserPath
@@ -107,9 +107,9 @@ const startBrowser = async (url, { windowSize, forceBrowser }) => {
     windowSize
   });
 
-  Browser.idle = await IdleAPI(Browser.cdp, { browserType });
+  Window.idle = await IdleAPI(Window.cdp, { browserType });
 
-  return Browser;
+  return Window;
 };
 
 export const open = async (url, { windowSize, onLoad, forceBrowser } = {}) => {
