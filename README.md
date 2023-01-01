@@ -13,7 +13,7 @@
 - **Lower memory usage** - compared to most other frameworks Gluon should have a slightly lower average memory usage by using browser flags to squeeze out more performance
 <!-- - **No forks needed** - Gluon doesn't need forks of Bun or Chromium/etc to use them, it just uses normal versions -->
 
-![Gluworld Screenshot showing Chromium using Bun.](https://user-images.githubusercontent.com/19228318/210020320-ff62e67f-0eb5-4e9e-989b-3ba4edc0fe35.png)
+![Gluworld Screenshot showing Chromium using Bun.](https://user-images.githubusercontent.com/19228318/210172195-6c0fc375-7803-4775-b30b-c0a54d91a7c7.png)
 
 <br>
 
