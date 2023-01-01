@@ -107,7 +107,7 @@ const startBrowser = async (url, { windowSize, forceBrowser }) => {
     windowSize
   });
 
-  Browser.idle = await IdleAPI(Browser.cdp, { browserType, dataPath });
+  Browser.idle = await IdleAPI(Browser.cdp, { browserType });
 
   return Browser;
 };
