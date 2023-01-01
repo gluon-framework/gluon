@@ -48,7 +48,10 @@ type CDPApi = {
     method: string,
 
     /** Parameters of CDP command. */
-    params?: Object
+    params?: Object,
+
+    /** Send session ID with the command (default true). */
+    useSessionId?: Boolean = true
   ): Promise<any>
 };
 
