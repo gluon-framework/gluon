@@ -18,6 +18,8 @@ user_pref('privacy.window.maxInnerHeight', ${windowSize[1]});`}
 user_pref('privacy.resistFingerprinting', true);
 user_pref('fission.bfcacheInParent', false);
 user_pref('fission.webContentIsolationStrategy', 0);
+user_pref('ui.key.menuAccessKeyFocuses', false);
+${process.platform === 'darwin' ? `user_pref('browser.tabs.inTitlebar', 0);` : `` }
 `);
 
 // user_pref('privacy.resistFingerprinting', false);
