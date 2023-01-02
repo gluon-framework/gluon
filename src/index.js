@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
 
-import IdleAPI from './lib/idle.js';
+import IdleAPI from './api/idle.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
