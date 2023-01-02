@@ -35,6 +35,12 @@ const browserPaths = ({
 
     firefox: 'firefox',
     firefox_nightly: 'firefox-nightly'
+  },
+
+  darwin: {
+    chrome: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    edge: '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+    firefox: '/Applications/Firefox.app/Contents/MacOS/firefox',
   }
 })[process.platform]
 
