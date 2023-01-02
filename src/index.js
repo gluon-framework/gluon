@@ -11,6 +11,7 @@ import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
 
 import IdleAPI from './api/idle.js';
+import ControlsAPI from './api/controls.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -108,6 +109,7 @@ const startBrowser = async (url, { windowSize, forceBrowser }) => {
   });
 
   Window.idle = await IdleAPI(Window.cdp, { browserType });
+  Window.controls = await ControlsAPI(Window.cdp);
 
   return Window;
 };
