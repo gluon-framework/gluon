@@ -44,6 +44,8 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
       onReply[id] = msg => res(msg);
     });
 
+    if (reply.error) return new Error(reply.error.message);
+
     return reply.result;
   };
 
