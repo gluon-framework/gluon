@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 
 import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
+import { getUserPreferred } from './browser/windows.js';
 
 import IdleAPI from './api/idle.js';
 import ControlsAPI from './api/controls.js';
@@ -68,6 +69,13 @@ const getBrowserPath = async browser => {
 
 const findBrowserPath = async (forceBrowser) => {
   if (forceBrowser) return [ await getBrowserPath(forceBrowser), forceBrowser ];
+
+  if (process.platform === 'win32') {
+    try {
+      const userPreferred = await getUserPreferred()
+      if (userPreferred) return userPreferred
+    } catch (e) {}
+  }
 
   for (const x in browserPaths) {
     if (process.argv.includes('--' + x) || process.argv.includes('--' + x.split('_')[0])) return [ await getBrowserPath(x), x ];
