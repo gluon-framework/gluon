@@ -2,6 +2,9 @@
 node_modules
 package-lock.json
 
+# pnpm
+pnpm-lock.yaml
+
 # gluon
 build
 chrome_data

@@ -3,9 +3,8 @@ window.log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args
 
 Deno.version = { // have to do this because... Deno
   ...Deno.version,
-  gluon: '0.8.0-deno-dev'
+  gluon: '0.9.0-deno-dev'
 };
-
 
 import { join, dirname, delimiter, sep } from 'https://deno.land/std@0.170.0/node/path.ts';
 import { access, readdir } from 'https://deno.land/std@0.170.0/node/fs/promises.ts';
@@ -14,7 +13,8 @@ import { fileURLToPath } from 'https://deno.land/std@0.170.0/node/url.ts';
 import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
 
-import IdleAPI from './lib/idle.js';
+import IdleAPI from './api/idle.js';
+import ControlsAPI from './api/controls.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -32,8 +32,23 @@ const browserPaths = ({
   linux: { // these should be in path so just use the name of the binary
     chrome: [ 'chrome', 'google-chrome', 'chrome-browser', 'google-chrome-stable' ],
     chrome_canary: [ 'chrome-canary', 'google-chrome-canary', 'google-chrome-unstable', 'chrome-unstable' ],
+
     chromium: [ 'chromium', 'chromium-browser' ],
+    chromium_snapshot: [ 'chromium-snapshot', 'chromium-snapshot-bin' ],
+
     firefox: 'firefox',
+    firefox_nightly: 'firefox-nightly'
+  },
+
+  darwin: {
+    chrome: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    chrome_canary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
+    edge: '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+
+    chromium: '/Applications/Chromium.app/Contents/MacOS/Chromium',
+
+    firefox: '/Applications/Firefox.app/Contents/MacOS/firefox',
+    firefox_nightly: '/Applications/Firefox Nightly.app/Contents/MacOS/firefox'
   }
 })[Deno.build.os];
 
@@ -98,7 +113,7 @@ const startBrowser = async (url, { windowSize, forceBrowser }) => {
 
   const browserType = browserName.startsWith('firefox') ? 'firefox' : 'chromium';
 
-  const Browser = await (browserType === 'firefox' ? Firefox : Chromium)({
+  const Window = await (browserType === 'firefox' ? Firefox : Chromium)({
     browserName: browserFriendlyName,
     dataPath,
     browserPath
@@ -107,9 +122,10 @@ const startBrowser = async (url, { windowSize, forceBrowser }) => {
     windowSize
   });
 
-  Browser.idle = await IdleAPI(Browser.cdp, { browserType, dataPath });
+  Window.idle = await IdleAPI(Window.cdp, { browserType });
+  Window.controls = await ControlsAPI(Window.cdp);
 
-  return Browser;
+  return Window;
 };
 
 export const open = async (url, { windowSize, onLoad, forceBrowser } = {}) => {

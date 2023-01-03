@@ -1,6 +1,6 @@
 import IPCApi from '../lib/ipc.js';
 
-export default async (CDP, injectionType = 'browser', { browserName }) => {
+export default async (CDP, proc, injectionType = 'browser', { browserName } = { browserName: 'unknown' }) => {
   let pageLoadCallback = () => {}, onWindowMessage = () => {};
   CDP.onMessage(msg => {
     if (msg.method === 'Runtime.bindingCalled' && msg.params.name === '_gluonSend') onWindowMessage(JSON.parse(msg.params.payload));
@@ -27,6 +27,9 @@ export default async (CDP, injectionType = 'browser', { browserName }) => {
     log('browser:', browserInfo.product);
   }
 
+  const browserEngine = browserInfo.jsVersion.startsWith('1.') ? 'firefox' : 'chromium';
+
+
   CDP.sendMessage('Runtime.enable', {}, sessionId); // enable runtime API
 
   CDP.sendMessage('Runtime.addBinding', { // setup sending from window to Node via Binding
@@ -42,16 +45,23 @@ export default async (CDP, injectionType = 'browser', { browserName }) => {
 
   const [ ipcMessageCallback, injectIPC, IPC ] = await IPCApi({
     browserName,
-    browserInfo
+    browserInfo,
+    browserEngine
   }, {
     evalInWindow,
     evalOnNewDocument: source => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', { source }, sessionId),
     pageLoadPromise: new Promise(res => pageLoadCallback = res)
   });
+
   onWindowMessage = ipcMessageCallback;
 
-
   log('finished setup');
+
+  const generateVersionInfo = (name, version) => ({
+    name,
+    version,
+    major: parseInt(version.split('.')[0])
+  });
 
   return {
     window: {
@@ -61,7 +71,18 @@ export default async (CDP, injectionType = 'browser', { browserName }) => {
     ipc: IPC,
 
     cdp: {
-      send: (method, params) => CDP.sendMessage(method, params, sessionId)
+      send: (method, params, useSessionId = true) => CDP.sendMessage(method, params, useSessionId ? sessionId : undefined)
+    },
+
+    close: () => {
+      CDP.close();
+      proc.kill();
+    },
+
+    versions: {
+      product: generateVersionInfo(browserName, browserInfo.product.split('/')[1]),
+      engine: generateVersionInfo(browserEngine, browserInfo.product.split('/')[1]),
+      jsEngine: generateVersionInfo(browserEngine === 'chromium' ? 'v8' : 'spidermonkey', browserInfo.jsVersion)
     }
   };
 };
