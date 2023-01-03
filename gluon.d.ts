@@ -119,6 +119,20 @@ type BrowserVersions = {
   jsEngine: VersionInfo
 };
 
+type ControlsApi = {
+  /** Minimize the browser window. */
+  minimize(): Promise<void>,
+
+  /**
+   * Maximize the browser window.
+   * Doesn't make the window appear (use show() before as well).
+   */
+  maximize(): Promise<void>,
+
+  /** Show (unminimize) the browser window. */
+  show(): Promise<void>
+}
+
 type Window = {
   /** API for accessing the window itself. */
   window: WindowApi,
@@ -137,6 +151,9 @@ type Window = {
 
   /** Browser version info of the window: product (browser), engine (Chromium/Firefox), and JS engine (V8/SpiderMonkey). */
   versions: BrowserVersions,
+
+  /** Control (minimize, maximize, etc) the browser window. */
+  controls: ControlsApi,
 
   /** Close the Gluon window. */
   close(): void
