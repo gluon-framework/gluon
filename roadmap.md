@@ -10,8 +10,8 @@
 ## v0.9.0
 - [X] Browser version info API
 - [X] Idle API v2
-- [X] Support darwin (Mac OS)
-- [ ] Window show/hide API
+- [X] Mac support
+- [ ] Window controls API
 
 ## v0.8.0
 - [X] Rewrite browser detection to support more setups
