@@ -18,12 +18,27 @@ const __dirname = dirname(__filename);
 
 const browserPaths = ({
   win32: process.platform === 'win32' && {
+    // if Chrome is installed in Program Files
     chrome: join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
-    chrome_canary: join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
+    chrome_canary: join(process.env.PROGRAMFILES, 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
+
+    // if Chrome is installed locally in AppData
+    chrome_local: join(process.env.LOCALAPPDATA, 'Google', 'Chrome', 'Application', 'chrome.exe'), 
+    chrome_canary_local: join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
+    
+    // Since mostly Edge is bundled in Windows by Microsoft,
+    // so I think no one would install it manually in AppData
     edge: join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
 
+    // if Firefox is installed in Program Files
     firefox: join(process.env.PROGRAMFILES, 'Mozilla Firefox', 'firefox.exe'),
+    firefox_developer: join(process.env.PROGRAMFILES, 'Firefox Developer Edition', 'firefox.exe'),
     firefox_nightly: join(process.env.PROGRAMFILES, 'Firefox Nightly', 'firefox.exe'),
+
+    // if Firefox is installed locally in AppData
+    firefox_local: join(process.env.LOCALAPPDATA, 'Mozilla Firefox', 'firefox.exe'),
+    firefox_developer_local: join(process.env.LOCALAPPDATA, 'Firefox Developer Edition', 'firefox.exe'),
+    firefox_nightly_local: join(process.env.LOCALAPPDATA, 'Firefox Nightly', 'firefox.exe'),
   },
 
   linux: { // these should be in path so just use the name of the binary
