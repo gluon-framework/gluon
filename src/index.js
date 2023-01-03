@@ -39,8 +39,13 @@ const browserPaths = ({
 
   darwin: {
     chrome: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    chrome_canary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
     edge: '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+
+    chromium: '/Applications/Chromium.app/Contents/MacOS/Chromium',
+
     firefox: '/Applications/Firefox.app/Contents/MacOS/firefox',
+    firefox_nightly: '/Applications/Firefox Nightly.app/Contents/MacOS/firefox'
   }
 })[process.platform];
 
