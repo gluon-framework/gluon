@@ -65,15 +65,15 @@ type IdleAutoOptions = {
 
 type IdleApi = {
   /** Put the window into hibernation. */
-  hibernate(): void,
+  hibernate(): Promise<void>,
 
   /**
    * Put the window to sleep.
    */
-  sleep(): void,
+  sleep(): Promise<void>,
 
   /** Wake up the window from hibernation or sleep. */
-  wake(): void,
+  wake(): Promise<void>,
 
   /** Enable/disable automatic idle management, and set its options. */
   auto(
