@@ -11,7 +11,7 @@
 - [X] Browser version info API
 - [X] Idle API v2
 - [X] Mac support
-- [ ] Window controls API
+- [X] Window controls API
 
 ## v0.8.0
 - [X] Rewrite browser detection to support more setups
