@@ -8,9 +8,10 @@
 - **Tiny bundle sizes** - <1MB using system Node, <10MB when bundling it
 - **Chromium *and Firefox* supported as browser engine**, unlike any other active framework
 - **Minimal and easy to use** - Gluon has a simple yet powerful API to make apps with a Node backend
+- **Also supports Deno** (experimental) - Deno is also being worked as an option (developer choice) in replacement of NodeJS for the backend, [check out the `deno` branch](https://github.com/gluon-framework/gluon/tree/deno)
 - **Fast build times** - Gluon has build times under 1 second on most machines for small projects
 - **Actively developed** and **listening to feedback** - new updates are coming around weekly, quickly adding unplanned requested features if liked by the community (like Firefox support!)
-- **Lower memory usage** - compared to most other frameworks Gluon should have a slightly lower average memory usage by using browser flags to squeeze out more performance
+- **Cross-platform** - Gluon works on Windows, Linux, and macOS (WIP)
 <!-- - **No forks needed** - Gluon doesn't need forks of Node or Chromium/etc to use them, it just uses normal versions -->
 
 ![Gluworld Screenshot showing Chrome Canary and Firefox Nightly being used at once.](https://user-images.githubusercontent.com/19228318/210174682-b261dba0-8b3c-4ca0-8093-aeeb9fdbc52d.png)
