@@ -18,12 +18,34 @@ const __dirname = dirname(__filename);
 
 const browserPaths = ({
   win32: process.platform === 'win32' && {
-    chrome: join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
-    chrome_canary: join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe'),
-    edge: join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+    chrome: [
+      join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+      join(process.env.LOCALAPPDATA, 'Google', 'Chrome', 'Application', 'chrome.exe')
+    ],
+    chrome_canary: [
+      join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+      join(process.env.LOCALAPPDATA, 'Google', 'Chrome SxS', 'Application', 'chrome.exe')
+    ],
 
-    firefox: join(process.env.PROGRAMFILES, 'Mozilla Firefox', 'firefox.exe'),
-    firefox_nightly: join(process.env.PROGRAMFILES, 'Firefox Nightly', 'firefox.exe'),
+    edge: [
+      join(process.env['PROGRAMFILES(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+      join(process.env.PROGRAMFILES, 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+      join(process.env.LOCALAPPDATA, 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+    ],
+
+    chromium: [
+      join(process.env.PROGRAMFILES, 'Chromium', 'Application', 'chrome.exe'),
+      join(process.env.LOCALAPPDATA, 'Chromium', 'Application', 'chrome.exe'),
+    ],
+
+    firefox: [
+      join(process.env.PROGRAMFILES, 'Mozilla Firefox', 'firefox.exe'),
+      join(process.env.LOCALAPPDATA, 'Mozilla Firefox', 'firefox.exe'),
+    ],
+    firefox_nightly: [
+      join(process.env.PROGRAMFILES, 'Firefox Nightly', 'firefox.exe'),
+      join(process.env.LOCALAPPDATA, 'Firefox Nightly', 'firefox.exe'),
+    ]
   },
 
   linux: { // these should be in path so just use the name of the binary
