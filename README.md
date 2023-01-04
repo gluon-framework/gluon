@@ -12,7 +12,7 @@ Gluon
 
 </span>
 
-**Gluon is a framework for creating "desktop apps" from websites**, using **system installed browsers** *(not webviews)* and NodeJS, differing a lot from other existing active projects - opening up innovation and allowing some major advantages. Instead of other similar frameworks bundling a browser like Chromium or using webviews (like Edge Webview2 on Windows), **Gluon just uses system installed browsers** like Chrome, Edge, Firefox, etc. Gluon supports Chromium ***and Firefox*** based browsers as the frontend, while Gluon's backend uses NodeJS to be versatile and easy to develop (also allowing easy learning from other popular frameworks like Electron by using the same-ish stack).
+**Gluon is a new framework for creating desktop apps from websites**, using **system installed browsers** *(not webviews)* and NodeJS, differing a lot from other existing active projects - opening up innovation and allowing some major advantages. Instead of other similar frameworks bundling a browser like Chromium or using webviews (like Edge Webview2 on Windows), **Gluon just uses system installed browsers** like Chrome, Edge, Firefox, etc. Gluon supports Chromium ***and Firefox*** based browsers as the frontend, while Gluon's backend uses NodeJS to be versatile and easy to develop (also allowing easy learning from other popular frameworks like Electron by using the same-ish stack).
 
 ## Features
 - **Uses normal system installed browsers** - allows user choice by **supporting most Chromium *and Firefox*** based browsers,  no webviews
