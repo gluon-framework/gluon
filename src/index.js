@@ -31,6 +31,7 @@ const browserPaths = ({
     edge_canary: join('Microsoft', 'Edge SxS', 'Application', 'msedge.exe'),
 
     thorium: join('Thorium', 'Application', 'thorium.exe'),
+    brave: join('BraveSoftware', 'Brave-Browser', 'Application', 'brave.exe'),
 
     firefox: join('Mozilla Firefox', 'firefox.exe'),
     firefox_developer: join('Firefox Developer Edition', 'firefox.exe'),
@@ -54,6 +55,7 @@ const browserPaths = ({
     edge_canary: [ 'microsoft-edge-canary', 'microsoft-edge-browser-canary', 'microsoft-edge-canary-browser' ],
 
     thorium: [ 'thorium', 'thorium-browser' ],
+    brave: [ 'brave', 'brave-browser' ],
 
     firefox: [ 'firefox', 'firefox-browser' ],
     firefox_nightly: [ 'firefox-nightly', 'firefox-nightly-browser', 'firefox-browser-nightly' ],
@@ -73,6 +75,8 @@ const browserPaths = ({
     edge_beta: '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge Beta',
     edge_dev: '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge Dev',
     edge_canary: '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge Canary',
+
+    brave: '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser',
 
     firefox: '/Applications/Firefox.app/Contents/MacOS/firefox',
     firefox_nightly: '/Applications/Firefox Nightly.app/Contents/MacOS/firefox'
