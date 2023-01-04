@@ -161,7 +161,13 @@ type Window = {
 
 
 /** A browser that Gluon supports. */
-type Browser = 'chrome'|'chrome_canary'|'chromium'|'chromium_snapshot'|'edge'|'firefox'|'firefox_nightly';
+type Browser =
+  'chrome'|'chrome_beta'|'chrome_dev'|'chrome_canary'|
+  'chromium'|'chromium_snapshot'|
+  'edge'|'edge_beta'|'edge_dev'|'edge_canary'|
+  'firefox'|'firefox_nightly'|
+  'thorium'|
+  'librewolf';
 
 /** A browser engine that Gluon supports. */
 type BrowserEngine = 'chromium'|'firefox';
