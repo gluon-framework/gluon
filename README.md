@@ -5,7 +5,7 @@ Gluon
 
 <span align="center">
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/l)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit)
 [![NPM version](https://img.shields.io/npm/v/@gluon-framework/gluon)](https://www.npmjs.com/package/@gluon-framework/gluon)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/CanadaHonk?label=Sponsors&logo=github)](https://github.com/sponsors/CanadaHonk)
 [![Discord](https://img.shields.io/discord/1051940602704564244.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/RFtUCA8fST)
