@@ -1,4 +1,4 @@
-export default ({ browserName, browserInfo }, { evalInWindow, evalOnNewDocument, pageLoadPromise }) => {
+export default ({ browserName, browserInfo, browserEngine }, { evalInWindow, evalOnNewDocument, pageLoadPromise }) => {
   const injection = `(() => {
 if (window.Gluon) return;
 let onIPCReply = {}, ipcListeners = {};
@@ -8,7 +8,7 @@ window.Gluon = {
     builder: '${'GLUGUN_VERSION' === 'G\LUGUN_VERSION' ? 'nothing' : 'Glugun GLUGUN_VERSION'}',
     deno: '${Deno.version.deno}',
     browser: '${browserInfo?.product.split('/')[1]}',
-    browserType: '${browserName.startsWith('Firefox') ? 'firefox' : 'chromium'}',
+    browserType: '${browserEngine}',
     product: '${browserName}',
 
     js: {

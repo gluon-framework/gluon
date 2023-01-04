@@ -48,7 +48,10 @@ type CDPApi = {
     method: string,
 
     /** Parameters of CDP command. */
-    params?: Object
+    params?: Object,
+
+    /** Send session ID with the command (default true). */
+    useSessionId?: Boolean = true
   ): Promise<any>
 };
 
@@ -62,16 +65,15 @@ type IdleAutoOptions = {
 
 type IdleApi = {
   /** Put the window into hibernation. */
-  hibernate(): void,
+  hibernate(): Promise<void>,
 
   /**
    * Put the window to sleep.
-   * @todo Unimplemented (for Idle v2).
    */
-  sleep(): void,
+  sleep(): Promise<void>,
 
   /** Wake up the window from hibernation or sleep. */
-  wake(): void,
+  wake(): Promise<void>,
 
   /** Enable/disable automatic idle management, and set its options. */
   auto(
@@ -82,6 +84,54 @@ type IdleApi = {
     options?: IdleAutoOptions
   ): void
 };
+
+type VersionInfo = {
+  /** Name of component. */
+  name: string,
+
+  /** Full version of component. */
+  version: string,
+
+  /** Major version of component as a number. */
+  major: number
+};
+
+type BrowserVersions = {
+  /**
+   * Product (browser) version and name.
+   * @example
+   * Window.versions.product // { name: 'Chrome Canary', version: '111.0.5513.0', major: 111 }
+   */
+  product: VersionInfo,
+
+  /**
+   * Browser engine (Chromium/Firefox) version and name.
+   * @example
+   * Window.versions.engine // { name: 'chromium', version: '111.0.5513.0', major: 111 }
+   */
+  engine: VersionInfo,
+
+  /**
+   * JS engine (V8/SpiderMonkey) version and name.
+   * @example
+   * Window.versions.jsEngine // { name: 'v8', version: '11.1.86', major: 11 }
+   */
+  jsEngine: VersionInfo
+};
+
+type ControlsApi = {
+  /** Minimize the browser window. */
+  minimize(): Promise<void>,
+
+  /**
+   * Maximize the browser window.
+   * Doesn't make the window appear (use show() before as well).
+   */
+  maximize(): Promise<void>,
+
+  /** Show (unminimize) the browser window. */
+  show(): Promise<void>
+}
 
 type Window = {
   /** API for accessing the window itself. */
@@ -97,12 +147,25 @@ type Window = {
    * API for Gluon idle management (like hibernation).
    * @experimental
    */
-  idle: IdleApi
+  idle: IdleApi,
+
+  /** Browser version info of the window: product (browser), engine (Chromium/Firefox), and JS engine (V8/SpiderMonkey). */
+  versions: BrowserVersions,
+
+  /** Control (minimize, maximize, etc) the browser window. */
+  controls: ControlsApi,
+
+  /** Close the Gluon window. */
+  close(): void
 };
 
 
 /** A browser that Gluon supports. */
-type Browser = 'chrome'|'chrome_canary'|'chromium'|'edge'|'firefox'|'firefox_nightly';
+type Browser = 'chrome'|'chrome_canary'|'chromium'|'chromium_snapshot'|'edge'|'firefox'|'firefox_nightly';
+
+/** A browser engine that Gluon supports. */
+type BrowserEngine = 'chromium'|'firefox';
+
 
 /** Additional options for opening */
 type OpenOptions = {

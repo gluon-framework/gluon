@@ -9,7 +9,7 @@
 - **Chromium *and Firefox* supported as browser engine**, unlike any other active framework
 - **Minimal and easy to use** - Gluon has a simple yet powerful API to make apps with a Deno backend
 - **Fast build times** - Gluon has build times under 1 second on most machines for small projects
-- **Actively developed** and **listening to feedback** - already on 5th major revision in ~1 week of development, quickly adding unplanned requested features if liked by the community (like Firefox support!)
+- **Actively developed** and **listening to feedback** - new updates are coming around weekly, quickly adding unplanned requested features if liked by the community (like Firefox support!)
 - **Lower memory usage** - compared to most other frameworks Gluon should have a slightly lower average memory usage by using browser flags to squeeze out more performance
 <!-- - **No forks needed** - Gluon doesn't need forks of Deno or Chromium/etc to use them, it just uses normal versions -->
 
