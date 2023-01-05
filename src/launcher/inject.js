@@ -94,6 +94,8 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
     versions
   };
 
+  proc.on('close', Window.close);
+
   Window.idle = await IdleApi(Window.cdp, { browserEngine, closeHandlers });
   Window.controls = await ControlsApi(Window.cdp);
 
