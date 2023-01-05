@@ -57,7 +57,7 @@ type IPCApi = {
   unexpose(
     /** Key name to unexpose (remove). */
     key: string
-  )
+  ): void
 };
 
 type CDPApi = {
@@ -74,7 +74,7 @@ type CDPApi = {
     params?: Object,
 
     /** Send session ID with the command (default true). */
-    useSessionId?: Boolean = true
+    useSessionId?: Boolean
   ): Promise<any>
 };
 
