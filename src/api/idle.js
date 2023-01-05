@@ -2,9 +2,9 @@ import { exec } from 'child_process';
 
 const killProcesses = async pids => process.platform !== 'win32' ? Promise.resolve('') : new Promise(resolve => exec(`taskkill /F ${pids.map(x => `/PID ${x}`).join(' ')}`, (e, out) => resolve(out)));
 
-export default async (CDP, { browserType }) => {
-  if (browserType !== 'chromium') { // current implementation is for chromium-based only
-    const warning = () => log(`Warning: Idle API is currently only for Chromium (running on ${browserType})`);
+export default async (CDP, { browserEngine, closeHandlers }) => {
+  if (browserEngine !== 'chromium') { // current implementation is for chromium-based only
+    const warning = () => log(`Warning: Idle API is currently only for Chromium (running on ${browserEngine})`);
 
     return {
       hibernate: warning,
@@ -129,6 +129,7 @@ export default async (CDP, { browserType }) => {
     log('stopped auto idle');
   };
 
+
   let lastScreenshot, takingScreenshot = false;
   const screenshotInterval = setInterval(async () => {
     if (takingScreenshot) return;
@@ -139,6 +140,12 @@ export default async (CDP, { browserType }) => {
   }, 10000);
 
   getScreenshot().then(x => lastScreenshot = x);
+
+  closeHandlers.push(() => {
+    clearInterval(screenshotInterval);
+    stopAuto();
+  });
+
 
   log(`idle API active (window id: ${windowId})`);
   if (autoEnabled) startAuto();
