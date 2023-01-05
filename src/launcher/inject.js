@@ -8,26 +8,20 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
     if (msg.method === 'Runtime.executionContextCreated') injectIPC(); // ensure IPC injection again
   });
 
+  const browserInfo = await CDP.sendMessage('Browser.getVersion');
+  log('browser:', browserInfo.product);
 
-  let browserInfo, sessionId;
+  const browserEngine = browserInfo.jsVersion.startsWith('1.') ? 'firefox' : 'chromium';
+
+  let sessionId;
   if (injectionType === 'browser') { // connected to browser itself, need to get and attach to a target
-    CDP.sendMessage('Browser.getVersion').then(x => { // get browser info async as we have time while attaching
-      browserInfo = x;
-      log('browser:', x.product);
-    });
-
     const target = (await CDP.sendMessage('Target.getTargets')).targetInfos[0];
 
     sessionId = (await CDP.sendMessage('Target.attachToTarget', {
       targetId: target.targetId,
       flatten: true
     })).sessionId;
-  } else { // already attached to target
-    browserInfo = await CDP.sendMessage('Browser.getVersion');
-    log('browser:', browserInfo.product);
   }
-
-  const browserEngine = browserInfo.jsVersion.startsWith('1.') ? 'firefox' : 'chromium';
 
 
   CDP.sendMessage('Runtime.enable', {}, sessionId); // enable runtime API
