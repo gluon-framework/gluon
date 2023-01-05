@@ -6,7 +6,7 @@
 ## v0.10.0 (intended release: <=9th January)
 - [X] Rewrite data path generation
 - [X] Rewrite browser path generation for Windows and add more browsers
-- [X] Clean up logging
+- [X] Clean up logging, minor internal cleanup/simplifying/rewriting
 - [ ] Await full web (window) load API
 - [ ] Resources Window API
 
