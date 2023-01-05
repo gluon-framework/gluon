@@ -142,7 +142,9 @@ const findBrowserPath = async (forceBrowser) => {
 };
 
 const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase());
-const getDataPath = () => join(__dirname, '..', 'chrome_data');
+
+const ranJsDir = !process.argv[1] ? __dirname : (process.argv[1].endsWith('.js') ? dirname(process.argv[1]) : process.argv[1]);
+const getDataPath = browser => join(ranJsDir, 'gluon_data', browser);
 
 const getBrowserType = name => { // todo: not need this
   if (name.startsWith('firefox') ||
@@ -152,18 +154,14 @@ const getBrowserType = name => { // todo: not need this
 };
 
 const startBrowser = async (url, { windowSize, forceBrowser }) => {
-  const dataPath = getDataPath();
-
   const [ browserPath, browserName ] = await findBrowserPath(forceBrowser);
-
   const browserFriendlyName = getFriendlyName(browserName);
-
-  // log('browser path:', browserPath);
-  // log('data path:', dataPath);
 
   if (!browserPath) return log('failed to find a good browser install');
 
+  const dataPath = getDataPath(browserName);
   const browserType = getBrowserType(browserName);
+
   log('found browser', browserName, `(${browserType} based)`, 'at path:', browserPath);
   log('data path:', dataPath);
 
