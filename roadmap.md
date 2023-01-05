@@ -4,8 +4,11 @@
 > Want more info on what some of these mean/are? Ask in [our Discord](https://discord.gg/RFtUCA8fST)!
 
 ## v0.10.0
+- [X] Rewrite data path generation
+- [X] Rewrite browser path generation for Windows and add more browsers
+- [X] Clean up logging
+- [ ] Await full web (window) load API
 - [ ] Resources Window API
-- [ ] On/await load Window API
 
 ## v0.9.0
 - [X] Browser version info API
