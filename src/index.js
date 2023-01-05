@@ -3,7 +3,7 @@ window.log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args
 
 Deno.version = { // have to do this because... Deno
   ...Deno.version,
-  gluon: '0.10.0-alpha.5-deno'
+  gluon: '0.10.0-deno'
 };
 
 import { join, dirname, delimiter, sep } from 'https://deno.land/std@0.170.0/node/path.ts';
