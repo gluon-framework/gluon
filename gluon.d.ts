@@ -6,7 +6,10 @@ type PageApi = {
   eval: (
     /** String or function to evaluate. */
     expression: string|Function
-  ) => Promise<any>
+  ) => Promise<any>,
+
+  /** Promise for waiting until the page has loaded. */
+  loaded: Promise<void>
 };
 
 type IPCApi = {
