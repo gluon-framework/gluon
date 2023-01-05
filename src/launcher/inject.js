@@ -1,10 +1,12 @@
 import IPCApi from '../lib/ipc.js';
 
 export default async (CDP, proc, injectionType = 'browser', { browserName } = { browserName: 'unknown' }) => {
-  let pageLoadCallback = () => {}, onWindowMessage = () => {};
+  let pageLoadCallback, pageLoadPromise = new Promise(res => pageLoadCallback = res);
+  let frameLoadCallback = () => {}, onWindowMessage = () => {};
   CDP.onMessage(msg => {
     if (msg.method === 'Runtime.bindingCalled' && msg.params.name === '_gluonSend') onWindowMessage(JSON.parse(msg.params.payload));
-    if (msg.method === 'Page.frameStoppedLoading') pageLoadCallback(msg.params);
+    if (msg.method === 'Page.frameStoppedLoading') frameLoadCallback(msg.params);
+    if (msg.method === 'Page.loadEventFired') pageLoadCallback();
     if (msg.method === 'Runtime.executionContextCreated') injectIPC(); // ensure IPC injection again
   });
 
@@ -42,12 +44,16 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
   }, {
     evalInWindow,
     evalOnNewDocument: source => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', { source }, sessionId),
-    pageLoadPromise: new Promise(res => pageLoadCallback = res)
+    pageLoadPromise: new Promise(res => frameLoadCallback = res)
   });
 
   onWindowMessage = ipcMessageCallback;
 
   log('finished setup');
+
+  evalInWindow('document.readyState').then(readyState => {
+    if (readyState === 'complete' || readyState === 'ready') pageLoadCallback();
+  });
 
   const generateVersionInfo = (name, version) => ({
     name,
@@ -58,6 +64,7 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
   return {
     window: {
       eval: evalInWindow,
+      loaded: pageLoadPromise
     },
 
     ipc: IPC,
