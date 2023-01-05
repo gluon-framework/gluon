@@ -1,5 +1,7 @@
 import { get } from 'https://deno.land/std@0.170.0/node/http.ts';
 
+const logCDP = process.argv.includes('--cdp-logging');
+
 export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
   let messageCallbacks = [], onReply = {};
   const onMessage = msg => {
@@ -7,7 +9,7 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
 
     msg = JSON.parse(msg);
 
-    // log('received', msg);
+    if (logCDP) log('received', msg);
     if (onReply[msg.id]) {
       onReply[msg.id](msg);
       delete onReply[msg.id];
@@ -37,7 +39,7 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
 
     _send(JSON.stringify(msg));
 
-    // log('sent', msg);
+    if (logCDP) log('sent', msg);
 
     const reply = await new Promise(res => {
       onReply[id] = msg => res(msg);

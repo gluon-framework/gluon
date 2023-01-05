@@ -1,3 +1,6 @@
+# miscellaneous
+.DS_Store
+
 # node
 node_modules
 package-lock.json
@@ -7,7 +10,7 @@ pnpm-lock.yaml
 
 # gluon
 build
-chrome_data
+gluon_data
 
 # vscode
 .vscode
