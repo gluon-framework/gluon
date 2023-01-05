@@ -1,4 +1,4 @@
-type WindowApi = {
+type PageApi = {
   /**
    * Evaluate a string or function in the web context.
    * @returns Return value of expression given.
@@ -6,7 +6,10 @@ type WindowApi = {
   eval: (
     /** String or function to evaluate. */
     expression: string|Function
-  ) => Promise<any>
+  ) => Promise<any>,
+
+  /** Promise for waiting until the page has loaded. */
+  loaded: Promise<void>
 };
 
 type IPCApi = {
@@ -34,7 +37,27 @@ type IPCApi = {
      * @returns Optionally with what to reply with, otherwise null by default.
      */
     callback: (data: any) => any
-  ): void
+  ): void,
+
+  /**
+   * Expose a Node function to the web context, acts as a wrapper around IPC events.
+   * Can be ran in window with Gluon.ipc[key](...args)
+   */
+  expose(
+    /** Key name to expose to. */
+    key: string,
+
+    /** Handler function which is called from the web context. */
+    handler: Function
+  ): void,
+
+  /**
+   * Unexpose (remove) a Node function previously exposed using expose().
+   */
+  unexpose(
+    /** Key name to unexpose (remove). */
+    key: string
+  )
 };
 
 type CDPApi = {
@@ -134,8 +157,8 @@ type ControlsApi = {
 }
 
 type Window = {
-  /** API for accessing the window itself. */
-  window: WindowApi,
+  /** API for the page of the window. */
+  page: PageApi,
 
   /** API for IPC. */
   ipc: IPCApi,

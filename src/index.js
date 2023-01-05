@@ -3,7 +3,7 @@ window.log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args
 
 Deno.version = { // have to do this because... Deno
   ...Deno.version,
-  gluon: '0.10.0-deno-dev-alpha.3'
+  gluon: '0.10.0-alpha.5-deno'
 };
 
 import { join, dirname, delimiter, sep } from 'https://deno.land/std@0.170.0/node/path.ts';
@@ -13,8 +13,6 @@ import { fileURLToPath } from 'https://deno.land/std@0.170.0/node/url.ts';
 import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
 
-import IdleAPI from './api/idle.js';
-import ControlsAPI from './api/controls.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -176,9 +174,6 @@ const startBrowser = async (url, { windowSize, forceBrowser }) => {
     url,
     windowSize
   });
-
-  Window.idle = await IdleAPI(Window.cdp, { browserType });
-  Window.controls = await ControlsAPI(Window.cdp);
 
   return Window;
 };

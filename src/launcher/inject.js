@@ -1,5 +1,8 @@
 import IPCApi from '../lib/ipc.js';
 
+import IdleApi from '../api/idle.js';
+import ControlsApi from '../api/controls.js';
+
 export default async (CDP, proc, injectionType = 'browser', { browserName } = { browserName: 'unknown' }) => {
   let pageLoadCallback, pageLoadPromise = new Promise(res => pageLoadCallback = res);
   let frameLoadCallback = () => {}, onWindowMessage = () => {};
@@ -51,9 +54,10 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
 
   log('finished setup');
 
-  evalInWindow('document.readyState').then(readyState => {
+  evalInWindow('document.readyState').then(readyState => { // check if already loaded, if so trigger page load promise
     if (readyState === 'complete' || readyState === 'ready') pageLoadCallback();
   });
+
 
   const generateVersionInfo = (name, version) => ({
     name,
@@ -61,8 +65,15 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
     major: parseInt(version.split('.')[0])
   });
 
-  return {
-    window: {
+  const versions = {
+    product: generateVersionInfo(browserName, browserInfo.product.split('/')[1]),
+    engine: generateVersionInfo(browserEngine, browserInfo.product.split('/')[1]),
+    jsEngine: generateVersionInfo(browserEngine === 'chromium' ? 'v8' : 'spidermonkey', browserInfo.jsVersion)
+  };
+
+  const closeHandlers = [];
+  const Window = {
+    page: {
       eval: evalInWindow,
       loaded: pageLoadPromise
     },
@@ -74,14 +85,17 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
     },
 
     close: () => {
+      for (const handler of closeHandlers) handler(); // extra api handlers which need to be closed
+
       CDP.close();
       proc.kill();
     },
 
-    versions: {
-      product: generateVersionInfo(browserName, browserInfo.product.split('/')[1]),
-      engine: generateVersionInfo(browserEngine, browserInfo.product.split('/')[1]),
-      jsEngine: generateVersionInfo(browserEngine === 'chromium' ? 'v8' : 'spidermonkey', browserInfo.jsVersion)
-    }
+    versions
   };
+
+  Window.idle = await IdleApi(Window.cdp, { browserEngine, closeHandlers });
+  Window.controls = await ControlsApi(Window.cdp);
+
+  return Window;
 };
