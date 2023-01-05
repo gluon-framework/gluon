@@ -143,9 +143,6 @@ export default async (CDP, { browserType }) => {
   log(`idle API active (window id: ${windowId})`);
   if (autoEnabled) startAuto();
 
-  const setWindowState = async state => await CDP.send('Browser.setWindowBounds', { windowId, bounds: { windowState: state }});
-
-
   return {
     hibernate,
     sleep,
