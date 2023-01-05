@@ -127,21 +127,70 @@ delete window._gluonSend;
     sendToWindow('pong', null, id); // send simple pong to confirm
   };
 
+  let API = {
+    on: (type, cb) => {
+      if (!ipcListeners[type]) ipcListeners[type] = [];
+      ipcListeners[type].push(cb);
+    },
+
+    removeListener: (type, cb) => {
+      if (!ipcListeners[type]) return false;
+      ipcListeners[type].splice(ipcListeners[type].indexOf(cb), 1);
+
+      if (ipcListeners[type].length === 0) delete ipcListeners[type]; // clean up - remove type from listeners if 0 listeners left
+    },
+
+    send: sendToWindow,
+  };
+
+  // Expose API
+  const makeExposeKey = key => 'exposed ' + key;
+
+  const expose = (key, func) => {
+    if (typeof func !== 'function') return new Error('Invalid arguments (expected key and function)');
+
+    const exposeKey = makeExposeKey(key);
+
+    API.on(exposeKey, args => func(args)); // handle IPC events
+    evalInWindow(`Gluon.ipc['${key}'] = (...args) => Gluon.ipc.send('${exposeKey}', args)`); // add wrapper func to window
+  };
+
+  const unexpose = key => {
+    const exposeKey = makeExposeKey(key);
+
+    const existed = API.removeListener(exposeKey); // returns false if type isn't registered/active
+    if (!existed) return;
+
+    evalInWindow(`delete Gluon.ipc['${key}']`); // remove wrapper func from window
+  };
+
+  API.expose = (...args) => {
+    if (args.length === 1) { // given object to expose
+      for (const key in args[0]) expose(key, args[0][key]); // expose all keys given
+
+      return;
+    }
+
+    if (args.length === 2) return expose(args[0], args[1]);
+
+    return new Error('Invalid arguments (expected object or key and function)');
+  };
+
+  API.unexpose = unexpose;
+
+  API = new Proxy(API, { // setter and deleter API
+    set(obj, key, value) {
+      expose(key, value);
+    },
+
+    deleteProperty(obj, key) {
+      unexpose(key);
+    }
+  });
+
   return [
     onWindowMessage,
     () => evalInWindow(injection),
-
-    {
-      on: (type, cb) => {
-        if (!ipcListeners[type]) ipcListeners[type] = [];
-        ipcListeners[type].push(cb);
-      },
-
-      removeListener: (type, cb) => {
-        if (!ipcListeners[type]) return false;
-        ipcListeners[type].splice(ipcListeners[type].indexOf(cb), 1);
-      },
-
-      send: sendToWindow,
-  } ];
+    API
+  ];
 };
