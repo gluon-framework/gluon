@@ -1,17 +1,29 @@
-# Gluon (experimental Deno edition)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/l) [![GitHub Sponsors](https://img.shields.io/github/sponsors/CanadaHonk?label=Sponsors&logo=github)](https://github.com/sponsors/CanadaHonk) [![Discord](https://img.shields.io/discord/1051940602704564244.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/RFtUCA8fST)
+<h1 align="center">
+<sub><img src="assets/logo.png" height="38" width="38"></sub>
+Gluon
+</h1>
 
-**Gluon is a framework for creating "desktop apps" from websites**, using **system installed browsers** *(not webviews)* and Deno, differing a lot from other existing active projects - opening up innovation and allowing some major advantages. Instead of other similar frameworks bundling a browser like Chromium or using webviews (like Edge Webview2 on Windows), **Gluon just uses system installed browsers** like Chrome, Edge, Firefox, etc. Gluon supports Chromium ***and Firefox*** based browsers as the frontend, while Gluon's backend uses Deno to be versatile and easy to develop (also allowing easy learning from other popular frameworks like Electron by using the same-ish stack).
+<span align="center">
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit)
+[![NPM version](https://img.shields.io/npm/v/@gluon-framework/gluon)](https://www.npmjs.com/package/@gluon-framework/gluon)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/CanadaHonk?label=Sponsors&logo=github)](https://github.com/sponsors/CanadaHonk)
+[![Discord](https://img.shields.io/discord/1051940602704564244.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/RFtUCA8fST)
+
+</span>
+
+**Gluon is a new framework for creating desktop apps from websites**, using **system installed browsers** *(not webviews)* and NodeJS, differing a lot from other existing active projects - opening up innovation and allowing some major advantages. Instead of other similar frameworks bundling a browser like Chromium or using webviews (like Edge Webview2 on Windows), **Gluon just uses system installed browsers** like Chrome, Edge, Firefox, etc. Gluon supports Chromium ***and Firefox*** based browsers as the frontend, while Gluon's backend uses NodeJS to be versatile and easy to develop (also allowing easy learning from other popular frameworks like Electron by using the same-ish stack).
 
 ## Features
 - **Uses normal system installed browsers** - allows user choice by **supporting most Chromium *and Firefox*** based browsers,  no webviews
 - **Tiny bundle sizes** - <1MB using system Deno
 - **Chromium *and Firefox* supported as browser engine**, unlike any other active framework
-- **Minimal and easy to use** - Gluon has a simple yet powerful API to make apps with a Deno backend
+- **Minimal and easy to use** - Gluon has a simple yet powerful API to make apps with a Node backend
+- **Also supports Deno** (experimental) - Deno is also being worked as an option (developer choice) in replacement of NodeJS for the backend (you're here right now)
 - **Fast build times** - Gluon has build times under 1 second on most machines for small projects
 - **Actively developed** and **listening to feedback** - new updates are coming around weekly, quickly adding unplanned requested features if liked by the community (like Firefox support!)
-- **Lower memory usage** - compared to most other frameworks Gluon should have a slightly lower average memory usage by using browser flags to squeeze out more performance
-<!-- - **No forks needed** - Gluon doesn't need forks of Deno or Chromium/etc to use them, it just uses normal versions -->
+- **Cross-platform** - Gluon works on Windows, Linux, and macOS (WIP)
+<!-- - **No forks needed** - Gluon doesn't need forks of Node or Chromium/etc to use them, it just uses normal versions -->
 
 ![Gluworld Screenshot showing Chrome Canary and Firefox Nightly being used at once using Deno.](https://user-images.githubusercontent.com/19228318/210020320-ff62e67f-0eb5-4e9e-989b-3ba4edc0fe35.png)
 
