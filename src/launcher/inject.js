@@ -62,7 +62,7 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
   });
 
   return {
-    window: {
+    page: {
       eval: evalInWindow,
       loaded: pageLoadPromise
     },
