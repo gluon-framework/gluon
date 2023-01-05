@@ -117,7 +117,7 @@ const exists = async path => {
 
 const getBrowserPath = async browser => {
   for (const path of Array.isArray(browserPaths[browser]) ? browserPaths[browser] : [ browserPaths[browser] ]) {
-    log('checking if ' + browser + ' exists:', path, await exists(path));
+    // log('checking if ' + browser + ' exists:', path, await exists(path));
 
     if (await exists(path)) return path;
   }
@@ -158,12 +158,15 @@ const startBrowser = async (url, { windowSize, forceBrowser }) => {
 
   const browserFriendlyName = getFriendlyName(browserName);
 
-  log('browser path:', browserPath);
-  log('data path:', dataPath);
+  // log('browser path:', browserPath);
+  // log('data path:', dataPath);
 
   if (!browserPath) return log('failed to find a good browser install');
 
   const browserType = getBrowserType(browserName);
+  log('found browser', browserName, `(${browserType} based)`, 'at path:', browserPath);
+  log('data path:', dataPath);
+
   const Window = await (browserType === 'firefox' ? Firefox : Chromium)({
     browserName: browserFriendlyName,
     dataPath,
