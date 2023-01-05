@@ -8,3 +8,4 @@ pnpm-lock.yaml
 # gluon
 build
 chrome_data
+.DS_Store
