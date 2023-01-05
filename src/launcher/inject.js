@@ -30,11 +30,9 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
     name: '_gluonSend'
   }, sessionId);
 
-  const evalInWindow = async func => {
-    return await CDP.sendMessage(`Runtime.evaluate`, {
-      expression: typeof func === 'string' ? func : `(${func.toString()})()`
-    }, sessionId);
-  };
+  const evalInWindow = async func => (await CDP.sendMessage(`Runtime.evaluate`, {
+    expression: typeof func === 'string' ? func : `(${func.toString()})()`
+  }, sessionId)).result.value;
 
 
   const [ ipcMessageCallback, injectIPC, IPC ] = await IPCApi({
