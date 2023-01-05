@@ -1,4 +1,4 @@
-import * as Gluon from '../src/index.js';
+import * as Gluon from '../mod.ts';
 
 const __dirname = new URL(".", import.meta.url).pathname;
 
