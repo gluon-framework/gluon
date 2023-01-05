@@ -37,7 +37,27 @@ type IPCApi = {
      * @returns Optionally with what to reply with, otherwise null by default.
      */
     callback: (data: any) => any
-  ): void
+  ): void,
+
+  /**
+   * Expose a Node function to the web context, acts as a wrapper around IPC events.
+   * Can be ran in window with Gluon.ipc[key](...args)
+   */
+  expose(
+    /** Key name to expose to. */
+    key: string,
+
+    /** Handler function which is called from the web context. */
+    handler: Function
+  ): void,
+
+  /**
+   * Unexpose (remove) a Node function previously exposed using expose().
+   */
+  unexpose(
+    /** Key name to unexpose (remove). */
+    key: string
+  )
 };
 
 type CDPApi = {
