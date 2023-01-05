@@ -10,4 +10,4 @@ pnpm-lock.yaml
 
 # gluon
 build
-chrome_data
+gluon_data
