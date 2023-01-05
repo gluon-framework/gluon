@@ -1,4 +1,4 @@
-type WindowApi = {
+type PageApi = {
   /**
    * Evaluate a string or function in the web context.
    * @returns Return value of expression given.
@@ -134,8 +134,8 @@ type ControlsApi = {
 }
 
 type Window = {
-  /** API for accessing the window itself. */
-  window: WindowApi,
+  /** API for the page of the window. */
+  page: PageApi,
 
   /** API for IPC. */
   ipc: IPCApi,
