@@ -1,6 +1,6 @@
 import { get } from 'https://deno.land/std@0.170.0/node/http.ts';
 
-const logCDP = process.argv.includes('--cdp-logging');
+const logCDP = Deno.args.includes('--cdp-logging');
 
 export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
   let messageCallbacks = [], onReply = {};

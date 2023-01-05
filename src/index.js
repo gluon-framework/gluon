@@ -92,9 +92,9 @@ if (Deno.build.os === 'windows') { // windows: automatically generate env-based 
       const basePath = browserPaths[browser];
 
       browserPaths[browser] = [
-        join(process.env.PROGRAMFILES, basePath),
-        join(process.env.LOCALAPPDATA, basePath),
-        join(process.env['PROGRAMFILES(x86)'], basePath)
+        join(Deno.env.get('PROGRAMFILES'), basePath),
+        join(Deno.env.get('LOCALAPPDATA'), basePath),
+        join(Deno.env.get('PROGRAMFILES(x86)'), basePath)
       ];
     }
   }
@@ -146,7 +146,7 @@ const findBrowserPath = async (forceBrowser) => {
 
 const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase());
 
-const ranJsDir = !process.argv[1] ? __dirname : (process.argv[1].endsWith('.js') ? dirname(process.argv[1]) : process.argv[1]);
+const ranJsDir = !Deno.args[0] ? __dirname : (Deno.args[0].endsWith('.js') ? dirname(Deno.args[0]) : Deno.args[0]);
 const getDataPath = browser => join(ranJsDir, 'gluon_data', browser);
 
 const getBrowserType = name => { // todo: not need this
