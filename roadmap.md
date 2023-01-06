@@ -3,7 +3,16 @@
 > **Note** |
 > Want more info on what some of these mean/are? Ask in [our Discord](https://discord.gg/RFtUCA8fST)!
 
+## Backlog
+- Shortcut (creation/deletion) API
+- Clipboard API
+- Custom protocol API
+- System tray API
+- Browser data (delete) API
+- Crash handling API
+
 ## v0.11.0
+- [X] Page title API
 - [ ] Resources/Injection API
 
 ## v0.10.0
