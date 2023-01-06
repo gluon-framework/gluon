@@ -151,7 +151,7 @@ delete window._gluonSend;
 
     const exposeKey = makeExposeKey(key);
 
-    API.on(exposeKey, args => func(args)); // handle IPC events
+    API.on(exposeKey, args => func(...args)); // handle IPC events
     evalInWindow(`Gluon.ipc['${key}'] = (...args) => Gluon.ipc.send('${exposeKey}', args)`); // add wrapper func to window
   };
 
