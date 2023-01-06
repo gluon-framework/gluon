@@ -75,7 +75,10 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
   const Window = {
     page: {
       eval: evalInWindow,
-      loaded: pageLoadPromise
+      loaded: pageLoadPromise,
+
+      get title() { return evalInWindow('document.title'); },
+      set title(val) { return evalInWindow(`document.title = \`${val}\``); }
     },
 
     ipc: IPC,
