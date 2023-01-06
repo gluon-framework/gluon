@@ -43,6 +43,17 @@ type IPCApi = {
   ): void,
 
   /**
+   * Unsubscribe an IPC event listener callback with a specific type.
+   */
+  removeListener(
+    /** Type of event which was subscribed to. */
+    type: string,
+
+    /** Callback function to unsubscribe. */
+    callback: Function
+  ),
+
+  /**
    * Expose a Node function to the web context, acts as a wrapper around IPC events.
    * Can be ran in window with Gluon.ipc[key](...args)
    */
