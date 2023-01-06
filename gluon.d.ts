@@ -9,7 +9,10 @@ type PageApi = {
   ) => Promise<any>,
 
   /** Promise for waiting until the page has loaded. */
-  loaded: Promise<void>
+  loaded: Promise<void>,
+
+  /** Get or set the title of the page (async) */
+  title: Promise<string>
 };
 
 type IPCApi = {
