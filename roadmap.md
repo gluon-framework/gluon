@@ -20,6 +20,8 @@
 - [X] Fix some IPC bugs
 - [X] Fix Firefox sometimes erroring out
 - [X] Error handling for Page.eval
+- [ ] IPC Store API
+- [ ] New local file loading/handling API
 
 ## v0.10.0
 - [X] Rewrite data path generation
