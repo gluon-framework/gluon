@@ -10,10 +10,16 @@
 - System tray API
 - Browser data (delete) API
 - Crash handling API
+- Resources/Injection API
+
 
 ## v0.11.0
 - [X] Page title API
-- [ ] Resources/Injection API
+- [X] Force browser open option
+- [X] Fix first run dialogs opening for Chromium
+- [X] Fix some IPC bugs
+- [X] Fix Firefox sometimes erroring out
+- [X] Error handling for Page.eval
 
 ## v0.10.0
 - [X] Rewrite data path generation
