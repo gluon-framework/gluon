@@ -19,6 +19,7 @@
 - [X] Fix first run dialogs opening for Chromium
 - [X] Fix some IPC bugs
 - [X] Fix Firefox sometimes erroring out
+- [X] Fix Chromium first run dialog showing
 - [X] Error handling for Page.eval
 - [ ] IPC Store API
 - [ ] New local file loading/handling API
