@@ -29,7 +29,7 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
   }
 
 
-  CDP.sendMessage('Runtime.enable', {}, sessionId); // enable runtime API
+  await CDP.sendMessage('Runtime.enable', {}, sessionId); // enable runtime API
 
   CDP.sendMessage('Runtime.addBinding', { // setup sending from window to Node via Binding
     name: '_gluonSend'
