@@ -1,7 +1,7 @@
 const rgb = (r, g, b, msg) => `\x1b[38;2;${r};${g};${b}m${msg}\x1b[0m`;
 global.log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args);
 
-process.versions.gluon = '0.10.1';
+process.versions.gluon = '0.11.0-alpha.1';
 
 import { join, dirname, delimiter, sep } from 'path';
 import { access, readdir } from 'fs/promises';
