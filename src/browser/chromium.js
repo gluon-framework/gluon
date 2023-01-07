@@ -13,6 +13,6 @@ export default async ({ browserName, browserPath, dataPath }, { url, windowSize 
     `--remote-debugging-pipe`,
     `--user-data-dir=${dataPath}`,
     windowSize ? `--window-size=${windowSize.join(',')}` : '',
-    ...`--new-window --disable-extensions --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication ${presets.perf}`.split(' ')
+    ...`--new-window --no-first-run --disable-extensions --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication ${presets.perf}`.split(' ')
   ], 'stdio', { browserName });
 };
