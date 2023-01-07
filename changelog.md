@@ -1,5 +1,9 @@
 # Gluon Changelog
 
+## v0.10.1
+- Fixed IPC exposed functions being called with arguments incorrectly
+- Fixed onLoad causing errors in Node
+
 ## [v0.10.0 - 2023-01-05](https://gluonjs.org/blog/gluon-v0.10/)
 
 ## [v0.9.0 - 2023-01-03](https://gluonjs.org/blog/gluon-v0.9/)
