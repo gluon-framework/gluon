@@ -215,8 +215,11 @@ type OpenOptions = {
   /** Function to evaluate in the web context once loaded. */
   onLoad?: Function,
 
-  /** Force Gluon to use a browser instead of automatically finding. */
+  /** Force Gluon to use a specific browser instead of automatically finding one itself. */
   forceBrowser?: Browser,
+
+  /** Force Gluon to use a specific browser engine instead of automatically finding a browser itself. */
+  forceEngine?: BrowserEngine
 };
 
 /**
