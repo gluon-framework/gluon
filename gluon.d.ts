@@ -168,7 +168,7 @@ type ControlsApi = {
 
   /** Show (unminimize) the browser window. */
   show(): Promise<void>
-}
+};
 
 type Window = {
   /** API for the page of the window. */
