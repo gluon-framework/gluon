@@ -187,7 +187,7 @@ export const open = async (url, { windowSize, onLoad, forceBrowser } = {}) => {
       (${onLoad.toString()})();
     })();`;
 
-    Browser.window.eval(toRun);
+    Browser.page.eval(toRun);
 
     await Browser.cdp.send(`Page.enable`);
     await Browser.cdp.send(`Page.addScriptToEvaluateOnNewDocument`, {
