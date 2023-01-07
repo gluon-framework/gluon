@@ -16,12 +16,18 @@ const __dirname = dirname(__filename);
 
 const browserPaths = ({
   win32: process.platform === 'win32' && { // windows paths are automatically prepended with program files, program files (x86), and local appdata if a string, see below
-    chrome: join('Google', 'Chrome', 'Application', 'chrome.exe'),
+    chrome: [
+      join('Google', 'Chrome', 'Application', 'chrome.exe'),
+      join(process.env.USERPROFILE, 'scoop', 'apps', 'googlechrome', 'current', 'chrome.exe')
+    ],
     chrome_beta: join('Google', 'Chrome Beta', 'Application', 'chrome.exe'),
     chrome_dev: join('Google', 'Chrome Dev', 'Application', 'chrome.exe'),
     chrome_canary: join('Google', 'Chrome SxS', 'Application', 'chrome.exe'),
 
-    chromium: join('Chromium', 'Application', 'chrome.exe'),
+    chromium: [
+      join('Chromium', 'Application', 'chrome.exe'),
+      join(process.env.USERPROFILE, 'scoop', 'apps', 'chromium', 'current', 'chrome.exe')
+    ],
 
     edge: join('Microsoft', 'Edge', 'Application', 'msedge.exe'),
     edge_beta: join('Microsoft', 'Edge Beta', 'Application', 'msedge.exe'),
@@ -31,7 +37,10 @@ const browserPaths = ({
     thorium: join('Thorium', 'Application', 'thorium.exe'),
     brave: join('BraveSoftware', 'Brave-Browser', 'Application', 'brave.exe'),
 
-    firefox: join('Mozilla Firefox', 'firefox.exe'),
+    firefox: [
+      join('Mozilla Firefox', 'firefox.exe'),
+      join(process.env.USERPROFILE, 'scoop', 'apps', 'firefox', 'current', 'firefox.exe')
+    ],
     firefox_developer: join('Firefox Developer Edition', 'firefox.exe'),
     firefox_nightly: join('Firefox Nightly', 'firefox.exe'),
 
@@ -83,15 +92,15 @@ const browserPaths = ({
 
 if (process.platform === 'win32') { // windows: automatically generate env-based paths if not arrays
   for (const browser in browserPaths) {
-    if (!Array.isArray(browserPaths[browser])) {
-      const basePath = browserPaths[browser];
+    const isArray = Array.isArray(browserPaths[browser]);
+    const basePath = isArray ? browserPaths[browser][0] : browserPaths[browser];
 
-      browserPaths[browser] = [
-        join(process.env.PROGRAMFILES, basePath),
-        join(process.env.LOCALAPPDATA, basePath),
-        join(process.env['PROGRAMFILES(x86)'], basePath)
-      ];
-    }
+    browserPaths[browser] = [
+      join(process.env.PROGRAMFILES, basePath),
+      join(process.env.LOCALAPPDATA, basePath),
+      join(process.env['PROGRAMFILES(x86)'], basePath),
+      ...(isArray ? browserPaths[browser].slice(1) : [])
+    ];
   }
 }
 
