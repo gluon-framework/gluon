@@ -35,10 +35,15 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
     name: '_gluonSend'
   }, sessionId);
 
-  const evalInWindow = async func => (await CDP.sendMessage(`Runtime.evaluate`, {
-    expression: typeof func === 'string' ? func : `(${func.toString()})()`
-  }, sessionId)).result.value;
+  const evalInWindow = async func => {
+    const reply = await CDP.sendMessage(`Runtime.evaluate`, {
+      expression: typeof func === 'string' ? func : `(${func.toString()})()`
+    }, sessionId);
 
+    if (reply.exceptionDetails) return new Error(reply.exceptionDetails.text);
+
+    return reply.result?.value ?? reply;
+  };
 
   const [ ipcMessageCallback, injectIPC, IPC ] = await IPCApi({
     browserName,
@@ -49,7 +54,6 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
     evalOnNewDocument: source => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', { source }, sessionId),
     pageLoadPromise: new Promise(res => frameLoadCallback = res)
   });
-
   onWindowMessage = ipcMessageCallback;
 
   log('finished setup');
