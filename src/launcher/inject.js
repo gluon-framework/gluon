@@ -58,7 +58,7 @@ export default async (CDP, proc, injectionType = 'browser', { browserName, openi
       expression: typeof func === 'string' ? func : `(${func.toString()})()`
     }, sessionId);
 
-    if (reply.exceptionDetails) return new Error(reply.result?.description ?? reply.exceptionDetails.text);
+    if (reply.exceptionDetails) return new (global[reply.result?.className] ?? Error)((reply.result?.description?.split(':').slice(1).join(':').trim() ?? reply.exceptionDetails.text) + '\n');
 
     return reply.result?.value ?? reply;
   };
