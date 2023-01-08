@@ -95,6 +95,12 @@ type IPCApi = {
 
   /** IPC Store API. */
   store: IPCStoreApi,
+
+  /**
+   * Expose a Node function to the web context, acts as a wrapper around IPC events.
+   * Can be ran in window with Gluon.ipc[key](...args)
+   */
+  [key: string]: any,
 };
 
 type CDPApi = {
