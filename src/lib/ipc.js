@@ -179,11 +179,11 @@ delete window._gluonSend;
   API.unexpose = unexpose;
 
   API = new Proxy(API, { // setter and deleter API
-    set(obj, key, value) {
+    set(_obj, key, value) {
       expose(key, value);
     },
 
-    deleteProperty(obj, key) {
+    deleteProperty(_obj, key) {
       unexpose(key);
     }
   });
