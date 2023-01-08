@@ -3,7 +3,26 @@ import IPCApi from '../lib/ipc.js';
 import IdleApi from '../api/idle.js';
 import ControlsApi from '../api/controls.js';
 
-export default async (CDP, proc, injectionType = 'browser', { browserName } = { browserName: 'unknown' }) => {
+const acquireTarget = async (CDP, filter = () => true) => {
+  let target;
+
+  log('acquiring target...');
+
+  while (!target) {
+    process.stdout.write('.');
+    target = (await CDP.sendMessage('Target.getTargets')).targetInfos.filter(x => x.type === 'page').filter(filter)[0];
+    if (!target) await new Promise(res => setTimeout(res, 200));
+  }
+
+  console.log();
+
+  return (await CDP.sendMessage('Target.attachToTarget', {
+    targetId: target.targetId,
+    flatten: true
+  })).sessionId;
+};
+
+export default async (CDP, proc, injectionType = 'browser', { browserName, openingLocal, localUrl, url, closeHandlers }) => {
   let pageLoadCallback, pageLoadPromise = new Promise(res => pageLoadCallback = res);
   let frameLoadCallback = () => {}, onWindowMessage = () => {};
   CDP.onMessage(msg => {
@@ -23,14 +42,7 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
   const browserEngine = browserInfo.jsVersion.startsWith('1.') ? 'firefox' : 'chromium';
 
   let sessionId;
-  if (injectionType === 'browser') { // connected to browser itself, need to get and attach to a target
-    const target = (await CDP.sendMessage('Target.getTargets')).targetInfos[0];
-
-    sessionId = (await CDP.sendMessage('Target.attachToTarget', {
-      targetId: target.targetId,
-      flatten: true
-    })).sessionId;
-  }
+  if (injectionType === 'browser') sessionId = await acquireTarget(CDP, target => target.url !== 'about:blank');
 
 
   await CDP.sendMessage('Runtime.enable', {}, sessionId); // enable runtime API
