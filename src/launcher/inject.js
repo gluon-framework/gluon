@@ -10,7 +10,11 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
     if (msg.method === 'Runtime.bindingCalled' && msg.params.name === '_gluonSend') onWindowMessage(JSON.parse(msg.params.payload));
     if (msg.method === 'Page.frameStoppedLoading') frameLoadCallback(msg.params);
     if (msg.method === 'Page.loadEventFired') pageLoadCallback();
-    if (msg.method === 'Runtime.executionContextCreated') injectIPC(); // ensure IPC injection again
+    if (msg.method === 'Runtime.executionContextCreated') {
+      try {
+        injectIPC(); // ensure IPC injection again
+      } catch { }
+    }
   });
 
   const browserInfo = await CDP.sendMessage('Browser.getVersion');
