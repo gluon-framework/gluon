@@ -28,8 +28,8 @@ type IPCStoreApi = {
     key: string,
 
     /** Value to set. */
-    value: any
-  ): void,
+    value: T
+  ): T,
 
   /** Get or set a key from the IPC Store (has to be serializable to JSON). */
   [key: string]: any,
