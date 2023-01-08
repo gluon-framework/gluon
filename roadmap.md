@@ -23,7 +23,8 @@
 - [X] Fix Chromium first run dialog showing
 - [X] Error handling for Page.eval
 - [X] IPC Store API
-- [ ] New local file loading/handling API
+- [X] Massive reliability improvements
+- [X] New local file loading/handling API
 
 ## v0.10.0
 - [X] Rewrite data path generation
