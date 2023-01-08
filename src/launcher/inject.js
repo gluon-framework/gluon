@@ -64,6 +64,7 @@ export default async (CDP, proc, injectionType = 'browser', { browserName } = { 
 
   evalInWindow('document.readyState').then(readyState => { // check if already loaded, if so trigger page load promise
     if (readyState === 'complete' || readyState === 'ready') pageLoadCallback();
+    frameLoadCallback();
   });
 
 
