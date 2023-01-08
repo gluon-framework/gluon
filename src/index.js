@@ -3,7 +3,7 @@ global.log = (...args) => console.log(`[${rgb(88, 101, 242, 'Gluon')}]`, ...args
 
 process.versions.gluon = '0.11.0-alpha.7';
 
-import { join, dirname, delimiter, sep } from 'path';
+import { join, dirname, delimiter, sep, resolve, isAbsolute } from 'path';
 import { access, readdir } from 'fs/promises';
 import { fileURLToPath } from 'url';
 
@@ -183,9 +183,10 @@ const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
 
   const openingLocal = !url.includes('://');
   const localUrl = browserType === 'firefox' ? `http://localhost:${generatePort()}` : 'https://gluon.local';
+  const basePath = isAbsolute(url) ? url : join(ranJsDir, url);
 
   const closeHandlers = [];
-  if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalServer({ localUrl, url }));
+  if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalServer({ localUrl, url: basePath }));
 
   const Window = await (browserType === 'firefox' ? Firefox : Chromium)({
     dataPath,
@@ -195,7 +196,7 @@ const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
     windowSize
   }, {
     browserName: browserFriendlyName,
-    url,
+    url: openingLocal ? basePath : url,
     localUrl,
     openingLocal,
     closeHandlers
