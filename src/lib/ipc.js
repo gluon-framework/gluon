@@ -260,7 +260,6 @@ delete window._gluonSend;
   });
 
   API.on('web store change', ({ key, value }) => {
-    console.log('web store change', key, value);
     if (value === undefined) delete _store[key];
       else _store[key] = value;
   });
