@@ -69,21 +69,19 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
       attempt();
     });
 
-    const targets = await continualTrying(() => new Promise((resolve, reject) => get(`http://127.0.0.1:${port}/json/list`, res => {
+    const target = await continualTrying(() => new Promise((resolve, reject) => get(`http://127.0.0.1:${port}/json/list`, res => {
       let body = '';
       res.on('data', chunk => body += chunk.toString());
       res.on('end', () => {
         try {
-          resolve(JSON.parse(body))
+          const targets = JSON.parse(body);
+          const target = targets.find(x => x.type === 'browser');
+          return target ? resolve(target) : reject();
         } catch {
           reject();
         }
       });
     }).on('error', reject)));
-
-    console.log();
-
-    const target = targets[0];
 
     log('got target', target);
 
