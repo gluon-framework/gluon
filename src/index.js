@@ -10,6 +10,8 @@ import { fileURLToPath } from 'url';
 import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
 
+import LocalServer from './lib/local/server.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -164,6 +166,9 @@ const getBrowserType = name => { // todo: not need this
   return 'chromium';
 };
 
+const portRange = [ 10000, 60000 ];
+const generatePort = () => (Math.floor(Math.random() * (portRange[1] - portRange[0] + 1)) + portRange[0]);
+
 const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
   const [ browserPath, browserName ] = await findBrowserPath(forceBrowser, forceEngine);
   const browserFriendlyName = getFriendlyName(browserName);
@@ -176,13 +181,24 @@ const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
   log('found browser', browserName, `(${browserType} based)`, 'at path:', browserPath);
   log('data path:', dataPath);
 
+  const openingLocal = !url.includes('://');
+  const localUrl = browserType === 'firefox' ? `http://localhost:${generatePort()}` : 'https://gluon.local';
+
+  const closeHandlers = [];
+  if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalServer({ localUrl, url }));
+
   const Window = await (browserType === 'firefox' ? Firefox : Chromium)({
-    browserName: browserFriendlyName,
     dataPath,
     browserPath
   }, {
-    url,
+    url: openingLocal ? localUrl : url,
     windowSize
+  }, {
+    browserName: browserFriendlyName,
+    url,
+    localUrl,
+    openingLocal,
+    closeHandlers
   });
 
   return Window;

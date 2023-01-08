@@ -4,7 +4,7 @@ import { join } from 'path';
 import StartBrowser from '../launcher/start.js';
 
 
-export default async ({ browserName, browserPath, dataPath }, { url, windowSize }) => {
+export default async ({ browserPath, dataPath }, { url, windowSize }, extra) => {
   await mkdir(dataPath, { recursive: true });
   await writeFile(join(dataPath, 'user.js'), `
 user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
@@ -78,6 +78,6 @@ html:not([tabsintitlebar="true"]) .tab-icon-image {
     `-profile`, dataPath,
     `-new-window`, url,
     `-new-instance`,
-    `-no-remote`
-  ], 'websocket', { browserName });
+    `-no-remote`,
+  ], 'websocket', extra);
 };

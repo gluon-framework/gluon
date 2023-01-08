@@ -7,12 +7,12 @@ const presets = { // Presets from OpenAsar
   'memory': '--in-process-gpu --js-flags="--lite-mode --optimize_for_size --wasm_opt --wasm_lazy_compilation --wasm_lazy_validation --always_compact" --renderer-process-limit=2 --enable-features=QuickIntensiveWakeUpThrottlingAfterLoading' // Less (?) memory usage
 };
 
-export default async ({ browserName, browserPath, dataPath }, { url, windowSize }) => {
+export default async ({ browserPath, dataPath }, { url, windowSize }, extra) => {
   return await StartBrowser(browserPath, [
     `--app=${url}`,
     `--remote-debugging-pipe`,
     `--user-data-dir=${dataPath}`,
     windowSize ? `--window-size=${windowSize.join(',')}` : '',
     ...`--new-window --no-first-run --disable-extensions --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication ${presets.perf}`.split(' ')
-  ], 'stdio', { browserName });
+  ], 'stdio', extra);
 };

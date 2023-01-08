@@ -1,4 +1,5 @@
 import IPCApi from '../lib/ipc.js';
+import LocalCDP from '../lib/local/cdp.js';
 
 import IdleApi from '../api/idle.js';
 import ControlsApi from '../api/controls.js';
@@ -44,6 +45,7 @@ export default async (CDP, proc, injectionType = 'browser', { browserName, openi
   let sessionId;
   if (injectionType === 'browser') sessionId = await acquireTarget(CDP, target => target.url !== 'about:blank');
 
+  if (openingLocal && browserEngine === 'chromium') await LocalCDP(CDP, { sessionId, localUrl, url });
 
   await CDP.sendMessage('Runtime.enable', {}, sessionId); // enable runtime API
 
@@ -92,7 +94,6 @@ export default async (CDP, proc, injectionType = 'browser', { browserName, openi
     jsEngine: generateVersionInfo(browserEngine === 'chromium' ? 'v8' : 'spidermonkey', browserInfo.jsVersion)
   };
 
-  const closeHandlers = [];
   const Window = {
     page: {
       eval: evalInWindow,
