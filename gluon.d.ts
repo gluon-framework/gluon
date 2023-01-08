@@ -15,6 +15,26 @@ type PageApi = {
   title: Promise<string>
 };
 
+type IPCStoreApi = {
+  /** Get a key from the IPC store. */
+  get(
+    /** Key to get. */
+    key: string
+  ): any,
+
+  /** Set a key to the provided value in the IPC store (has to be serializable to JSON). */
+  set<T>(
+    /** Key to set to. */
+    key: string,
+
+    /** Value to set. */
+    value: any
+  ): void,
+
+  /** Get or set a key from the IPC Store (has to be serializable to JSON). */
+  [key: string]: any,
+};
+
 type IPCApi = {
   /**
    * Send an IPC event to the web context.
@@ -72,6 +92,9 @@ type IPCApi = {
     /** Key name to unexpose (remove). */
     key: string
   ): void,
+
+  /** IPC Store API. */
+  store: IPCStoreApi,
 };
 
 type CDPApi = {
