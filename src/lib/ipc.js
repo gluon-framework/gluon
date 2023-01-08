@@ -79,6 +79,49 @@ window.Gluon = {
   },
 };
 
+const _store = {};
+const updateBackend = (key, value) => { // update backend with a key/value change
+  Gluon.ipc.send('web store change', { key, value });
+};
+
+Gluon.ipc.store = new Proxy({
+  get: (key) => {
+    return _store[key];
+  },
+
+  set: (key) => {
+    _store[key] = value;
+
+    updateBackend(key, value);
+    return value;
+  },
+
+  keys: () => Object.keys(_store)
+}, {
+  get(_obj, key) {
+    return _store[key];
+  },
+
+  set(_obj, key, value) {
+    _store[key] = value;
+
+    updateBackend(key, value);
+    return value;
+  },
+
+  deleteProperty(_obj, key) {
+    delete _store[key];
+
+    updateBackend(key, undefined);
+    return;
+  }
+});
+
+Gluon.ipc.on('backend store change', ({ key, value }) => {
+  if (value === undefined) delete _store[key];
+    else _store[key] = value;
+});
+
 delete window._gluonSend;
 })();`;
 
@@ -177,6 +220,50 @@ delete window._gluonSend;
   };
 
   API.unexpose = unexpose;
+
+  const _store = {};
+  const updateWeb = (key, value) => { // update web with a key/value change
+    API.send('backend store change', { key, value });
+  };
+
+  API.store = new Proxy({
+    get: (key) => {
+      return _store[key];
+    },
+
+    set: (key) => {
+      _store[key] = value;
+
+      updateWeb(key, value);
+      return value;
+    },
+
+    keys: () => Object.keys(_store)
+  }, {
+    get(_obj, key) {
+      return _store[key];
+    },
+
+    set(_obj, key, value) {
+      _store[key] = value;
+
+      updateWeb(key, value);
+      return value;
+    },
+
+    deleteProperty(_obj, key) {
+      delete _store[key];
+
+      updateWeb(key, undefined);
+      return;
+    }
+  });
+
+  API.on('web store change', ({ key, value }) => {
+    console.log('web store change', key, value);
+    if (value === undefined) delete _store[key];
+      else _store[key] = value;
+  });
 
   API = new Proxy(API, { // setter and deleter API
     set(_obj, key, value) {
