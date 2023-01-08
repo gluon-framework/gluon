@@ -11,6 +11,7 @@
 - Browser data (delete) API
 - Crash handling API
 - Resources/Injection API
+- Log file
 
 
 ## v0.11.0
@@ -21,7 +22,7 @@
 - [X] Fix Firefox sometimes erroring out
 - [X] Fix Chromium first run dialog showing
 - [X] Error handling for Page.eval
-- [ ] IPC Store API
+- [X] IPC Store API
 - [ ] New local file loading/handling API
 
 ## v0.10.0
