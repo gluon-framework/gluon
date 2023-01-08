@@ -51,7 +51,7 @@ type IPCApi = {
 
     /** Callback function to unsubscribe. */
     callback: Function
-  ),
+  ): void,
 
   /**
    * Expose a Node function to the web context, acts as a wrapper around IPC events.
@@ -71,7 +71,7 @@ type IPCApi = {
   unexpose(
     /** Key name to unexpose (remove). */
     key: string
-  )
+  ): void,
 };
 
 type CDPApi = {
