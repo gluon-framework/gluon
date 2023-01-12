@@ -117,7 +117,7 @@ type CDPApi = {
     params?: Object,
 
     /** Send session ID with the command (default true).
-    @defaultValue true */
+    @default true */
     useSessionId?: boolean
   ): Promise<any>
 };
