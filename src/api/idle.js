@@ -1,10 +1,10 @@
 import { exec } from 'https://deno.land/std@0.170.0/node/child_process.ts';
 
-const killProcesses = async pids => process.platform !== 'win32' ? Promise.resolve('') : new Promise(resolve => exec(`taskkill /F ${pids.map(x => `/PID ${x}`).join(' ')}`, (e, out) => resolve(out)));
+const killProcesses = async pids => Deno.build.os !== 'windows' ? Promise.resolve('') : new Promise(resolve => exec(`taskkill /F ${pids.map(x => `/PID ${x}`).join(' ')}`, (e, out) => resolve(out)));
 
-export default async (CDP, { browserType }) => {
-  if (browserType !== 'chromium') { // current implementation is for chromium-based only
-    const warning = () => log(`Warning: Idle API is currently only for Chromium (running on ${browserType})`);
+export default async (CDP, { browserEngine, closeHandlers }) => {
+  if (browserEngine !== 'chromium') { // current implementation is for chromium-based only
+    const warning = () => log(`Warning: Idle API is currently only for Chromium (running on ${browserEngine})`);
 
     return {
       hibernate: warning,
@@ -44,7 +44,7 @@ export default async (CDP, { browserType }) => {
   let wakeUrl, hibernating = false;
   const hibernate = async () => { // hibernate - crashing chromium internally to save max memory. users will see a crash/gone wrong page but we hopefully "reload" quick enough once visible again for not much notice.
     if (hibernating) return;
-    if (process.platform !== 'win32') return sleep(); // sleep instead - full hibernation is windows only for now due to needing to do native things
+    if (Deno.build.os !== 'windows') return sleep(); // sleep instead - full hibernation is windows only for now due to needing to do native things
 
     hibernating = true;
 
@@ -129,6 +129,7 @@ export default async (CDP, { browserType }) => {
     log('stopped auto idle');
   };
 
+
   let lastScreenshot, takingScreenshot = false;
   const screenshotInterval = setInterval(async () => {
     if (takingScreenshot) return;
@@ -140,11 +141,14 @@ export default async (CDP, { browserType }) => {
 
   getScreenshot().then(x => lastScreenshot = x);
 
+  closeHandlers.push(() => {
+    clearInterval(screenshotInterval);
+    stopAuto();
+  });
+
+
   log(`idle API active (window id: ${windowId})`);
   if (autoEnabled) startAuto();
-
-  const setWindowState = async state => await CDP.send('Browser.setWindowBounds', { windowId, bounds: { windowState: state }});
-
 
   return {
     hibernate,

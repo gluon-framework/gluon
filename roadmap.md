@@ -3,9 +3,15 @@
 > **Note** |
 > Want more info on what some of these mean/are? Ask in [our Discord](https://discord.gg/RFtUCA8fST)!
 
+## v0.11.0
+- [ ] Resources/Injection API
+
 ## v0.10.0
-- [ ] Resources Window API
-- [ ] On/await load Window API
+- [X] Rewrite data path generation
+- [X] Rewrite browser path generation for Windows and add more browsers
+- [X] Clean up logging, minor internal cleanup/simplifying/rewriting
+- [X] IPC v2 (Expose API)
+- [X] Await page load API
 
 ## v0.9.0
 - [X] Browser version info API

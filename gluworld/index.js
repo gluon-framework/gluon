@@ -1,15 +1,28 @@
-import * as Gluon from '../src/index.js';
+import * as Gluon from '../mod.ts';
 
-import { fileURLToPath, pathToFileURL } from 'https://deno.land/std@0.170.0/node/url.ts';
-import { join, dirname } from 'https://deno.land/std@0.170.0/node/path.ts';
+const __dirname = new URL(".", import.meta.url).pathname;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const dirSize = async dir => {
+  const files = Array.from(await Deno.readDir(dir, { withFileTypes: true }));
+
+  const paths = files.map(async file => {
+    const path = `${dir}/${file.name}`;
+
+    if (file.isDirectory()) return await dirSize(path);
+    if (file.isFile()) return (await Deno.stat(path)).size;
+
+    return 0;
+  });
+
+  return (await Promise.all(paths)).flat(Infinity).reduce((acc, x) => acc + x, 0);
+};
 
 (async () => {
-  if (Deno.args.length > 0) { // use argv as browsers to use
-    for (const forceBrowser of Deno.args) {
-      await Gluon.open(pathToFileURL(join(__dirname, 'index.html')).href, {
+  const browsers = Deno.args.slice(1).filter(x => !x.startsWith('-'));
+
+  if (browsers.length > 0) { // use argv as browsers to use
+    for (const forceBrowser of browsers) {
+      await Gluon.open(new URL(`file://${__dirname}/index.html`).href, {
         windowSize: [ 800, 500 ],
         forceBrowser
       });
@@ -18,7 +31,7 @@ const __dirname = dirname(__filename);
     return;
   }
 
-  const Browser = await Gluon.open(pathToFileURL(join(__dirname, 'index.html')).href, {
+  const Browser = await Gluon.open(new URL(`file://${__dirname}/index.html`).href, {
     windowSize: [ 800, 500 ]
   });
 
