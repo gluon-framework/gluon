@@ -249,6 +249,12 @@ type OpenOptions = {
 
   /** Force Gluon to use a specific browser engine instead of automatically finding a browser itself. */
   forceEngine?: BrowserEngine
+
+  /** 
+   * Ask Gluon to provide Widevine to the browser.
+   * @default true
+   */
+  widevine?: boolean,
 };
 
 /**
@@ -261,3 +267,19 @@ export function open(
   /** Additional options for opening. */
   options: OpenOptions
 ): Promise<Window>;
+
+type EnsureWidevineOptions = {
+  /** Force Gluon to use a specific browser instead of automatically finding one itself. */
+  forceBrowser?: Browser;
+
+  /** Force Gluon to use a specific browser engine instead of automatically finding a browser itself. */
+  forceEngine?: BrowserEngine;
+};
+
+/**
+ * Ensures that Widevine is installed for the relevant browser.
+ * If it is not, installs it.
+ */
+export function ensureWidevine(
+  options: EnsureWidevineOptions
+): Promise<void>;

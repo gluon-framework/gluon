@@ -11,6 +11,7 @@ import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
 
 import LocalServer from './lib/local/server.js';
+import { ensureWidevine as ensureWidevineRaw } from './launcher/widevine.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -169,14 +170,29 @@ const getBrowserType = name => { // todo: not need this
 const portRange = [ 10000, 60000 ];
 const generatePort = () => (Math.floor(Math.random() * (portRange[1] - portRange[0] + 1)) + portRange[0]);
 
-const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
-  const [ browserPath, browserName ] = await findBrowserPath(forceBrowser, forceEngine);
+const getBrowserData = async ({forceBrowser, forceEngine}) => {
+  const [browserPath, browserName] = await findBrowserPath(
+    forceBrowser,
+    forceEngine
+  );
   const browserFriendlyName = getFriendlyName(browserName);
 
-  if (!browserPath) return log('failed to find a good browser install');
+  if (!browserPath) return log("failed to find a good browser install");
 
   const dataPath = getDataPath(browserName);
   const browserType = getBrowserType(browserName);
+
+  return {
+    browserPath, browserName, browserFriendlyName, dataPath, browserType
+  };
+}
+
+const startBrowser = async (url, { windowSize, forceBrowser, forceEngine, widevine = true }) => {
+  const browserData = await getBrowserData({forceBrowser, forceEngine});
+  if (!browserData) return;
+  const {
+    browserPath, browserName, browserFriendlyName, dataPath, browserType
+  } = browserData;
 
   log('found browser', browserName, `(${browserType} based)`, 'at path:', browserPath);
   log('data path:', dataPath);
@@ -187,6 +203,11 @@ const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
 
   const closeHandlers = [];
   if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalServer({ localUrl, url: basePath }));
+
+  // firefox is clever enough to sort widevine itself
+  // and this installer doesnt work on it anyway
+  if (widevine && browserType !== "firefox")
+    await ensureWidevineRaw(dataPath);
 
   const Window = await (browserType === 'firefox' ? Firefox : Chromium)({
     dataPath,
@@ -205,10 +226,10 @@ const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
   return Window;
 };
 
-export const open = async (url, { windowSize, onLoad, forceBrowser, forceEngine } = {}) => {
+export const open = async (url, { windowSize, onLoad, forceBrowser, forceEngine, widevine } = {}) => {
   log('starting browser...');
 
-  const Browser = await startBrowser(url, { windowSize, forceBrowser, forceEngine });
+  const Browser = await startBrowser(url, { windowSize, forceBrowser, forceEngine, widevine });
 
   if (onLoad) {
     const toRun = `(() => {
@@ -227,3 +248,10 @@ export const open = async (url, { windowSize, onLoad, forceBrowser, forceEngine 
 
   return Browser;
 };
+
+export const ensureWidevine = async ({forceBrowser, forceEngine} = {}) => {
+  const browserData = await getBrowserData({ forceBrowser, forceEngine });
+  if (!browserData) return;
+
+  if (browserData.browserType !== "firefox") await ensureWidevineRaw(browserData.dataPath);
+}

@@ -17,6 +17,7 @@
   "homepage": "https://github.com/gluon-framework/gluon#readme",
   "type": "module",
   "dependencies": {
+    "unzipper": "^0.10.11",
     "ws": "^8.11.0"
   }
 }
