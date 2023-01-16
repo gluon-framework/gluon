@@ -12,7 +12,15 @@
 - Crash handling API
 - Resources/Injection API
 - Log file
+- Automatically remember window position/size between starts (disableable)
 
+
+## v0.12.0
+- [ ] Idle improved using `WebLifecycleState`
+- [ ] Better looking on startup
+- [ ] Initial system tray API (Windows only for WIP)
+- [ ] Frameless windows (Windows only for WIP)
+- [ ] Hide window completely (Windows only for WIP)
 
 ## v0.11.0
 - [X] Page title API
