@@ -69,23 +69,22 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
       attempt();
     });
 
-    const target = await continualTrying(() => new Promise((resolve, reject) => get(`http://127.0.0.1:${port}/json/list`, res => {
+    const wsUrl = await continualTrying(() => new Promise((resolve, reject) => get(`http://127.0.0.1:${port}/json/version`, res => {
       let body = '';
       res.on('data', chunk => body += chunk.toString());
       res.on('end', () => {
         try {
-          const targets = JSON.parse(body);
-          const target = targets.find(x => x.type === 'browser');
-          return target ? resolve(target) : reject();
+          const info = JSON.parse(body);
+          resolve(info.webSocketDebuggerUrl);
         } catch {
           reject();
         }
       });
     }).on('error', reject)));
 
-    log('got target', target);
+    log('got main process target websocket url:', wsUrl);
 
-    const ws = new WebSocket(target.webSocketDebuggerUrl);
+    const ws = new WebSocket(wsUrl);
     await new Promise(resolve => ws.on('open', resolve));
 
     ws.on('message', data => onMessage(data));
