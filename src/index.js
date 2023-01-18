@@ -6,6 +6,7 @@ import { join, dirname, delimiter, sep, resolve, isAbsolute } from 'path';
 import { access, readdir } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { log } from './lib/logger.js';
+import { getPort } from './lib/get-port.js';
 
 import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
@@ -175,9 +176,6 @@ const getBrowserType = name => { // todo: not need this
   return 'chromium';
 };
 
-const portRange = [ 10000, 60000 ];
-const generatePort = () => (Math.floor(Math.random() * (portRange[1] - portRange[0] + 1)) + portRange[0]);
-
 const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
   const [ browserPath, browserName ] = await findBrowserPath(forceBrowser, forceEngine);
   const browserFriendlyName = getFriendlyName(browserName);
@@ -190,8 +188,10 @@ const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
   log('found browser', browserName, `(${browserType} based)`, 'at path:', browserPath);
   log('data path:', dataPath);
 
+  const port = await getPort()
+
   const openingLocal = !url.includes('://');
-  const localUrl = browserType === 'firefox' ? `http://localhost:${generatePort()}` : 'https://gluon.local';
+  const localUrl = browserType === 'firefox' ? `http://localhost:${port}` : 'https://gluon.local';
   const basePath = isAbsolute(url) ? url : join(ranJsDir, url);
 
   const closeHandlers = [];

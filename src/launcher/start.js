@@ -1,12 +1,12 @@
 import { spawn } from 'child_process';
-import getPort from 'get-port';
+import { getPort } from '../lib/get-port.js';
 import { log } from '../lib/logger.js';
 
 import ConnectCDP from '../lib/cdp.js';
 import InjectInto from './inject.js';
 
 export default async (browserPath, args, transport, extra) => {
-  const port = transport === 'websocket' ? await getPort({port: 10000}) : null;
+  const port = transport === 'websocket' ? await getPort() : null;
 
   const proc = spawn(browserPath, [
     transport === 'stdio' ? `--remote-debugging-pipe` : `--remote-debugging-port=${port}`,
