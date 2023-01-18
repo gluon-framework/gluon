@@ -141,13 +141,22 @@ const findBrowserPath = async (forceBrowser, forceEngine) => {
     if (process.argv.includes('--' + x) || process.argv.includes('--' + x.split('_')[0])) return [ await getBrowserPath(x), x ];
   }
 
-  for (const x in browserPaths) {
-    const path = await getBrowserPath(x);
+  if (process.argv.some(x => x.startsWith('--browser='))) {
+    const given = process.argv.find(x => x.startsWith('--browser='));
+    const split = given.slice(given.indexOf('=') + 1).split(',');
+    const name = split[0];
+    const path = split.slice(1).join(',');
+
+    return [ path || await getBrowserPath(name), name ];
+  }
+
+  for (const name in browserPaths) {
+    const path = await getBrowserPath(name);
 
     if (path) {
-      if (forceEngine && getBrowserType(x) !== forceEngine) continue; // if forceEngine is set, ignore path if it isn't
+      if (forceEngine && getBrowserType(name) !== forceEngine) continue; // if forceEngine is set, ignore path if it isn't
 
-      return [ path, x ];
+      return [ path, name ];
     }
   }
 
