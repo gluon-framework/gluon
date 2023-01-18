@@ -3,12 +3,12 @@ process.versions.gluon = '0.12.0-alpha.0';
 import { join, dirname, delimiter, sep, resolve, isAbsolute } from 'path';
 import { access, readdir } from 'fs/promises';
 import { fileURLToPath } from 'url';
-import { log } from './lib/logger.js';
+import { log } from './logger.js';
 
-import Chromium from './browser/chromium.js';
-import Firefox from './browser/firefox.js';
+import Chromium from '../browser/chromium.js';
+import Firefox from '../browser/firefox.js';
 
-import LocalServer from './lib/local/server.js';
+import LocalServer from './local/server.js';
 
 
 const __filename = fileURLToPath(import.meta.url);

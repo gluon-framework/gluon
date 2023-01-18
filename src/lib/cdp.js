@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 import { get } from 'http';
-import { log } from '../utils/logger';
+import { log } from './logger';
 
 const logCDP = process.argv.includes('--cdp-logging');
 
