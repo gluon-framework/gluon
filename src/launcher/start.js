@@ -1,4 +1,5 @@
 import { spawn } from 'child_process';
+import { log } from '../utils/logger.js';
 
 import ConnectCDP from '../lib/cdp.js';
 import InjectInto from './inject.js';

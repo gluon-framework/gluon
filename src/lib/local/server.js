@@ -1,6 +1,7 @@
 import { basename, dirname, extname, join } from 'path';
 import { readFile } from 'fs/promises';
 import { createServer } from 'http';
+import { log } from '../../utils/logger';
 
 const generatePath = (pathname, indexFile) => {
   if (pathname === '/') return indexFile;
