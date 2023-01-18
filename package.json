@@ -17,7 +17,6 @@
   "homepage": "https://github.com/gluon-framework/gluon#readme",
   "type": "module",
   "dependencies": {
-    "get-port": "^6.1.2",
     "ws": "^8.11.0"
   }
 }
