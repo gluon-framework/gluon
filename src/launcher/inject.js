@@ -1,3 +1,5 @@
+import { log } from '../lib/logger.js';
+
 import IPCApi from '../lib/ipc.js';
 import LocalCDP from '../lib/local/cdp.js';
 

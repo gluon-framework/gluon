@@ -1,4 +1,5 @@
 import { exec } from 'child_process';
+import { log } from '../lib/logger';
 
 const killProcesses = async pids => new Promise(resolve => exec(process.platform !== 'win32' ? `kill -9 ${pids.join(' ')}` : `taskkill /F ${pids.map(x => `/PID ${x}`).join(' ')}`, (e, out) => resolve(out)));
 
