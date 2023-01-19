@@ -18,9 +18,6 @@ export default async (browserPath, args, transport, extra) => {
     stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe']
   });
 
-  proc.stdout.pipe(proc.stdout);
-  proc.stderr.pipe(proc.stderr);
-
   log(`connecting to CDP over ${transport === 'stdio' ? 'stdio pipe' : `websocket (${port})`}...`);
 
   let CDP;
