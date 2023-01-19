@@ -3,9 +3,9 @@ import { log } from '../lib/logger.js';
 
 const killProcesses = async pids => new Promise(resolve => exec(process.platform !== 'win32' ? `kill -9 ${pids.join(' ')}` : `taskkill /F ${pids.map(x => `/PID ${x}`).join(' ')}`, (e, out) => resolve(out)));
 
-export default async (CDP, { browserEngine, closeHandlers }) => {
-  if (browserEngine !== 'chromium') { // current implementation is for chromium-based only
-    const warning = () => log(`Warning: Idle API is currently only for Chromium (running on ${browserEngine})`);
+export default async (CDP, { browserType, closeHandlers }) => {
+  if (browserType !== 'chromium') { // current implementation is for chromium-based only
+    const warning = () => log(`Warning: Idle API is currently only for Chromium (running on ${browserType})`);
 
     return {
       hibernate: warning,

@@ -25,7 +25,7 @@ const acquireTarget = async (CDP, filter = () => true) => {
   })).sessionId;
 };
 
-export default async (CDP, proc, injectionType = 'browser', { browserName, openingLocal, localUrl, url, closeHandlers }) => {
+export default async (CDP, proc, injectionType = 'browser', { browserName, browserType, openingLocal, localUrl, url, closeHandlers }) => {
   let pageLoadCallback, pageLoadPromise = new Promise(res => pageLoadCallback = res);
   let frameLoadCallback = () => {}, onWindowMessage = () => {};
   CDP.onMessage(msg => {
@@ -42,12 +42,10 @@ export default async (CDP, proc, injectionType = 'browser', { browserName, openi
   const browserInfo = await CDP.sendMessage('Browser.getVersion');
   log('browser:', browserInfo.product);
 
-  const browserEngine = browserInfo.jsVersion.startsWith('1.') ? 'firefox' : 'chromium';
-
   let sessionId;
   if (injectionType === 'browser') sessionId = await acquireTarget(CDP, target => target.url !== 'about:blank');
 
-  if (openingLocal && browserEngine === 'chromium') await LocalCDP(CDP, { sessionId, localUrl, url });
+  if (openingLocal && browserType === 'chromium') await LocalCDP(CDP, { sessionId, localUrl, url });
 
   await CDP.sendMessage('Runtime.enable', {}, sessionId); // enable runtime API
 
@@ -68,7 +66,7 @@ export default async (CDP, proc, injectionType = 'browser', { browserName, openi
   const [ ipcMessageCallback, injectIPC, IPC ] = await IPCApi({
     browserName,
     browserInfo,
-    browserEngine
+    browserType
   }, {
     evalInWindow,
     evalOnNewDocument: source => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', { source }, sessionId),
@@ -92,8 +90,8 @@ export default async (CDP, proc, injectionType = 'browser', { browserName, openi
 
   const versions = {
     product: generateVersionInfo(browserName, browserInfo.product.split('/')[1]),
-    engine: generateVersionInfo(browserEngine, browserInfo.product.split('/')[1]),
-    jsEngine: generateVersionInfo(browserEngine === 'chromium' ? 'v8' : 'spidermonkey', browserInfo.jsVersion)
+    engine: generateVersionInfo(browserType, browserInfo.product.split('/')[1]),
+    jsEngine: generateVersionInfo(browserType === 'chromium' ? 'v8' : 'spidermonkey', browserInfo.jsVersion)
   };
 
   const Window = {
@@ -123,7 +121,7 @@ export default async (CDP, proc, injectionType = 'browser', { browserName, openi
 
   proc.on('close', Window.close);
 
-  Window.idle = await IdleApi(Window.cdp, { browserEngine, closeHandlers });
+  Window.idle = await IdleApi(Window.cdp, { browserType, closeHandlers });
   Window.controls = await ControlsApi(Window.cdp);
 
   return Window;
