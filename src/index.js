@@ -1,7 +1,3 @@
-import pkgJSON from '../package.json'
-
-process.versions.gluon = pkgJSON.version;
-
 import { join, dirname, delimiter, sep, resolve, isAbsolute } from 'path';
 import { access, readdir } from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -12,6 +8,7 @@ import Firefox from './browser/firefox.js';
 
 import LocalServer from './lib/local/server.js';
 
+process.versions.gluon = '0.12.0-alpha.0';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
