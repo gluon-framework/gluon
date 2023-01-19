@@ -8,7 +8,7 @@ import Firefox from './browser/firefox.js';
 
 import LocalServer from './lib/local/server.js';
 
-process.versions.gluon = '0.12.0-alpha.0';
+process.versions.gluon = '0.12.0-alpha.1';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
