@@ -137,13 +137,23 @@ type IdleAutoOptions = {
 };
 
 type IdleApi = {
-  /** Put the window into hibernation. */
+  /**
+   * Put the window into hibernation.
+   * Internally kills the browser to save the most resources possible. Loses page state.
+   */
   hibernate(): Promise<void>,
 
   /**
    * Put the window to sleep.
+   * Uses a screenshot of the page instead of the actual page. Loses page state.
    */
   sleep(): Promise<void>,
+
+  /**
+   * Freeze the window.
+   * Keeps the page but halts most execution and background work. Keeps page state.
+   */
+  freeze(): Promise<void>,
 
   /** Wake up the window from hibernation or sleep. */
   wake(): Promise<void>,
