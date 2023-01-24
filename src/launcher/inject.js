@@ -99,8 +99,10 @@ export default async (CDP, proc, injectionType = 'browser', { browserName, brows
       eval: evalInWindow,
       loaded: pageLoadPromise,
 
-      get title() { return evalInWindow('document.title'); },
-      set title(val) { return evalInWindow(`document.title = \`${val}\``); }
+      title: val => {
+        if (!val) return evalInWindow('document.title');
+        return evalInWindow(`document.title = \`${val}\``);
+      }
     },
 
     ipc: IPC,

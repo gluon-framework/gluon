@@ -11,8 +11,14 @@ type PageApi = {
   /** Promise for waiting until the page has loaded. */
   loaded: Promise<void>,
 
-  /** Get or set the title of the page (async) */
-  title: Promise<string>
+  /**
+   * Get or set the title of the page.
+   * Use no arguments to get the title, or provide a string to set it.
+   */
+  title: (
+    /** Set the page title to a new title. */
+    newTitle: string
+  ) => Promise<string>
 };
 
 type IPCStoreApi = {
