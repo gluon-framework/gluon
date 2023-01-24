@@ -16,8 +16,9 @@
 
 
 ## v0.12.0
-- [ ] Idle improved using `WebLifecycleState`
-- [ ] Better looking on startup
+- [X] Add freeze as an option to Idle API
+- [X] Minor stability/edge-case improvements
+- [X] Some API tweaks
 - [ ] Initial system tray API (Windows only for WIP)
 - [ ] Frameless windows (Windows only for WIP)
 - [ ] Hide window completely (Windows only for WIP)
