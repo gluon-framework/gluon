@@ -109,7 +109,17 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
     ipc: IPC,
 
     cdp: {
-      send: (method, params, useSessionId = true) => CDP.sendMessage(method, params, useSessionId ? sessionId : undefined)
+      send: (method, params, useSessionId = true) => CDP.sendMessage(method, params, useSessionId ? sessionId : undefined),
+      on: (method, handler, once = false) => {
+        const unhook = CDP.onMessage(msg => {
+          if (msg.method === method) {
+            handler(msg);
+            if (once) unhook();
+          }
+        });
+
+        return unhook;
+      }
     },
 
     close: () => {

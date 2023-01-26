@@ -179,7 +179,19 @@ type CDPApi = {
      * @default true
      */
     useSessionId?: boolean
-  ): Promise<any>
+  ): Promise<any>,
+
+  /**
+   * Hook into a specific CDP method being called.
+   * @returns Function to unhook/unsubscribe.
+   */
+  on(
+    /** Method of CDP command to hook into. */
+    method: string,
+
+    /** Callback to run when the given method is emitted. */
+    callback: (message: any) => void
+  ): (() => void)
 };
 
 type IdleAutoOptions = {
