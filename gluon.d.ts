@@ -3,10 +3,10 @@ type PageApi = {
    * Evaluate a string or function in the web context.
    * @returns Return value of expression given.
    */
-  eval: (
+  eval(
     /** String or function to evaluate. */
     expression: string|Function
-  ) => Promise<any>,
+  ): Promise<any>,
 
   /** Promise for waiting until the page has loaded. */
   loaded: Promise<void>,
@@ -15,10 +15,10 @@ type PageApi = {
    * Get or set the title of the page.
    * Use no arguments to get the title, or provide a string to set it.
    */
-  title: (
+  title(
     /** Set the page title to a new title. */
     newTitle: string
-  ) => Promise<string>
+  ): Promise<string>
 };
 
 type IPCStoreApi = {
@@ -122,8 +122,10 @@ type CDPApi = {
     /** Parameters of CDP command. */
     params?: Object,
 
-    /** Send session ID with the command (default true).
-    @default true */
+    /**
+     * Send session ID with the command (default true).
+     * @default true
+     */
     useSessionId?: boolean
   ): Promise<any>
 };
