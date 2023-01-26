@@ -1,3 +1,55 @@
+type V8CacheBuildOptions = {
+  /**
+   * Path to save the V8 Cache to. Defaults to v8Cache.json in Gluon's browser data.
+   */
+  path?: string,
+
+  /**
+   * Use eager compilation.
+   * @default true
+   */
+  eager?: Boolean,
+
+  /**
+   * URLs of scripts to cache. Defaults to automatically detecting currently loaded scripts in the page.
+   */
+  urls?: string[],
+
+  /**
+   * Reload the page to force script compilation.
+   * @default true
+   */
+  reload?: Boolean,
+
+  /**
+   * Include preload scripts in automatic detection.
+   * @default true
+   */
+  includePreload?: Boolean
+};
+
+type V8CacheApi = {
+  /** Build a V8 Cache. */
+  build(
+    /** Build options. */
+    options?: V8CacheBuildOptions
+  ),
+
+  /** Load a V8 Cache. */
+  load(
+    /**
+     * Path to load. Defaults to v8Cache.json in Gluon's browser data.
+     */
+    path?: string
+  ): Promise<boolean>
+
+  /** Check if a V8 Cache exists with a given path. */
+  exists(
+    /** Path to check. */
+    path: string
+  ): Promise<Boolean>
+};
+
 type PageApi = {
   /**
    * Evaluate a string or function in the web context.

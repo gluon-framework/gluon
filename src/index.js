@@ -206,7 +206,8 @@ const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
     localUrl,
     openingLocal,
     closeHandlers,
-    browserType
+    browserType,
+    dataPath
   });
 
   return Window;

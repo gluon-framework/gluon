@@ -5,6 +5,7 @@ import LocalCDP from '../lib/local/cdp.js';
 
 import IdleApi from '../api/idle.js';
 import ControlsApi from '../api/controls.js';
+import V8CacheApi from '../api/v8Cache.js';
 
 const acquireTarget = async (CDP, filter = () => true) => {
   let target;
@@ -25,7 +26,7 @@ const acquireTarget = async (CDP, filter = () => true) => {
   })).sessionId;
 };
 
-export default async (CDP, proc, injectionType = 'browser', { browserName, browserType, openingLocal, localUrl, url, closeHandlers }) => {
+export default async (CDP, proc, injectionType = 'browser', { dataPath, browserName, browserType, openingLocal, localUrl, url, closeHandlers }) => {
   let pageLoadCallback, pageLoadPromise = new Promise(res => pageLoadCallback = res);
   let frameLoadCallback = () => {}, onWindowMessage = () => {};
   CDP.onMessage(msg => {
@@ -125,6 +126,7 @@ export default async (CDP, proc, injectionType = 'browser', { browserName, brows
 
   Window.idle = await IdleApi(Window.cdp, { browserType, closeHandlers });
   Window.controls = await ControlsApi(Window.cdp);
+  Window.v8Cache = await V8CacheApi(Window.cdp, evalInWindow, { browserType, dataPath });
 
   return Window;
 };
