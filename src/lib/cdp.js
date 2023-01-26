@@ -129,13 +129,13 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
   }
 
   return {
-    onMessage: (_callback, once = false) => {
-      const callback = once ? msg => {
-        _callback(msg);
-        messageCallbacks.splice(messageCallbacks.indexOf(callback), 1); // remove self
-      } : _callback;
-
+    onMessage: (callback) => {
       messageCallbacks.push(callback);
+
+      // return function to unhook
+      return () => {
+        messageCallbacks.splice(messageCallbacks.indexOf(callback), 1);
+      };
     },
 
     sendMessage,
