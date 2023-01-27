@@ -2,6 +2,7 @@ import { basename, dirname, extname, join } from 'path';
 import { readFile } from 'fs/promises';
 import { createServer } from 'http';
 import { log } from '../logger.js';
+import mimeType from '../mimeType.js';
 
 const generatePath = (pathname, indexFile) => {
   if (pathname === '/') return indexFile;
@@ -18,15 +19,12 @@ export default async ({ url: givenPath, localUrl }) => {
   const server = createServer(async (req, res) => {
     const url = new URL(`http://localhost:${port}` + decodeURI(req.url));
     const path = join(basePath, generatePath(url.pathname, indexFile));
-
-    console.log('SERVER', url, path);
+    const ext = extname(path).slice(1);
 
     let error = false;
 
     const body = await readFile(path, 'utf8').catch(() => false);
     if (!body) error = 404;
-
-    console.log('SERVER', error);
 
     if (error) {
       res.writeHead(error);
@@ -34,7 +32,7 @@ export default async ({ url: givenPath, localUrl }) => {
     }
 
     res.writeHead(200, {
-
+      'Content-Type': mimeType(ext)
     });
 
     res.end(body, 'utf8');
