@@ -70,7 +70,18 @@ type PageApi = {
   title(
     /** Set the page title to a new title. */
     newTitle: string
-  ): Promise<string>
+  ): Promise<string>,
+
+  /**
+   * Reload the page.
+   */
+  reload(
+    /**
+     * Optionally ignore the cache for the reload.
+     * @default false
+    */
+    ignoreCache?: Boolean
+  )
 };
 
 type IPCStoreApi = {

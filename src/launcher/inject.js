@@ -103,6 +103,12 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
       title: val => {
         if (!val) return evalInWindow('document.title');
         return evalInWindow(`document.title = \`${val}\``);
+      },
+
+      reload: async (ignoreCache = false) => {
+        await Window.cdp.send('Page.reload', {
+          ignoreCache
+        });
       }
     },
 
