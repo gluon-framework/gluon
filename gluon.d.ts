@@ -193,11 +193,11 @@ type CDPApi = {
   ): Promise<any>,
 
   /**
-   * Hook into a specific CDP method being called.
+   * Hook into a specific CDP method being emitted.
    * @returns Function to unhook/unsubscribe.
    */
   on(
-    /** Method of CDP command to hook into. */
+    /** Method of CDP event to hook into. */
     method: string,
 
     /** Callback to run when the given method is emitted. */
