@@ -91,7 +91,7 @@ export default async (CDP, evaluate, { browserType, dataPath }) => {
     return true;
   };
 
-  // try to load default ASAP
+  // try to load default ASAP in background
   load();
 
   return {
