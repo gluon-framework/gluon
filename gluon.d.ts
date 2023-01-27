@@ -210,7 +210,7 @@ type IdleAutoOptions = {
    * How long the window should be minimized before hibernating, in seconds.
    * @default 5
    */
-  timeMinimizedToHibernate?: Number
+  timeMinimizedToHibernate?: number
 };
 
 type IdleApi = {
@@ -279,6 +279,20 @@ type BrowserVersions = {
   jsEngine: VersionInfo
 };
 
+type WindowBounds = {
+  /** The offset from the left edge of the screen to the window in pixels. */
+  left?: number,
+
+  /** The offset from the top edge of the screen to the window in pixels. */
+  top?: number,
+
+  /** The window width in pixels. */
+  width?: number,
+
+  /** The window height in pixels. */
+  height?: number
+};
+
 type ControlsApi = {
   /** Minimize the browser window. */
   minimize(): Promise<void>,
@@ -289,8 +303,11 @@ type ControlsApi = {
    */
   maximize(): Promise<void>,
 
-  /** Show (unminimize) the browser window. */
-  show(): Promise<void>
+  /** Show (unminimize) the browser window and optionally set the bounds (position/size). */
+  show(
+    /** Set the bounds (position and/or size) of the browser window optionally as well. */
+    bounds?: WindowBounds
+  ): Promise<void>
 };
 
 type Window = {
