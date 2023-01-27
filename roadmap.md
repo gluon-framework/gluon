@@ -15,6 +15,11 @@
 - Automatically remember window position/size between starts (disableable)
 
 
+## v0.13.0
+- [ ] Initial system tray API (Windows only for WIP)
+- [ ] Frameless windows (Windows only for WIP)
+- [ ] Hide window completely (Windows only for WIP)
+
 ## v0.12.0
 - [X] Add new freezing API to Idle API
 - [X] Minor stability/edge-case improvements
@@ -22,9 +27,6 @@
 - [X] Experimental V8 Cache API
 - [X] Massive startup time speedup (~1s -> ~0.4s)
 - [X] Tweak and add to Page API
-- [ ] Initial system tray API (Windows only for WIP)
-- [ ] Frameless windows (Windows only for WIP)
-- [ ] Hide window completely (Windows only for WIP)
 
 ## v0.11.0
 - [X] Page title API
