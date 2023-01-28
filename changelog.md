@@ -1,8 +1,6 @@
 # Gluon Changelog
 
-## v0.12.0 (in development)
-- Added Linux/Mac support to Idle Hibernation (alpha.0)
-
+## [v0.12.0 - 2023-01-28](https://gluonjs.org/blog/gluon-v0.12/)
 
 ## [v0.11.0 - 2023-01-08](https://gluonjs.org/blog/gluon-v0.11/)
 

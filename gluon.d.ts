@@ -201,7 +201,13 @@ type CDPApi = {
     method: string,
 
     /** Callback to run when the given method is emitted. */
-    callback: (message: any) => void
+    callback: (message: any) => void,
+
+    /**
+     * Unhook once the callback is called the first time.
+     * @default false
+     */
+    once: Boolean
   ): (() => void)
 };
 
