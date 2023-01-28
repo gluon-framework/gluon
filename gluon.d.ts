@@ -33,7 +33,7 @@ type V8CacheApi = {
   build(
     /** Build options. */
     options?: V8CacheBuildOptions
-  ),
+  ): Promise<void>,
 
   /** Load a V8 Cache. */
   load(
@@ -81,7 +81,7 @@ type PageApi = {
      * @default false
     */
     ignoreCache?: Boolean
-  )
+  ): Promise<void>,
 };
 
 type IPCStoreApi = {
@@ -327,7 +327,7 @@ type Window = {
   cdp: CDPApi,
 
   /**
-   * API for Gluon idle management (like hibernation).
+   * API for Gluon idle management (like hibernation). Chromium only.
    * @experimental
    */
   idle: IdleApi,
@@ -337,6 +337,12 @@ type Window = {
 
   /** Control (minimize, maximize, etc) the browser window. */
   controls: ControlsApi,
+
+  /**
+   * Interface with V8's Compilation Cache. Chromium only.
+   * @experimental
+   */
+  v8Cache: V8CacheApi,
 
   /** Close the Gluon window. */
   close(): void,
