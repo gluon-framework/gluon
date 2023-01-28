@@ -339,7 +339,10 @@ type Window = {
   controls: ControlsApi,
 
   /** Close the Gluon window. */
-  close(): void
+  close(): void,
+
+  /** If the window has been closed or not. */
+  closed: Boolean
 };
 
 
