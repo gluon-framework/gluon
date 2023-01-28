@@ -1,3 +1,6 @@
+/// <reference types="node" />
+declare module "@gluon-framework/gluon";
+
 type V8CacheBuildOptions = {
   /**
    * Path to save the V8 Cache to. Defaults to v8Cache.json in Gluon's browser data.
