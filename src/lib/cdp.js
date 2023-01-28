@@ -90,8 +90,7 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
 
     ws.on('message', data => onMessage(data));
 
-    _send = data => ws.send(data);
-
+    _send = data => !closed && ws.send(data);
     _close = () => ws.close();
   } else {
     let pending = '';
