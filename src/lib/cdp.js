@@ -27,7 +27,7 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
 
   let msgId = 0;
   const sendMessage = async (method, params = {}, sessionId = undefined) => {
-    if (closed) throw new Error('CDP connection closed');
+    if (closed) return new Error('CDP connection closed');
 
     const id = msgId++;
 
