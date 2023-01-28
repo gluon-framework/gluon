@@ -118,14 +118,13 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
     });
 
     pipeRead.on('close', () => log('pipe read closed'));
+    pipeWrite.on('error', () => {}); // ignore write error, likely just closed
 
     _send = data => {
-      if (closed) return new Error('CDP connection closed');
+      if (closed || !pipeWrite.writable) return new Error('CDP connection closed');
 
-      try {
-        pipeWrite.write(data);
-        pipeWrite.write('\0');
-      } catch { } // error writing, likely closed/closing (cannot check)
+      pipeWrite.write(data);
+      pipeWrite.write('\0');
     };
 
     _close = () => {};
