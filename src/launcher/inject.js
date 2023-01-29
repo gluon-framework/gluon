@@ -1,3 +1,4 @@
+import { writeFile } from 'fs/promises';
 import { log } from '../lib/logger.js';
 
 import IPCApi from '../lib/ipc.js';
@@ -114,6 +115,27 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
         await Window.cdp.send('Page.reload', {
           ignoreCache
         });
+      },
+
+      printToPDF: async (...args) => {
+        let path, options;
+
+        if (args.length === 1) {
+          if (typeof args[0] === 'string') path = args[0];
+            else options = args[0];
+        }
+
+        if (args.length === 2) {
+          [ path, options ] = args;
+        }
+
+
+        const { data } = await CDP.send('Page.printToPDF', options);
+        const buffer = Buffer.from(data, 'base64');
+
+        if (path) await writeFile(path, buffer);
+
+        return buffer;
       }
     },
 

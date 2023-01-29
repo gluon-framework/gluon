@@ -53,6 +53,107 @@ type V8CacheApi = {
   ): Promise<boolean>
 };
 
+type PrintToPDFOptions = {
+  /**
+   * Paper orientation.
+   * @default false
+   */
+  landscape?: boolean,
+
+  /**
+   * Display header and footer.
+   * @default false
+   */
+  displayHeaderFooter?: boolean,
+
+  /**
+   * Print background graphics.
+   * @default false
+   */
+  printBackground?: boolean,
+
+  /**
+   * Scale of the webpage rendering.
+   * @default 1
+   */
+  scale?: number,
+
+  /**
+   * Paper width in inches.
+   * @default 8.5
+   */
+  paperWidth?: number,
+
+  /**
+   * Paper height in inches.
+   * @default 11
+   */
+  paperHeight?: number,
+
+  /**
+   * Top margin in inches.
+   * @default 0.4
+   */
+  marginTop?: number,
+
+  /**
+   * Bottom margin in inches.
+   * @default 0.4
+   */
+  marginBottom?: number,
+
+  /**
+   * Left margin in inches.
+   * @default 0.4
+   */
+  marginLeft?: number,
+
+  /**
+   * Right margin in inches.
+   * @default 0.4
+   */
+  marginRight?: number,
+
+  /**
+   * Paper ranges to print, one based, (eg '1-5, 8, 11-13').
+   * Pages are printed in the document order, not in the order specified, and no more than once.
+   * Defaults to an empty string, which implies all pages available are printed.
+   * @default ''
+   */
+  pageRanges?: string,
+
+  /**
+   * HTML template for the print header.
+   * You can use the following classes which will have the relevant print data injected into the contents:
+   * - `date` - formatted print date
+   * - `title` - document title
+   * - `url` - document location
+   * - `pageNumber` - current page number
+   * - `totalPages` - total pages in the document
+   * @example `<span class=title></span>` would create a span containing the document title.
+   */
+  headerTemplate?: string,
+
+  /**
+   * HTML template for the print footer.
+   * You can use the following classes which will have the relevant print data injected into the contents:
+   * - `date` - formatted print date
+   * - `title` - document title
+   * - `url` - document location
+   * - `pageNumber` - current page number
+   * - `totalPages` - total pages in the document
+   * @example `<span class=title></span>` would create a span containing the document title.
+   */
+  footerTemplate?: string,
+
+  /**
+   * Prefer the page size defined by the page's CSS.
+   * When set to false, it will scale to fit the paper size.
+   * @default false
+   */
+  preferCSSPageSize?: boolean,
+};
+
 type PageApi = {
   /**
    * Evaluate a string or function in the web context.
@@ -85,6 +186,27 @@ type PageApi = {
     */
     ignoreCache?: boolean
   ): Promise<void>,
+
+  /**
+   * Print (save) the page as a PDF, optionally to a file.
+   * @returns Buffer of PDF data.
+   */
+  printToPDF(
+    /** Optional print options (based on Chromium's headless standard). */
+    options?: PrintToPDFOptions
+  ): Promise<Buffer>,
+
+  /**
+   * Print (save) the page as a PDF to a file.
+   * @returns Buffer of PDF data.
+   */
+  printToPDF(
+    /** Path to save the PDF to. Do not include to just get a Buffer. */
+    path: string,
+
+    /** Optional print options (based on Chromium's headless standard). */
+    options?: PrintToPDFOptions
+  ): Promise<Buffer>
 };
 
 type IPCStoreApi = {
