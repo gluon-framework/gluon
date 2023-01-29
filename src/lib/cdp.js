@@ -1,7 +1,7 @@
-import WebSocket from 'ws';
 import { get } from 'http';
 import { log } from './logger.js';
 
+let WebSocket;
 const logCDP = process.argv.includes('--cdp-logging');
 
 export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
@@ -56,6 +56,9 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
   };
 
   if (port) {
+    // begin importing ws in the background if not already
+    if (!WebSocket) WebSocket = import('ws');
+
     const continualTrying = func => new Promise(resolve => {
       const attempt = async () => {
         try {
@@ -85,7 +88,7 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
 
     log('got main process target websocket url:', wsUrl);
 
-    const ws = new WebSocket(wsUrl);
+    const ws = new (await WebSocket).default(wsUrl);
     await new Promise(resolve => ws.on('open', resolve));
 
     ws.on('message', data => onMessage(data));
