@@ -11,7 +11,7 @@ type V8CacheBuildOptions = {
    * Use eager compilation.
    * @default true
    */
-  eager?: Boolean,
+  eager?: boolean,
 
   /**
    * URLs of scripts to cache. Defaults to automatically detecting currently loaded scripts in the page.
@@ -22,13 +22,13 @@ type V8CacheBuildOptions = {
    * Reload the page to force script compilation.
    * @default true
    */
-  reload?: Boolean,
+  reload?: boolean,
 
   /**
    * Include preload scripts in automatic detection.
    * @default true
    */
-  includePreload?: Boolean
+  includePreload?: boolean
 };
 
 type V8CacheApi = {
@@ -50,7 +50,7 @@ type V8CacheApi = {
   exists(
     /** Path to check. */
     path: string
-  ): Promise<Boolean>
+  ): Promise<boolean>
 };
 
 type PageApi = {
@@ -83,7 +83,7 @@ type PageApi = {
      * Optionally ignore the cache for the reload.
      * @default false
     */
-    ignoreCache?: Boolean
+    ignoreCache?: boolean
   ): Promise<void>,
 };
 
@@ -186,7 +186,7 @@ type CDPApi = {
     method: string,
 
     /** Parameters of CDP command. */
-    params?: Object,
+    params?: object,
 
     /**
      * Send session ID with the command (default true).
@@ -210,7 +210,7 @@ type CDPApi = {
      * Unhook once the callback is called the first time.
      * @default false
      */
-    once: Boolean
+    once: boolean
   ): (() => void)
 };
 
@@ -247,7 +247,7 @@ type IdleApi = {
   /** Enable/disable automatic idle management, and set its options. */
   auto(
     /** Whether to use automatic idle management. */
-    enabled: Boolean,
+    enabled: boolean,
 
     /** Set options for automatic behavior. */
     options?: IdleAutoOptions
@@ -351,7 +351,7 @@ type Window = {
   close(): void,
 
   /** If the window has been closed or not. */
-  closed: Boolean
+  closed: boolean
 };
 
 
