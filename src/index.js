@@ -6,7 +6,7 @@ import { log } from './lib/logger.js';
 import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
 
-import LocalServer from './lib/local/server.js';
+import LocalHTTP from './lib/local/http.js';
 
 process.versions.gluon = '0.13.0-alpha.0';
 
@@ -192,7 +192,7 @@ const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
   const basePath = isAbsolute(url) ? url : join(ranJsDir, url);
 
   const closeHandlers = [];
-  if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalServer({ localUrl, url: basePath }));
+  if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalHTTP({ localUrl, url: basePath }));
 
   const Window = await (browserType === 'firefox' ? Firefox : Chromium)({
     dataPath,
