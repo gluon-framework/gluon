@@ -499,7 +499,16 @@ type OpenOptions = {
   forceBrowser?: Browser,
 
   /** Force Gluon to use a specific browser engine instead of automatically finding a browser itself. */
-  forceEngine?: BrowserEngine
+  forceEngine?: BrowserEngine,
+
+  /**
+   * Opt-in to allowing HTTP. Not recommended to use, always keep `false` where possible. Primarily to support custom localhost servers.
+   * Options:
+   * - `false`: HTTP is **completely disabled**. Recommended.
+   * - `mixed`: HTTP is **enabled for mixed content**, but not as window URL. **Not recommended.**
+   * - `true`: HTTP is **completely enabled**. **Not recommended.**
+   */
+  allowHTTP?: false | 'mixed' | true
 };
 
 /**

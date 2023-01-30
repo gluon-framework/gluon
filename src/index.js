@@ -175,7 +175,7 @@ const getBrowserType = name => { // todo: not need this
 const portRange = [ 10000, 60000 ];
 const generatePort = () => (Math.floor(Math.random() * (portRange[1] - portRange[0] + 1)) + portRange[0]);
 
-const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
+const startBrowser = async (url, { allowHTTP, windowSize, forceBrowser, forceEngine }) => {
   const [ browserPath, browserName ] = await findBrowserPath(forceBrowser, forceEngine);
   const browserFriendlyName = getFriendlyName(browserName);
 
@@ -199,7 +199,8 @@ const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
     browserPath
   }, {
     url: openingLocal ? localUrl : url,
-    windowSize
+    windowSize,
+    allowHTTP
   }, {
     browserName: browserFriendlyName,
     url: openingLocal ? basePath : url,
@@ -213,10 +214,14 @@ const startBrowser = async (url, { windowSize, forceBrowser, forceEngine }) => {
   return Window;
 };
 
-export const open = async (url, { windowSize, onLoad, forceBrowser, forceEngine } = {}) => {
+export const open = async (url, opts = {}) => {
+  const { onLoad, allowHTTP } = opts;
+
+  if (allowHTTP !== true && url.startsWith('http://')) throw new Error(`HTTP URLs are blocked by default. Please use HTTPS, or if not possible, enable the 'allowHTTP' option.`);
+
   log('starting browser...');
 
-  const Browser = await startBrowser(url, { windowSize, forceBrowser, forceEngine });
+  const Browser = await startBrowser(url, opts);
 
   if (onLoad) {
     const toRun = `(() => {

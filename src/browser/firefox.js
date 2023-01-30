@@ -4,7 +4,7 @@ import { join } from 'path';
 import StartBrowser from '../launcher/start.js';
 
 
-export default async ({ browserPath, dataPath }, { url, windowSize }, extra) => {
+export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP }, extra) => {
   await mkdir(dataPath, { recursive: true });
   await writeFile(join(dataPath, 'user.js'), `
 user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
@@ -20,6 +20,11 @@ user_pref('fission.bfcacheInParent', false);
 user_pref('fission.webContentIsolationStrategy', 0);
 user_pref('ui.key.menuAccessKeyFocuses', false);
 ${process.platform === 'darwin' ? `user_pref('browser.tabs.inTitlebar', 0);` : `` }
+
+user_pref('security.mixed_content.block_active_content', ${![true, 'mixed'].includes(allowHTTP) ? 'true' : 'false'});
+user_pref('security.mixed_content.block_display_content', ${![true, 'mixed'].includes(allowHTTP) ? 'true' : 'false'});
+user_pref('security.mixed_content.block_object_subrequest', ${![true, 'mixed'].includes(allowHTTP) ? 'true' : 'false'});
+user_pref('security.mixed_content.upgrade_display_content', true);
 `);
 
 // user_pref('privacy.resistFingerprinting', false);
