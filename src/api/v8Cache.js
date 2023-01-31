@@ -7,9 +7,9 @@ export default async (CDP, evaluate, { browserType, dataPath }) => {
     const warning = () => log(`Warning: V8 Cache API is only for Chromium (running on ${browserType})`);
 
     return {
-      build: () => {},
-      load: () => false,
-      exists: () => false
+      build: () => warning() || ({}),
+      load: () => warning() || false,
+      exists: () => warning() || false
     };
   }
 
