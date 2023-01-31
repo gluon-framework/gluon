@@ -197,6 +197,7 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   process.on('SIGUSR1', interruptHandler);
   process.on('SIGUSR2', interruptHandler);
   process.on('SIGTERM', interruptHandler);
+  process.on('uncaughtException', interruptHandler);
 
 
   Window.idle = await IdleApi(Window.cdp, { browserType, closeHandlers });
