@@ -22,7 +22,7 @@ export default async (CDP, evaluate, { browserType, dataPath }) => {
     const startTime = performance.now();
 
     log('v8Cache: beginning cache build...');
-    urls ??= await getScriptUrls(includePreload);
+    urls = urls ?? await getScriptUrls(includePreload);
 
     log(`v8Cache: found ${urls.length} scripts`);
 
