@@ -14,6 +14,6 @@ export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP },
     `--user-data-dir=${dataPath}`,
     windowSize ? `--window-size=${windowSize.join(',')}` : '',
     ![true, 'mixed'].includes(allowHTTP) ? `--enable-strict-mixed-content-checking` : '--allow-running-insecure-content',
-    ...`--new-window --no-first-run --no-default-browser-check --disable-component-extensions-with-background-pages --disable-extensions --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication -in-process-gpu ${presets.perf}`.split(' ')
+    ...`--new-window --no-first-run --no-default-browser-check --disable-component-extensions-with-background-pages --disable-extensions --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication --in-process-gpu ${presets.perf}`.split(' ')
   ], 'stdio', extra);
 };
