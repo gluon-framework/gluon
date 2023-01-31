@@ -118,19 +118,29 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
       },
 
       printToPDF: async (...args) => {
-        let path, options;
+        let path, options = {};
 
         if (args.length === 1) {
           if (typeof args[0] === 'string') path = args[0];
-            else options = args[0];
+            else options = { ...args[0] };
         }
 
         if (args.length === 2) {
-          [ path, options ] = args;
+          path = args[0];
+          options = { ...args[1] };
         }
 
+        if (options.margins) {
+          const { top, bottom, left, right } = options.margins;
+          if (top) options.marginTop = top;
+          if (bottom) options.marginBottom = bottom;
+          if (left) options.marginLeft = left;
+          if (right) options.marginRight = right;
 
-        const { data } = await CDP.send('Page.printToPDF', options);
+          delete options.margins;
+        }
+
+        const { data } = await Window.cdp.send('Page.printToPDF', options);
         const buffer = Buffer.from(data, 'base64');
 
         if (path) await writeFile(path, buffer);

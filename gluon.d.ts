@@ -91,28 +91,34 @@ type PrintToPDFOptions = {
   paperHeight?: number,
 
   /**
-   * Top margin in inches.
-   * @default 0.4
+   * Set the margins of the PDF (inches).
+   * @default 0.4 for all
    */
-  marginTop?: number,
+  margins?: {
+    /**
+     * Top margin in inches.
+     * @default 0.4 (1cm)
+     */
+    top?: number,
 
-  /**
-   * Bottom margin in inches.
-   * @default 0.4
-   */
-  marginBottom?: number,
+    /**
+     * Bottom margin in inches.
+     * @default 0.4 (1cm)
+     */
+    bottom?: number,
 
-  /**
-   * Left margin in inches.
-   * @default 0.4
-   */
-  marginLeft?: number,
+    /**
+     * Left margin in inches.
+     * @default 0.4 (1cm)
+     */
+    left?: number,
 
-  /**
-   * Right margin in inches.
-   * @default 0.4
-   */
-  marginRight?: number,
+    /**
+     * Right margin in inches.
+     * @default 0.4 (1cm)
+     */
+    right?: number
+  },
 
   /**
    * Paper ranges to print, one based, (eg '1-5, 8, 11-13').
