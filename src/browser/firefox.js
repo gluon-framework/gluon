@@ -1,10 +1,11 @@
-import { mkdir, writeFile } from 'fs/promises';
-import { join } from 'path';
+import { mkdir, writeFile, copyFile, access } from 'fs/promises';
+import { join, basename } from 'path';
 
 import StartBrowser from '../launcher/start.js';
 
+const exists = path => access(path).then(() => true).catch(() => false);
 
-export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP }, extra) => {
+export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP, extensions }, extra) => {
   await mkdir(dataPath, { recursive: true });
   await writeFile(join(dataPath, 'user.js'), `
 user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
@@ -31,7 +32,7 @@ user_pref('security.mixed_content.upgrade_display_content', true);
 /* user_pref('privacy.window.maxInnerWidth', ${windowSize[0]});
 user_pref('privacy.window.maxInnerHeight', ${windowSize[1]}); */
 
-  await mkdir(join(dataPath, 'chrome'), { recursive: true });
+  await mkdir(join(dataPath, 'chrome'));
   await writeFile(join(dataPath, 'chrome', 'userChrome.css'), `
 .titlebar-spacer, #firefox-view-button, #alltabs-button, #tabbrowser-arrowscrollbox-periphery, .tab-close-button {
   display: none;
@@ -77,6 +78,12 @@ html:not([tabsintitlebar="true"]) .tab-icon-image {
   display: none !important;
 }
 `);
+
+  await mkdir(join(dataPath, 'extensions'));
+  for (const ext of (await Promise.all(extensions)).flat()) {
+    const installPath = join(dataPath, 'extensions', basename(ext));
+    if (!await exists(installPath)) await copyFile(ext, installPath);
+  }
 
   return await StartBrowser(browserPath, [
     ...(!windowSize ? [] : [ `-window-size`, windowSize.join(',') ]),

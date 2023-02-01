@@ -6,6 +6,7 @@ import { log } from './lib/logger.js';
 import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
 
+import * as ExtensionsAPI from './extensions.js';
 import LocalHTTP from './lib/local/http.js';
 
 process.versions.gluon = '0.13.0-alpha.0';
@@ -200,7 +201,8 @@ const startBrowser = async (url, { allowHTTP, windowSize, forceBrowser, forceEng
   }, {
     url: openingLocal ? localUrl : url,
     windowSize,
-    allowHTTP
+    allowHTTP,
+    extensions: ExtensionsAPI._extensions[browserType]
   }, {
     browserName: browserFriendlyName,
     url: openingLocal ? basePath : url,
@@ -232,11 +234,15 @@ export const open = async (url, opts = {}) => {
 
     Browser.page.eval(toRun);
 
-    await Browser.cdp.send(`Page.enable`);
     await Browser.cdp.send(`Page.addScriptToEvaluateOnNewDocument`, {
       source: toRun
     });
   }
 
   return Browser;
+};
+
+export const extensions = {
+  add: ExtensionsAPI.add,
+  remove: ExtensionsAPI.remove
 };
