@@ -20,6 +20,7 @@ user_pref('privacy.resistFingerprinting', true);
 user_pref('fission.bfcacheInParent', false);
 user_pref('fission.webContentIsolationStrategy', 0);
 user_pref('ui.key.menuAccessKeyFocuses', false);
+user_pref('extensions.autoDisableScopes', 0);
 ${process.platform === 'darwin' ? `user_pref('browser.tabs.inTitlebar', 0);` : `` }
 
 user_pref('security.mixed_content.block_active_content', ${![true, 'mixed'].includes(allowHTTP) ? 'true' : 'false'});
@@ -32,7 +33,7 @@ user_pref('security.mixed_content.upgrade_display_content', true);
 /* user_pref('privacy.window.maxInnerWidth', ${windowSize[0]});
 user_pref('privacy.window.maxInnerHeight', ${windowSize[1]}); */
 
-  await mkdir(join(dataPath, 'chrome'));
+  await mkdir(join(dataPath, 'chrome'), { recursive: true });
   await writeFile(join(dataPath, 'chrome', 'userChrome.css'), `
 .titlebar-spacer, #firefox-view-button, #alltabs-button, #tabbrowser-arrowscrollbox-periphery, .tab-close-button {
   display: none;
@@ -79,7 +80,7 @@ html:not([tabsintitlebar="true"]) .tab-icon-image {
 }
 `);
 
-  await mkdir(join(dataPath, 'extensions'));
+  await mkdir(join(dataPath, 'extensions'), { recursive: true });
   for (const ext of (await Promise.all(extensions)).flat()) {
     const installPath = join(dataPath, 'extensions', basename(ext));
     if (!await exists(installPath)) await copyFile(ext, installPath);
