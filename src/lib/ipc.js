@@ -106,14 +106,14 @@ Gluon.ipc.store = new Proxy({
     _store[key] = value;
 
     updateBackend(key, value);
-    return value;
+    return true;
   },
 
   deleteProperty(_obj, key) {
     delete _store[key];
 
     updateBackend(key, undefined);
-    return;
+    return true;
   }
 });
 
@@ -248,14 +248,14 @@ delete window._gluonSend;
       _store[key] = value;
 
       updateWeb(key, value);
-      return value;
+      return true;
     },
 
     deleteProperty(_obj, key) {
       delete _store[key];
 
       updateWeb(key, undefined);
-      return;
+      return true;
     }
   });
 
