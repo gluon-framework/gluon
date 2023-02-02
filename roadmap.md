@@ -15,10 +15,17 @@
 - Automatically remember window position/size between starts (disableable)
 
 
-## v0.13.0
+## v0.14.0
 - [ ] Initial system tray API (Windows only for WIP)
 - [ ] Frameless windows (Windows only for WIP)
 - [ ] Hide window completely (Windows only for WIP)
+
+## v0.13.0
+- [X] Browser extension API
+- [X] Security revamp:
+  - [X] Completely block HTTP (by default)
+  - [ ] Add easy CSP options (with default) when using Local
+  - [ ] Restrict navigation when using Local to Local only (by default)
 
 ## v0.12.0
 - [X] Add new freezing API to Idle API
