@@ -1,0 +1,17 @@
+# miscellaneous
+.DS_Store
+
+# node
+node_modules
+package-lock.json
+
+# pnpm
+pnpm-lock.yaml
+
+# gluon
+build
+gluon_data
+
+# github stuff
+.github
+assets
