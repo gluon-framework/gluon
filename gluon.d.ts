@@ -507,6 +507,9 @@ type OpenOptions = {
   /** Force Gluon to use a specific browser engine instead of automatically finding a browser itself. */
   forceEngine?: BrowserEngine,
 
+  /** Size of Gluon window in [width, height]. */
+  windowSize?: [number, number],
+
   /**
    * Opt-in to allowing HTTP. Not recommended to use, always keep `false` where possible. Primarily to support custom localhost servers.
    * Options:
