@@ -530,3 +530,21 @@ export function open(
   /** Additional options for opening. */
   options: OpenOptions
 ): Promise<Window>;
+
+type Extension = {
+  /** Path to unpacked Chromium extension. */
+  chromium?: string | Promise<string>,
+
+  /** Path to Firefox extension as an XPI file, with the correct filename. */
+  firefox?: string | Promise<string>
+};
+
+type ExtensionsAPI = {
+  /** Add extensions to be used. */
+  add(...extensions: Extension[]): void,
+
+  /** Remove extensions to be used. */
+  remove(...extensions: Extension[]): void,
+};
+
+export const extensions: ExtensionsAPI;
