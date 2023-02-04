@@ -540,11 +540,12 @@ type Extension = {
 };
 
 type ExtensionsAPI = {
-  /** Add extensions to be used. */
+  /** Add browser extensions to be used when opening new Gluon windows. */
   add(...extensions: Extension[]): void,
 
-  /** Remove extensions to be used. */
+  /** Remove browser extensions to be used when opening new Gluon windows. */
   remove(...extensions: Extension[]): void,
 };
 
+/** Manage browser extensions to use. */
 export const extensions: ExtensionsAPI;
