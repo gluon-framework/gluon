@@ -36,6 +36,7 @@ const browserPaths = ({
 
     thorium: join('Thorium', 'Application', 'thorium.exe'),
     brave: join('BraveSoftware', 'Brave-Browser', 'Application', 'brave.exe'),
+    vivaldi: join('Vivaldi', 'Application', 'vivaldi.exe'),
 
     firefox: [
       join('Mozilla Firefox', 'firefox.exe'),
@@ -45,6 +46,7 @@ const browserPaths = ({
     firefox_nightly: join('Firefox Nightly', 'firefox.exe'),
 
     librewolf: join('LibreWolf', 'librewolf.exe'),
+    waterfox: join('Waterfox', 'waterfox.exe'),
   },
 
   linux: { // these should be in path so just use the name of the binary
@@ -63,11 +65,13 @@ const browserPaths = ({
 
     thorium: [ 'thorium', 'thorium-browser' ],
     brave: [ 'brave', 'brave-browser' ],
+    vivaldi: [ 'vivaldi', 'vivaldi-browser' ],
 
     firefox: [ 'firefox', 'firefox-browser' ],
     firefox_nightly: [ 'firefox-nightly', 'firefox-nightly-browser', 'firefox-browser-nightly' ],
 
-    librewolf: [ 'librewolf', 'librewolf-browser' ]
+    librewolf: [ 'librewolf', 'librewolf-browser' ],
+    waterfox: [ 'waterfox', 'waterfox-browser' ],
   },
 
   darwin: {
@@ -83,10 +87,15 @@ const browserPaths = ({
     edge_dev: '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge Dev',
     edge_canary: '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge Canary',
 
+    thorium: '/Applications/Thorium.app/Contents/MacOS/Thorium',
     brave: '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser',
+    vivaldi: '/Applications/Vivaldi.app/Contents/MacOS/Vivaldi',
 
     firefox: '/Applications/Firefox.app/Contents/MacOS/firefox',
-    firefox_nightly: '/Applications/Firefox Nightly.app/Contents/MacOS/firefox'
+    firefox_nightly: '/Applications/Firefox Nightly.app/Contents/MacOS/firefox',
+
+    librewolf: '/Applications/LibreWolf.app/Contents/MacOS/librewolf',
+    waterfox: '/Applications/Waterfox.app/Contents/MacOS/waterfox',
   }
 })[process.platform];
 
@@ -168,7 +177,7 @@ const getDataPath = browser => join(ranJsDir, 'gluon_data', browser);
 
 const getBrowserType = name => { // todo: not need this
   if (name.startsWith('firefox') ||
-    [ 'librewolf' ].includes(name)) return 'firefox';
+    [ 'librewolf', 'waterfox' ].includes(name)) return 'firefox';
 
   return 'chromium';
 };
