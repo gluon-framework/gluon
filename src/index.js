@@ -1,4 +1,4 @@
-import { join, dirname, delimiter, sep, resolve, isAbsolute } from 'path';
+import { join, dirname, delimiter, sep, isAbsolute } from 'path';
 import { access, readdir } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { log } from './lib/logger.js';
