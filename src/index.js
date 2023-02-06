@@ -1,5 +1,4 @@
-import { join, delimiter, sep, isAbsolute } from 'node:path';
-import { access, readdir } from 'node:fs/promises';
+import { join, isAbsolute } from 'node:path';
 import { log } from './lib/logger.js';
 
 import chromium from './browser/chromium.js';
@@ -9,34 +8,22 @@ import * as ExtensionsAPI from './extensions.js';
 import LocalHTTP from './lib/local/http.js';
 import { getBrowserPaths } from './utils/browserPaths.js'
 import { generatePort } from './utils/generatePort.js'
+import { getBinariesInPath } from './utils/getBinariesInPath.js'
+import { existsInPathOrInBin } from './utils/existsInPathOrInBin.js'
+import { getFriendlyName } from './utils/getFriendlyName.js'
+import { getDataPath } from './utils/getDataPath.js'
+import { getBrowserType } from './utils/getBrowserType.js'
 
 process.versions.gluon = '0.13.0-alpha.2';
 
 const browserPaths = getBrowserPaths()
-
-let _binariesInPath; // cache as to avoid excessive reads
-const getBinariesInPath = async () => {
-  if (_binariesInPath) return _binariesInPath;
-
-  return _binariesInPath = (await Promise.all(process.env.PATH
-    .replaceAll('"', '')
-    .split(delimiter)
-    .filter(Boolean)
-    .map(x => readdir(x.replace(/"+/g, '')).catch(() => [])))).flat();
-};
-
-const exists = async path => {
-  if (path.includes(sep)) return await access(path).then(() => true).catch(() => false);
-
-  // just binary name, so check path
-  return (await getBinariesInPath()).includes(path);
-};
+const binariesInPath = getBinariesInPath()
 
 const getBrowserPath = async browser => {
   for (const path of Array.isArray(browserPaths[browser]) ? browserPaths[browser] : [ browserPaths[browser] ]) {
     // log('checking if ' + browser + ' exists:', path, await exists(path));
 
-    if (await exists(path)) return path;
+    if (await existsInPathOrInBin(path, binariesInPath)) return path;
   }
 
   return null;
@@ -82,17 +69,6 @@ const findBrowserPath = async (forceBrowser, forceEngine) => {
   }
 
   return { path: undefined, name: undefined };
-};
-
-const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase());
-
-const getDataPath = browser => join(process.cwd(), 'gluon_data', browser);
-
-const getBrowserType = name => { // todo: not need this
-  if (name.startsWith('firefox') ||
-    [ 'librewolf', 'waterfox' ].includes(name)) return 'firefox';
-
-  return 'chromium';
 };
 
 const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-origin', windowSize, forceBrowser, forceEngine }) => {

@@ -1,9 +1,7 @@
-import { mkdir, writeFile, copyFile, access } from 'node:fs/promises';
+import { mkdir, writeFile, copyFile } from 'node:fs/promises';
 import { join, basename } from 'node:path';
 
 import startBrowser from '../launcher/start.js';
-
-const exists = path => access(path).then(() => true).catch(() => false);
 
 export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP, extensions }, extra) => {
   await mkdir(dataPath, { recursive: true });

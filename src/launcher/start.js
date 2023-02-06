@@ -5,7 +5,6 @@ import ConnectCDP from '../lib/cdp.js';
 import InjectInto from './inject.js';
 import { generatePort } from '../utils/generatePort.js'
 
-
 export default async (browserPath, args, transport, extra) => {
   const port = transport === 'websocket' ? generatePort() : null;
 
