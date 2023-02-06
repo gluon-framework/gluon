@@ -1,3 +1,9 @@
+import { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 export const PORT_RANGE = [ 10000, 60000 ];
 
 export const MIME_TYPES = {
@@ -49,3 +55,5 @@ export const MIME_TYPES = {
   'xml': 'application/xml',
   'zip': 'application/zip'
 }
+
+export const RAN_JS_DIR = !process.argv[1] ? __dirname : (process.argv[1].endsWith('.js') ? dirname(process.argv[1]) : process.argv[1])

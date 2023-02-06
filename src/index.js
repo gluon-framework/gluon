@@ -13,6 +13,7 @@ import { getFriendlyName } from './utils/getFriendlyName.js'
 import { getDataPath } from './utils/getDataPath.js'
 import { getBrowserType } from './utils/getBrowserType.js'
 import { findBrowserPath } from './utils/findBrowserPath.js'
+import { RAN_JS_DIR } from './constants.js'
 
 process.versions.gluon = '0.13.0-alpha.2';
 
@@ -33,7 +34,7 @@ const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-ori
 
   const openingLocal = !url.includes('://');
   const localUrl = browserType === 'firefox' ? `http://localhost:${generatePort()}` : 'https://gluon.local';
-  const basePath = isAbsolute(url) ? url : join(process.cwd(), url);
+  const basePath = isAbsolute(url) ? url : join(RAN_JS_DIR, url);
 
   const closeHandlers = [];
   if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalHTTP({ localUrl, url: basePath }));
