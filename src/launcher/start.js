@@ -3,9 +3,8 @@ import { log } from '../lib/logger.js';
 
 import ConnectCDP from '../lib/cdp.js';
 import InjectInto from './inject.js';
+import { generatePort } from '../utils.js'
 
-const portRange = [ 10000, 60000 ];
-const generatePort = () => (Math.floor(Math.random() * (portRange[1] - portRange[0] + 1)) + portRange[0]);
 
 export default async (browserPath, args, transport, extra) => {
   const port = transport === 'websocket' ? generatePort() : null;
