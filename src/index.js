@@ -1,13 +1,14 @@
-import { join, dirname, delimiter, sep, isAbsolute } from 'path';
+import { join, delimiter, sep, isAbsolute } from 'path';
 import { access, readdir } from 'fs/promises';
 import { log } from './lib/logger.js';
 
-import Chromium from './browser/chromium.js';
-import Firefox from './browser/firefox.js';
+import chromium from './browser/chromium.js';
+import firefox from './browser/firefox.js';
 
 import * as ExtensionsAPI from './extensions.js';
 import LocalHTTP from './lib/local/http.js';
 import { getBrowserPaths } from './browserPaths.js'
+import { generatePort } from './utils.js'
 
 process.versions.gluon = '0.13.0-alpha.2';
 
@@ -42,10 +43,20 @@ const getBrowserPath = async browser => {
 };
 
 const findBrowserPath = async (forceBrowser, forceEngine) => {
-  if (forceBrowser) return [ await getBrowserPath(forceBrowser), forceBrowser ];
+  if (forceBrowser) {
+    return {
+      path: await getBrowserPath(forceBrowser),
+      name: forceBrowser
+    }
+  }
 
   for (const x in browserPaths) {
-    if (process.argv.includes('--' + x) || process.argv.includes('--' + x.split('_')[0])) return [ await getBrowserPath(x), x ];
+    if (process.argv.includes('--' + x) || process.argv.includes('--' + x.split('_')[0])) {
+      return {
+        path: await getBrowserPath(x),
+        name: x
+      }
+    }
   }
 
   if (process.argv.some(x => x.startsWith('--browser='))) {
@@ -54,7 +65,10 @@ const findBrowserPath = async (forceBrowser, forceEngine) => {
     const name = split[0];
     const path = split.slice(1).join(',');
 
-    return [ path || await getBrowserPath(name), name ];
+    return {
+      path: path || await getBrowserPath(name),
+      name: name
+    }
   }
 
   for (const name in browserPaths) {
@@ -63,17 +77,16 @@ const findBrowserPath = async (forceBrowser, forceEngine) => {
     if (path) {
       if (forceEngine && getBrowserType(name) !== forceEngine) continue; // if forceEngine is set, ignore path if it isn't
 
-      return [ path, name ];
+      return { path, name }
     }
   }
 
-  return null;
+  return { path: undefined, name: undefined };
 };
 
 const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase());
 
-const ranJsDir = !process.argv[1] ? __dirname : (process.argv[1].endsWith('.js') ? dirname(process.argv[1]) : process.argv[1]);
-const getDataPath = browser => join(ranJsDir, 'gluon_data', browser);
+const getDataPath = browser => join(process.cwd(), 'gluon_data', browser);
 
 const getBrowserType = name => { // todo: not need this
   if (name.startsWith('firefox') ||
@@ -82,11 +95,8 @@ const getBrowserType = name => { // todo: not need this
   return 'chromium';
 };
 
-const portRange = [ 10000, 60000 ];
-const generatePort = () => (Math.floor(Math.random() * (portRange[1] - portRange[0] + 1)) + portRange[0]);
-
 const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-origin', windowSize, forceBrowser, forceEngine }) => {
-  const [ browserPath, browserName ] = await findBrowserPath(forceBrowser, forceEngine);
+  const { path: browserPath, name: browserName } = await findBrowserPath(forceBrowser, forceEngine);
   const browserFriendlyName = getFriendlyName(browserName);
 
   if (!browserPath) return log('failed to find a good browser install');
@@ -99,12 +109,14 @@ const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-ori
 
   const openingLocal = !url.includes('://');
   const localUrl = browserType === 'firefox' ? `http://localhost:${generatePort()}` : 'https://gluon.local';
-  const basePath = isAbsolute(url) ? url : join(ranJsDir, url);
+  const basePath = isAbsolute(url) ? url : join(process.cwd(), url);
 
   const closeHandlers = [];
   if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalHTTP({ localUrl, url: basePath }));
 
-  const Window = await (browserType === 'firefox' ? Firefox : Chromium)({
+  let winConstructor = browserType === 'firefox' ? firefox : chromium
+
+  return await winConstructor({
     dataPath,
     browserPath
   }, {
@@ -122,8 +134,6 @@ const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-ori
     dataPath,
     allowRedirects
   });
-
-  return Window;
 };
 
 export const open = async (url, opts = {}) => {
