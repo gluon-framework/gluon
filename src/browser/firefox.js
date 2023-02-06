@@ -1,5 +1,5 @@
-import { mkdir, writeFile, copyFile, access } from 'fs/promises';
-import { join, basename } from 'path';
+import { mkdir, writeFile, copyFile, access } from 'node:fs/promises';
+import { join, basename } from 'node:path';
 
 import startBrowser from '../launcher/start.js';
 

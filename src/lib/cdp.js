@@ -1,4 +1,4 @@
-import { get } from 'http';
+import { get } from 'node:http';
 import { log } from './logger.js';
 
 let WebSocket;

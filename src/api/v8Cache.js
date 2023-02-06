@@ -1,5 +1,5 @@
-import { join, sep } from 'path';
-import { access, writeFile, readFile } from 'fs/promises';
+import { join, sep } from 'node:path';
+import { access, writeFile, readFile } from 'node:fs/promises';
 import { log } from '../lib/logger.js';
 
 export default async (CDP, evaluate, { browserType, dataPath }) => {

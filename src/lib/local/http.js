@@ -1,4 +1,4 @@
-import { createServer } from 'http';
+import { createServer } from 'node:http';
 import createLocalFulfill from './fulfill.js';
 import { log } from '../logger.js';
 

@@ -1,5 +1,5 @@
-import { join, delimiter, sep, isAbsolute } from 'path';
-import { access, readdir } from 'fs/promises';
+import { join, delimiter, sep, isAbsolute } from 'node:path';
+import { access, readdir } from 'node:fs/promises';
 import { log } from './lib/logger.js';
 
 import chromium from './browser/chromium.js';

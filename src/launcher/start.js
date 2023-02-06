@@ -1,9 +1,9 @@
-import { spawn } from 'child_process';
+import { spawn } from 'node:child_process';
 import { log } from '../lib/logger.js';
 
 import ConnectCDP from '../lib/cdp.js';
 import InjectInto from './inject.js';
-import { generatePort } from '../utils.js'
+import { generatePort } from '../utils/generatePort.js'
 
 
 export default async (browserPath, args, transport, extra) => {
