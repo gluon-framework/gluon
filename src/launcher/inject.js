@@ -27,7 +27,7 @@ const acquireTarget = async (CDP, filter = () => true) => {
   })).sessionId;
 };
 
-export default async (CDP, proc, injectionType = 'browser', { dataPath, browserName, browserType, openingLocal, localUrl, url, closeHandlers }) => {
+export default async (CDP, proc, injectionType = 'browser', { dataPath, browserName, browserType, openingLocal, localUrl, url, allowRedirects, closeHandlers }) => {
   let pageLoadCallback, pageLoadPromise = new Promise(res => pageLoadCallback = res);
   let frameLoadCallback = () => {}, onWindowMessage = () => {};
   CDP.onMessage(msg => {
@@ -38,6 +38,20 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
       try {
         injectIPC(); // ensure IPC injection again
       } catch { }
+    }
+
+    if (msg.method === 'Page.frameScheduledNavigation' || msg.method === 'Page.frameNavigated') {
+      let newUrl = msg.params?.frame?.url ?? msg.params?.url;
+      if (allowRedirects === true) return;
+      if (allowRedirects === 'same-origin' && new URL(newUrl).origin === new URL(url).origin) return;
+
+      CDP.sendMessage('Page.stopLoading', {}, sessionId);
+
+      if (msg.method === 'Page.frameNavigated') {
+        CDP.sendMessage('Page.navigate', { url: 'about:blank' }, sessionId);
+        // CDP.sendMessage('Page.navigate')
+      }
+      // CDP.sendMessage('Page.navigate', { url: 'about:blank' }, sessionId);
     }
   });
 
