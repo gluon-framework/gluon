@@ -9,70 +9,18 @@ import LocalHTTP from './lib/local/http.js';
 import { getBrowserPaths } from './utils/browserPaths.js'
 import { generatePort } from './utils/generatePort.js'
 import { getBinariesInPath } from './utils/getBinariesInPath.js'
-import { existsInPathOrInBin } from './utils/existsInPathOrInBin.js'
 import { getFriendlyName } from './utils/getFriendlyName.js'
 import { getDataPath } from './utils/getDataPath.js'
 import { getBrowserType } from './utils/getBrowserType.js'
+import { findBrowserPath } from './utils/findBrowserPath.js'
 
 process.versions.gluon = '0.13.0-alpha.2';
 
 const browserPaths = getBrowserPaths()
 const binariesInPath = getBinariesInPath()
 
-const getBrowserPath = async browser => {
-  for (const path of Array.isArray(browserPaths[browser]) ? browserPaths[browser] : [ browserPaths[browser] ]) {
-    // log('checking if ' + browser + ' exists:', path, await exists(path));
-
-    if (await existsInPathOrInBin(path, binariesInPath)) return path;
-  }
-
-  return null;
-};
-
-const findBrowserPath = async (forceBrowser, forceEngine) => {
-  if (forceBrowser) {
-    return {
-      path: await getBrowserPath(forceBrowser),
-      name: forceBrowser
-    }
-  }
-
-  for (const x in browserPaths) {
-    if (process.argv.includes('--' + x) || process.argv.includes('--' + x.split('_')[0])) {
-      return {
-        path: await getBrowserPath(x),
-        name: x
-      }
-    }
-  }
-
-  if (process.argv.some(x => x.startsWith('--browser='))) {
-    const given = process.argv.find(x => x.startsWith('--browser='));
-    const split = given.slice(given.indexOf('=') + 1).split(',');
-    const name = split[0];
-    const path = split.slice(1).join(',');
-
-    return {
-      path: path || await getBrowserPath(name),
-      name: name
-    }
-  }
-
-  for (const name in browserPaths) {
-    const path = await getBrowserPath(name);
-
-    if (path) {
-      if (forceEngine && getBrowserType(name) !== forceEngine) continue; // if forceEngine is set, ignore path if it isn't
-
-      return { path, name }
-    }
-  }
-
-  return { path: undefined, name: undefined };
-};
-
 const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-origin', windowSize, forceBrowser, forceEngine }) => {
-  const { path: browserPath, name: browserName } = await findBrowserPath(forceBrowser, forceEngine);
+  const { path: browserPath, name: browserName } = await findBrowserPath(forceBrowser, forceEngine, { browserPaths, binariesInPath });
   const browserFriendlyName = getFriendlyName(browserName);
 
   if (!browserPath) return log('failed to find a good browser install');
