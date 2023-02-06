@@ -184,7 +184,6 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   // Close window fully internally if browser process closes
   proc.on('close', Window.close);
 
-
   // Close browser fully if Node exits
   process.on('exit', Window.close);
 
@@ -197,8 +196,7 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   process.on('SIGUSR1', interruptHandler);
   process.on('SIGUSR2', interruptHandler);
   process.on('SIGTERM', interruptHandler);
-  process.on('uncaughtException', interruptHandler);
-
+  // process.on('uncaughtException', interruptHandler);
 
   Window.idle = await IdleApi(Window.cdp, { browserType, closeHandlers });
   Window.controls = await ControlsApi(Window.cdp);
