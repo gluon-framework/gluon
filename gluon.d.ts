@@ -516,8 +516,18 @@ type OpenOptions = {
    * - `false`: HTTP is **completely disabled**. Recommended.
    * - `mixed`: HTTP is **enabled for mixed content**, but not as window URL. **Not recommended.**
    * - `true`: HTTP is **completely enabled**. **Not recommended.**
+   * @default false
    */
-  allowHTTP?: false | 'mixed' | true
+  allowHTTP?: false | 'mixed' | true,
+
+  /**
+   * Set what redirects are allowed in the window.
+   * Options:
+   * - `false`: **No** redirects are allowed.
+   * - `same-origin`: Redirects are **allowed if the redirect URL is the same origin** (as the URL given to `open()`).
+   * - `true`: **All** redirects are allowed. **Not recommended.**
+   */
+  allowRedirects?: false | 'same-origin' | true
 };
 
 /**
