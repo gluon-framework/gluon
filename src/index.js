@@ -7,8 +7,8 @@ import firefox from './browser/firefox.js';
 
 import * as ExtensionsAPI from './extensions.js';
 import LocalHTTP from './lib/local/http.js';
-import { getBrowserPaths } from './browserPaths.js'
-import { generatePort } from './utils.js'
+import { getBrowserPaths } from './utils/browserPaths.js'
+import { generatePort } from './utils/generatePort.js'
 
 process.versions.gluon = '0.13.0-alpha.2';
 
