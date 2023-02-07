@@ -198,9 +198,9 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
 
       for (const handler of closeHandlers) handler(); // extra api handlers which need to be closed
 
-      CDP.sendMessage('Browser.close');
-      CDP.close();
-      proc.kill();
+      CDP.sendMessage('Browser.close'); // request graceful close to browser (incase process is not attached)
+      CDP.close(); // close CDP connection
+      proc.kill(); // kill browser process
 
       return Window.closed = true;
     },
