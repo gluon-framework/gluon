@@ -526,8 +526,17 @@ type OpenOptions = {
    * - `false`: **No** redirects are allowed.
    * - `same-origin`: Redirects are **allowed if the redirect URL is the same origin** (as the URL given to `open()`).
    * - `true`: **All** redirects are allowed. **Not recommended.**
+   * @default 'same-origin'
    */
-  allowRedirects?: false | 'same-origin' | true
+  allowRedirects?: false | 'same-origin' | true,
+
+  /**
+   * Set the Content Security Policy when using Local (giving open() a path).
+   * Defaults to allowing almost everything remote except dangerous parts like JS or frames (see detailed default value).
+   * Set to blank (`''`) to use no CSP, or provide your own to use (as a string).
+   * @default "upgrade-insecure-requests; default-src 'self' 'unsafe-inline'; connect-src https: data: blob: 'unsafe-inline'; prefetch-src https: data: blob: 'unsafe-inline'; font-src https: data: blob: 'unsafe-inline'; img-src https: data: blob: 'unsafe-inline'; media-src https: data: blob: 'unsafe-inline'; style-src https: data: blob: 'unsafe-inline'; form-action https: data: blob: 'unsafe-inline'"
+   */
+  localCSP?: string
 };
 
 /**
