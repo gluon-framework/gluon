@@ -42,18 +42,23 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
 
     if (msg.method === 'Page.frameScheduledNavigation' || msg.method === 'Page.frameNavigated') {
       let newUrl = msg.params?.frame?.url ?? msg.params?.url;
-      if (allowRedirects === true) return;
-      if (allowRedirects === 'same-origin' && new URL(newUrl).origin === new URL(url).origin) return;
-      if (allowRedirects === false && newUrl === url) return;
+      if (allowRedirects === true) return; // always allow redirects
+      if (allowRedirects === 'same-origin' && new URL(newUrl).origin === new URL(url).origin) return; // only allow if same origin
+      if (allowRedirects === false && newUrl === url) return; // only allow if identical open() url
+      if (newUrl === 'about:blank') return; // allow blank urls
 
       CDP.sendMessage('Page.stopLoading', {}, sessionId);
 
       if (msg.method === 'Page.frameNavigated') {
-        CDP.sendMessage('Page.navigate', { url: 'about:blank' }, sessionId);
+        // Page.frameNavigated will never be fired if we intercept the scheduled navigation
+        // but Firefox does not support that so this is a fallback
+
+        // load about:blank whilst we do things
+        // CDP.sendMessage('Page.navigate', { url: 'about:blank' }, sessionId);
 
         const history = await CDP.sendMessage('Page.getNavigationHistory', {}, sessionId);
         let oldUrl = history.entries[history.currentIndex - 1].url;
-        if (oldUrl === 'about:blank') oldUrl = history.entries[history.currentIndex - 2].url;
+        // if (oldUrl === 'about:blank') oldUrl = history.entries[history.currentIndex - 2].url;
 
         CDP.sendMessage('Page.navigate', {
           url: oldUrl,
