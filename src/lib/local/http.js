@@ -2,8 +2,8 @@ import { createServer } from 'http';
 import createLocalFulfill from './fulfill.js';
 import { log } from '../logger.js';
 
-export default async ({ basePath, url }) => {
-  const localFulfill = createLocalFulfill(basePath);
+export default async ({ basePath, url, csp }) => {
+  const localFulfill = createLocalFulfill(basePath, csp);
 
   const port = parseInt(url.split(':').pop());
   const server = createServer(async (req, res) => {

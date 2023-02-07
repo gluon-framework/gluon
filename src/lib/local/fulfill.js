@@ -10,7 +10,9 @@ const generatePath = (pathname, indexFile) => {
   return pathname;
 };
 
-export default givenPath => {
+export default (givenPath, csp) => {
+  if (!csp) csp = undefined;
+
   const basePath = extname(givenPath) ? dirname(givenPath) : givenPath;
   const indexFile = extname(basePath) ? basename(basePath) : 'index.html';
 
@@ -36,7 +38,8 @@ export default givenPath => {
       status: 200,
       body,
       headers: {
-        'Content-Type': mimeType(ext)
+        'Content-Type': mimeType(ext),
+        'Content-Security-Policy': csp
       }
     };
   };

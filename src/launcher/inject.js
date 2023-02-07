@@ -27,7 +27,7 @@ const acquireTarget = async (CDP, filter = () => true) => {
   })).sessionId;
 };
 
-export default async (CDP, proc, injectionType = 'browser', { dataPath, browserName, browserType, openingLocal, url, basePath, allowRedirects, closeHandlers }) => {
+export default async (CDP, proc, injectionType = 'browser', { dataPath, browserName, browserType, openingLocal, url, basePath, allowRedirects, localCSP, closeHandlers }) => {
   let pageLoadCallback, pageLoadPromise = new Promise(res => pageLoadCallback = res);
   let frameLoadCallback = () => {}, onWindowMessage = () => {};
   CDP.onMessage(async msg => {
@@ -79,7 +79,7 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   let sessionId;
   if (injectionType === 'browser') sessionId = await acquireTarget(CDP, target => target.url !== 'about:blank');
 
-  if (openingLocal && browserType === 'chromium') await LocalCDP(CDP, { sessionId, url, basePath });
+  if (openingLocal && browserType === 'chromium') await LocalCDP(CDP, { sessionId, url, basePath, csp: localCSP });
 
   await CDP.sendMessage('Runtime.enable', {}, sessionId); // enable runtime API
   CDP.sendMessage('Page.enable', {}, sessionId); // enable page API

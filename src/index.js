@@ -185,7 +185,16 @@ const getBrowserType = name => { // todo: not need this
 const portRange = [ 10000, 60000 ];
 const generatePort = () => (Math.floor(Math.random() * (portRange[1] - portRange[0] + 1)) + portRange[0]);
 
-const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-origin', windowSize, forceBrowser, forceEngine }) => {
+// default CSP policy. tl;dr: allow everything if same-origin, and allow all mostly non-dangerous things for all domains (images, css, requests)
+const csp_sameOnly = `'self' 'unsafe-inline'`;
+const csp_allowAll = `https: data: blob: 'unsafe-inline'`;
+const defaultCSP = [ 'upgrade-insecure-requests' ].concat(
+  [ 'default-src' ].map(x => `${x} ${csp_sameOnly}`)
+).concat(
+  [ 'connect-src', 'prefetch-src', 'font-src', 'img-src', 'media-src', 'style-src', 'form-action' ].map(x => `${x} ${csp_allowAll}`)
+).join('; ');
+
+const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-origin', windowSize, forceBrowser, forceEngine, localCSP = defaultCSP }) => {
   const [ browserPath, browserName ] = await findBrowserPath(forceBrowser, forceEngine);
   const browserFriendlyName = getFriendlyName(browserName);
 
@@ -202,7 +211,7 @@ const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-ori
   const basePath = isAbsolute(url) ? url : join(ranJsDir, url);
 
   const closeHandlers = [];
-  if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalHTTP({ url: localUrl, basePath }));
+  if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalHTTP({ url: localUrl, basePath, csp: localCSP }));
 
   const Window = await (browserType === 'firefox' ? Firefox : Chromium)({
     dataPath,
@@ -220,7 +229,8 @@ const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-ori
     closeHandlers,
     browserType,
     dataPath,
-    allowRedirects
+    allowRedirects,
+    localCSP
   });
 
   return Window;
