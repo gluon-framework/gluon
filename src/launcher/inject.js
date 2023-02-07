@@ -44,8 +44,7 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
       let newUrl = msg.params?.frame?.url ?? msg.params?.url;
       if (allowRedirects === true) return;
       if (allowRedirects === 'same-origin' && new URL(newUrl).origin === new URL(url).origin) return;
-
-      console.log(url, new URL(url).origin);
+      if (allowRedirects === false && newUrl === url) return;
 
       CDP.sendMessage('Page.stopLoading', {}, sessionId);
 
@@ -53,7 +52,8 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
         CDP.sendMessage('Page.navigate', { url: 'about:blank' }, sessionId);
 
         const history = await CDP.sendMessage('Page.getNavigationHistory', {}, sessionId);
-        const oldUrl = history.entries[history.currentIndex - 1].url;
+        let oldUrl = history.entries[history.currentIndex - 1].url;
+        if (oldUrl === 'about:blank') oldUrl = history.entries[history.currentIndex - 2].url;
 
         CDP.sendMessage('Page.navigate', {
           url: oldUrl,
