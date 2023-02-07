@@ -8,8 +8,6 @@ const presets = { // Presets from OpenAsar
 };
 
 export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP, extensions }, extra) => {
-  console.log(extensions);
-
   return await StartBrowser(browserPath, [
     `--app=${url}`,
     `--user-data-dir=${dataPath}`,

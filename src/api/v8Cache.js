@@ -28,7 +28,6 @@ export default async (CDP, evaluate, { browserType, dataPath }) => {
       let produced = [], done = false;
 
       const unhook = CDP.on('Page.compilationCacheProduced', ({ params: { url, data }}) => {
-        // console.log('produced', url);
         produced.push({ url, data });
 
         process.stdout.write(`v8Cache: caching... (${produced.length}/${urls.length})\r`);
@@ -46,7 +45,6 @@ export default async (CDP, evaluate, { browserType, dataPath }) => {
 
       if (reload) {
         if (finishOnLoad) CDP.on('Page.frameStoppedLoading', async () => {
-          // console.log('loaded');
           await new Promise(res => setTimeout(res, 2000));
           if (done) return;
 
@@ -80,7 +78,6 @@ export default async (CDP, evaluate, { browserType, dataPath }) => {
     const cache = JSON.parse(await readFile(path, 'utf8'));
 
     for (const entry of cache) {
-      // console.log('loaded', entry);
       CDP.send('Page.addCompilationCache', entry);
     }
 
