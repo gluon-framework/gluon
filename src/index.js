@@ -1,7 +1,7 @@
 import { join, dirname, delimiter, sep, isAbsolute } from 'path';
 import { access, readdir } from 'fs/promises';
 import { fileURLToPath } from 'url';
-import { log } from './lib/logger.js';
+import { log, dangerousAPI } from './lib/logger.js';
 
 import Chromium from './browser/chromium.js';
 import Firefox from './browser/firefox.js';
@@ -226,11 +226,17 @@ const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-ori
   return Window;
 };
 
+const checkForDangerousOptions = ({ allowHTTP, allowRedirects }) => {
+  if (allowHTTP === true) dangerousAPI('Gluon.open', 'allowHTTP', 'true');
+  if (allowRedirects === true) dangerousAPI('Gluon.open', 'allowRedirects', 'true');
+};
+
 export const open = async (url, opts = {}) => {
   const { onLoad, allowHTTP = false } = opts;
 
   if (allowHTTP !== true && url.startsWith('http://')) throw new Error(`HTTP URLs are blocked by default. Please use HTTPS, or if not possible, enable the 'allowHTTP' option.`);
 
+  checkForDangerousOptions(opts);
   log('starting browser...');
 
   const Browser = await startBrowser(url, opts);
