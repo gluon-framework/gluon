@@ -1,7 +1,6 @@
-import { basename, dirname, extname, join } from 'path';
-import { readFile } from 'fs/promises';
-
-import mimeType from '../mimeType.js';
+import { basename, dirname, extname, join } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { getMimeType } from '../../utils/getMimeType.js';
 
 const generatePath = (pathname, indexFile) => {
   if (pathname === '/') return indexFile;
@@ -36,7 +35,7 @@ export default givenPath => {
       status: 200,
       body,
       headers: {
-        'Content-Type': mimeType(ext)
+        'Content-Type': getMimeType(ext)
       }
     };
   };

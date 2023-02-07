@@ -1,9 +1,7 @@
-import { mkdir, writeFile, copyFile, access } from 'fs/promises';
-import { join, basename } from 'path';
+import { mkdir, writeFile, copyFile } from 'node:fs/promises';
+import { join, basename } from 'node:path';
 
-import StartBrowser from '../launcher/start.js';
-
-const exists = path => access(path).then(() => true).catch(() => false);
+import startBrowser from '../launcher/start.js';
 
 export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP, extensions }, extra) => {
   await mkdir(dataPath, { recursive: true });
@@ -86,11 +84,16 @@ html:not([tabsintitlebar="true"]) .tab-icon-image {
     if (!await exists(installPath)) await copyFile(ext, installPath);
   }
 
-  return await StartBrowser(browserPath, [
-    ...(!windowSize ? [] : [ `-window-size`, windowSize.join(',') ]),
+  const args = [
     `-profile`, dataPath,
     `-new-window`, url,
     `-new-instance`,
     `-no-remote`,
-  ], 'websocket', extra);
+  ]
+
+  if (windowSize) {
+    args.push(`-window-size`, windowSize.join(','))
+  }
+
+  return await startBrowser(browserPath, args, 'websocket', extra);
 };

@@ -1,6 +1,7 @@
-import { join, sep } from 'path';
-import { access, writeFile, readFile } from 'fs/promises';
+import { join, sep } from 'node:path';
+import { writeFile, readFile } from 'node:fs/promises';
 import { log } from '../lib/logger.js';
+import { exists } from '../utils/exists.js'
 
 export default async (CDP, evaluate, { browserType, dataPath }) => {
   if (browserType !== 'chromium') { // current implementation is for chromium-based only
@@ -73,8 +74,6 @@ export default async (CDP, evaluate, { browserType, dataPath }) => {
     log(`v8Cache: saved to .../${path.split(sep).slice(-3).join('/')} (${(Buffer.byteLength(raw, 'utf8') / 1024 / 1024).toFixed(2)}MB)`);
   };
 
-  const exists = (path = getDefaultPath()) => access(path).then(() => true).catch(() => false);
-
   const load = async (path = getDefaultPath()) => {
     if (!await exists(path)) return false;
     const startTime = performance.now();
@@ -97,6 +96,6 @@ export default async (CDP, evaluate, { browserType, dataPath }) => {
   return {
     build,
     load,
-    exists
+    exists: (path) => exists(path ?? getDefaultPath())
   };
 };

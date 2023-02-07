@@ -4,7 +4,10 @@
   "description": "Make websites into desktop apps with system installed browsers and NodeJS.",
   "main": "src/index.js",
   "types": "gluon.d.ts",
-  "scripts": {},
+  "scripts": {
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gluon-framework/gluon.git"
@@ -18,5 +21,8 @@
   "type": "module",
   "dependencies": {
     "ws": "^8.11.0"
+  },
+  "devDependencies": {
+    "vitest": "^0.28.4"
   }
 }

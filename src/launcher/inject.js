@@ -1,4 +1,4 @@
-import { writeFile } from 'fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { log } from '../lib/logger.js';
 
 import IPCApi from '../lib/ipc.js';
