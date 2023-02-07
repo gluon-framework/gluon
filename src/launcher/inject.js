@@ -27,10 +27,10 @@ const acquireTarget = async (CDP, filter = () => true) => {
   })).sessionId;
 };
 
-export default async (CDP, proc, injectionType = 'browser', { dataPath, browserName, browserType, openingLocal, localUrl, url, allowRedirects, closeHandlers }) => {
+export default async (CDP, proc, injectionType = 'browser', { dataPath, browserName, browserType, openingLocal, url, basePath, allowRedirects, closeHandlers }) => {
   let pageLoadCallback, pageLoadPromise = new Promise(res => pageLoadCallback = res);
   let frameLoadCallback = () => {}, onWindowMessage = () => {};
-  CDP.onMessage(msg => {
+  CDP.onMessage(async msg => {
     if (msg.method === 'Runtime.bindingCalled' && msg.params.name === '_gluonSend') onWindowMessage(JSON.parse(msg.params.payload));
     if (msg.method === 'Page.frameStoppedLoading') frameLoadCallback(msg.params);
     if (msg.method === 'Page.loadEventFired') pageLoadCallback();
@@ -45,13 +45,21 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
       if (allowRedirects === true) return;
       if (allowRedirects === 'same-origin' && new URL(newUrl).origin === new URL(url).origin) return;
 
+      console.log(url, new URL(url).origin);
+
       CDP.sendMessage('Page.stopLoading', {}, sessionId);
 
       if (msg.method === 'Page.frameNavigated') {
         CDP.sendMessage('Page.navigate', { url: 'about:blank' }, sessionId);
-        // CDP.sendMessage('Page.navigate')
+
+        const history = await CDP.sendMessage('Page.getNavigationHistory', {}, sessionId);
+        const oldUrl = history.entries[history.currentIndex - 1].url;
+
+        CDP.sendMessage('Page.navigate', {
+          url: oldUrl,
+          frameId: msg.params.frame.id
+        }, sessionId);
       }
-      // CDP.sendMessage('Page.navigate', { url: 'about:blank' }, sessionId);
     }
   });
 
@@ -66,9 +74,10 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   let sessionId;
   if (injectionType === 'browser') sessionId = await acquireTarget(CDP, target => target.url !== 'about:blank');
 
-  if (openingLocal && browserType === 'chromium') await LocalCDP(CDP, { sessionId, localUrl, url });
+  if (openingLocal && browserType === 'chromium') await LocalCDP(CDP, { sessionId, url, basePath });
 
   await CDP.sendMessage('Runtime.enable', {}, sessionId); // enable runtime API
+  CDP.sendMessage('Page.enable', {}, sessionId); // enable page API
 
   CDP.sendMessage('Runtime.addBinding', { // setup sending from window to Node via Binding
     name: '_gluonSend'

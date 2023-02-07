@@ -12,7 +12,7 @@ const generatePath = (pathname, indexFile) => {
 
 export default givenPath => {
   const basePath = extname(givenPath) ? dirname(givenPath) : givenPath;
-  const indexFile = extname(givenPath) ? basename(givenPath) : 'index.html';
+  const indexFile = extname(basePath) ? basename(basePath) : 'index.html';
 
   return async url => {
     url = new URL(url);

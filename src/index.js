@@ -202,7 +202,7 @@ const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-ori
   const basePath = isAbsolute(url) ? url : join(ranJsDir, url);
 
   const closeHandlers = [];
-  if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalHTTP({ localUrl, url: basePath }));
+  if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalHTTP({ url: localUrl, basePath }));
 
   const Window = await (browserType === 'firefox' ? Firefox : Chromium)({
     dataPath,
@@ -214,8 +214,8 @@ const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-ori
     extensions: ExtensionsAPI._extensions[browserType]
   }, {
     browserName: browserFriendlyName,
-    url: openingLocal ? basePath : url,
-    localUrl,
+    url: openingLocal ? localUrl : url,
+    basePath,
     openingLocal,
     closeHandlers,
     browserType,

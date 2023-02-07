@@ -13,8 +13,6 @@ export default async (CDP, evaluate, { browserType, dataPath }) => {
     };
   }
 
-  await CDP.send('Page.enable');
-
   const getDefaultPath = () => join(dataPath, 'v8Cache.json');
   const getScriptUrls = async (includePreload = true) => (await evaluate(`[...document.querySelectorAll('script[src]${includePreload ? ', link[as=script]' : ''}')].map(x => x.src ?? x.href).join(';')`)).split(';');
 

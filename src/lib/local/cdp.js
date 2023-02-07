@@ -1,8 +1,8 @@
 import createLocalFulfill from './fulfill.js';
 import { log } from '../logger.js';
 
-export default async (CDP, { sessionId, url: givenPath, localUrl }) => {
-  const localFulfill = createLocalFulfill(givenPath);
+export default async (CDP, { sessionId, basePath, url }) => {
+  const localFulfill = createLocalFulfill(basePath);
 
   CDP.onMessage(async msg => {
     if (msg.method === 'Fetch.requestPaused') {
@@ -21,7 +21,7 @@ export default async (CDP, { sessionId, url: givenPath, localUrl }) => {
 
   await CDP.sendMessage('Fetch.enable', {
     patterns: [ {
-      urlPattern: `${localUrl}*`
+      urlPattern: `${url}*`
     } ]
   });
 
