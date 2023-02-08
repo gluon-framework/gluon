@@ -194,7 +194,7 @@ const defaultCSP = [ 'upgrade-insecure-requests' ].concat(
   [ 'connect-src', 'prefetch-src', 'font-src', 'img-src', 'media-src', 'style-src', 'form-action' ].map(x => `${x} ${csp_allowAll}`)
 ).join('; ');
 
-const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-origin', windowSize, forceBrowser, forceEngine, localCSP = defaultCSP }) => {
+const startBrowser = async (url, { allowHTTP = false, allowNavigation = 'same-origin', windowSize, forceBrowser, forceEngine, localCSP = defaultCSP }) => {
   const [ browserPath, browserName ] = await findBrowserPath(forceBrowser, forceEngine);
   const browserFriendlyName = getFriendlyName(browserName);
 
@@ -229,16 +229,16 @@ const startBrowser = async (url, { allowHTTP = false, allowRedirects = 'same-ori
     closeHandlers,
     browserType,
     dataPath,
-    allowRedirects,
+    allowNavigation,
     localCSP
   });
 
   return Window;
 };
 
-const checkForDangerousOptions = ({ allowHTTP, allowRedirects }) => {
+const checkForDangerousOptions = ({ allowHTTP, allowNavigation }) => {
   if (allowHTTP === true) dangerousAPI('Gluon.open', 'allowHTTP', 'true');
-  if (allowRedirects === true) dangerousAPI('Gluon.open', 'allowRedirects', 'true');
+  if (allowNavigation === true) dangerousAPI('Gluon.open', 'allowNavigation', 'true');
 };
 
 export const open = async (url, opts = {}) => {

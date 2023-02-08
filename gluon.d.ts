@@ -521,14 +521,14 @@ type OpenOptions = {
   allowHTTP?: false | 'mixed' | true,
 
   /**
-   * Set what redirects are allowed in the window.
+   * Set what top-level navigation is allowed in the window.
    * Options:
-   * - `false`: **No** redirects are allowed.
-   * - `same-origin`: Redirects are **allowed if the redirect URL is the same origin** (as the URL given to `open()`).
-   * - `true`: **All** redirects are allowed. **Not recommended.**
+   * - `false`: **No** navigation is allowed.
+   * - `same-origin`: Navigation is allowed **if the redirect URL is the same origin** (as the URL given to `open()`).
+   * - `true`: **All** navigation is allowed. **Not recommended.**
    * @default 'same-origin'
    */
-  allowRedirects?: false | 'same-origin' | true,
+  allowNavigation?: false | 'same-origin' | true,
 
   /**
    * Set the Content Security Policy when using Local (giving open() a path).

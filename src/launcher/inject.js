@@ -27,7 +27,7 @@ const acquireTarget = async (CDP, filter = () => true) => {
   })).sessionId;
 };
 
-export default async (CDP, proc, injectionType = 'browser', { dataPath, browserName, browserType, openingLocal, url, basePath, allowRedirects, localCSP, closeHandlers }) => {
+export default async (CDP, proc, injectionType = 'browser', { dataPath, browserName, browserType, openingLocal, url, basePath, allowNavigation, localCSP, closeHandlers }) => {
   let pageLoadCallback, pageLoadPromise = new Promise(res => pageLoadCallback = res);
   let frameLoadCallback = () => {}, onWindowMessage = () => {};
   CDP.onMessage(async msg => {
@@ -42,9 +42,10 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
 
     if (msg.method === 'Page.frameScheduledNavigation' || msg.method === 'Page.frameNavigated') {
       let newUrl = msg.params?.frame?.url ?? msg.params?.url;
-      if (allowRedirects === true) return; // always allow redirects
-      if (allowRedirects === 'same-origin' && new URL(newUrl).origin === new URL(url).origin) return; // only allow if same origin
-      if (allowRedirects === false && newUrl === url) return; // only allow if identical open() url
+
+      if (allowNavigation === true) return; // always allow redirects
+      if (allowNavigation === 'same-origin' && new URL(newUrl).origin === new URL(url).origin) return; // only allow if same origin
+      if (allowNavigation === false && newUrl === url) return; // only allow if identical open() url
       if (newUrl === 'about:blank') return; // allow blank urls
 
       CDP.sendMessage('Page.stopLoading', {}, sessionId);
