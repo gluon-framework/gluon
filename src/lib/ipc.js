@@ -266,10 +266,12 @@ delete window._gluonSend;
   API = new Proxy(API, { // setter and deleter API
     set(_obj, key, value) {
       expose(key, value);
+      return true;
     },
 
     deleteProperty(_obj, key) {
       unexpose(key);
+      return true;
     }
   });
 
