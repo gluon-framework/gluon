@@ -24,8 +24,14 @@
 - [X] Browser extension API
 - [X] Security revamp:
   - [X] Completely block HTTP (by default)
-  - [ ] Add easy CSP options (with default) when using Local
-  - [ ] Restrict navigation when using Local to Local only (by default)
+  - [X] Add easy CSP options (with default) when using Local
+  - [X] Restrict navigation when using Local to Local only (by default)
+- [X] New small APIs:
+  - [X] `Window.page.printToPDF()`
+  - [X] `Window.closed`
+- [X] Typings improvements
+- [X] Cleaner exiting on browser or node exit
+- [X] More browsers added
 
 ## v0.12.0
 - [X] Add new freezing API to Idle API
