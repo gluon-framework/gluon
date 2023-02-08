@@ -1,5 +1,7 @@
 # Gluon Changelog
 
+## [v0.13.0 - 2023-02-08](https://gluonjs.org/blog/gluon-v0.13/)
+
 ## [v0.12.0 - 2023-01-28](https://gluonjs.org/blog/gluon-v0.12/)
 
 ## [v0.11.0 - 2023-01-08](https://gluonjs.org/blog/gluon-v0.11/)
