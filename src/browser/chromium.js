@@ -14,6 +14,6 @@ export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP, e
     windowSize ? `--window-size=${windowSize.join(',')}` : '',
     ![true, 'mixed'].includes(allowHTTP) ? `--enable-strict-mixed-content-checking` : '--allow-running-insecure-content',
     Array.isArray(extensions) && extensions.length > 0 ? `--load-extension=${(await Promise.all(extensions)).flat().join(',')}` : '',
-    ...`--new-window --no-first-run --no-default-browser-check --disable-component-extensions-with-background-pages --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication --in-process-gpu ${presets.perf}`.split(' ')
+    ...`--new-window --disable-translate --disable-sync --no-first-run --no-default-browser-check --disable-component-extensions-with-background-pages --disable-default-apps --disable-breakpad --disable-crashpad --disable-background-networking --disable-domain-reliability --disable-component-update --disable-sync --disable-features=AutofillServerCommunication --in-process-gpu ${presets.perf}`.split(' ')
   ], 'stdio', extra);
 };
