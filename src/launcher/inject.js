@@ -109,7 +109,6 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
     browserType
   }, {
     evalInWindow,
-    frameLoadPromise,
     evalOnNewDocument: source => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', { source }, sessionId)
   });
   onWindowMessage = ipcMessageCallback;

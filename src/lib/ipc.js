@@ -1,4 +1,4 @@
-export default ({ browserName, browserInfo, browserType }, { evalInWindow, evalOnNewDocument, pageLoadPromise }) => {
+export default ({ browserName, browserInfo, browserType }, { evalInWindow, evalOnNewDocument }) => {
   const injection = `(() => {
 if (window.Gluon) return;
 let onIPCReply = {}, ipcListeners = {};
@@ -133,7 +133,6 @@ delete window._gluonSend;
     const isReply = !!id;
     id = id ?? Math.random().toString().split('.')[1];
 
-    await pageLoadPromise; // wait for page to load before sending, otherwise messages won't be heard
     evalInWindow(`window.Gluon.ipc._receive(${JSON.stringify({
       id,
       type,
