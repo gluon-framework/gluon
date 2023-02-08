@@ -29,7 +29,10 @@ const acquireTarget = async (CDP, filter = () => true) => {
 
 export default async (CDP, proc, injectionType = 'browser', { dataPath, browserName, browserType, openingLocal, url, basePath, allowNavigation, localCSP, closeHandlers }) => {
   let pageLoadCallback, pageLoadPromise = new Promise(res => pageLoadCallback = res);
-  let frameLoadCallback = () => {}, onWindowMessage = () => {};
+  let frameLoadCallback, frameLoadPromise = new Promise(res => frameLoadCallback = res);
+
+  let onWindowMessage = () => {};
+
   CDP.onMessage(async msg => {
     if (msg.method === 'Runtime.bindingCalled' && msg.params.name === '_gluonSend') onWindowMessage(JSON.parse(msg.params.payload));
     if (msg.method === 'Page.frameStoppedLoading') frameLoadCallback(msg.params);
@@ -90,6 +93,7 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   }, sessionId);
 
   const evalInWindow = async func => {
+    await frameLoadPromise; // wait for page to load before eval, otherwise fail
     const reply = await CDP.sendMessage(`Runtime.evaluate`, {
       expression: typeof func === 'string' ? func : `(${func.toString()})()`
     }, sessionId);
@@ -105,8 +109,8 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
     browserType
   }, {
     evalInWindow,
-    evalOnNewDocument: source => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', { source }, sessionId),
-    pageLoadPromise: new Promise(res => frameLoadCallback = res)
+    frameLoadPromise,
+    evalOnNewDocument: source => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', { source }, sessionId)
   });
   onWindowMessage = ipcMessageCallback;
 
