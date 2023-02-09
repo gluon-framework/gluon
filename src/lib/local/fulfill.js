@@ -14,7 +14,7 @@ export default (givenPath, csp) => {
   if (!csp) csp = undefined;
 
   const basePath = extname(givenPath) ? dirname(givenPath) : givenPath;
-  const indexFile = extname(basePath) ? basename(basePath) : 'index.html';
+  const indexFile = extname(givenPath) ? basename(givenPath) : 'index.html';
 
   return async url => {
     url = new URL(url);
