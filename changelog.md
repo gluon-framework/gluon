@@ -6,6 +6,9 @@
 - Fixed IPC exposing sometimes not working when ran early due to timing issue
 - Fixed IPC expose Proxy setter return values
 
+### v0.13.2
+- Fixed Local not resolving custom indexes
+
 
 ## [v0.12.0 - 2023-01-28](https://gluonjs.org/blog/gluon-v0.12/)
 
