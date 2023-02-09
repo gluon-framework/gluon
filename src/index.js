@@ -1,4 +1,4 @@
-import { join, dirname, delimiter, sep, isAbsolute } from 'path';
+import { join, dirname, extname, delimiter, sep, isAbsolute } from 'path';
 import { access, readdir } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { log, dangerousAPI } from './lib/logger.js';
@@ -172,7 +172,7 @@ const findBrowserPath = async (forceBrowser, forceEngine) => {
 
 const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase());
 
-const ranJsDir = !process.argv[1] ? __dirname : (process.argv[1].endsWith('.js') ? dirname(process.argv[1]) : process.argv[1]);
+const ranJsDir = !process.argv[1] ? __dirname : (extname(process.argv[1]) ? dirname(process.argv[1]) : process.argv[1]);
 const getDataPath = browser => join(ranJsDir, 'gluon_data', browser);
 
 const getBrowserType = name => { // todo: not need this
