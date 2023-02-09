@@ -194,7 +194,7 @@ const defaultCSP = [ 'upgrade-insecure-requests' ].concat(
   [ 'connect-src', 'prefetch-src', 'font-src', 'img-src', 'media-src', 'style-src', 'form-action' ].map(x => `${x} ${csp_allowAll}`)
 ).join('; ');
 
-const startBrowser = async (url, { allowHTTP = false, allowNavigation = 'same-origin', windowSize, forceBrowser, forceEngine, localCSP = defaultCSP }) => {
+const startBrowser = async (url, parentDir, { allowHTTP = false, allowNavigation = 'same-origin', windowSize, forceBrowser, forceEngine, localCSP = defaultCSP }) => {
   const [ browserPath, browserName ] = await findBrowserPath(forceBrowser, forceEngine);
   const browserFriendlyName = getFriendlyName(browserName);
 
@@ -208,7 +208,7 @@ const startBrowser = async (url, { allowHTTP = false, allowNavigation = 'same-or
 
   const openingLocal = !url.includes('://');
   const localUrl = browserType === 'firefox' ? `http://localhost:${generatePort()}` : 'https://gluon.local';
-  const basePath = isAbsolute(url) ? url : join(ranJsDir, url);
+  const basePath = isAbsolute(url) ? url : join(parentDir, url);
 
   const closeHandlers = [];
   if (openingLocal && browserType === 'firefox') closeHandlers.push(await LocalHTTP({ url: localUrl, basePath, csp: localCSP }));
@@ -236,6 +236,9 @@ const startBrowser = async (url, { allowHTTP = false, allowNavigation = 'same-or
   return Window;
 };
 
+// get parent directory of where function was called from
+const getParentDir = () => dirname(fileURLToPath((new Error()).stack.split('\n')[3].slice(7).trim().split(':').slice(0, -2).join(':')));
+
 const checkForDangerousOptions = ({ allowHTTP, allowNavigation }) => {
   if (allowHTTP === true) dangerousAPI('Gluon.open', 'allowHTTP', 'true');
   if (allowNavigation === true) dangerousAPI('Gluon.open', 'allowNavigation', 'true');
@@ -249,7 +252,7 @@ export const open = async (url, opts = {}) => {
   checkForDangerousOptions(opts);
   log('starting browser...');
 
-  const Browser = await startBrowser(url, opts);
+  const Browser = await startBrowser(url, getParentDir(), opts);
 
   if (onLoad) {
     const toRun = `(() => {
