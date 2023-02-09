@@ -46,4 +46,4 @@ export default ext => ({
   "xhtml": "application/xhtml+xml",
   "xml": "application/xml",
   "zip": "application/zip"
-})[ext] ?? 'application/octet-stream';
+})[ext.toLowerCase()] ?? 'application/octet-stream';
