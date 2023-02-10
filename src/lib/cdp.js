@@ -124,6 +124,7 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
     pipeWrite.on('error', () => {}); // ignore write error, likely just closed
 
     _send = data => {
+      log('debug:', closed, !pipeWrite.writable);
       if (closed || !pipeWrite.writable) return new Error('CDP connection closed');
 
       pipeWrite.write(data);
