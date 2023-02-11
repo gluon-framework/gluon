@@ -1,3 +1,5 @@
+const logIPC = process.argv.includes('--ipc-logging');
+
 export default ({ browserName, browserInfo, browserType }, { evalInWindow, evalOnNewDocument }) => {
   const injection = `(() => {
 if (window.Gluon) return;
@@ -130,6 +132,8 @@ delete window._gluonSend;
 
   let onIPCReply = {}, ipcListeners = {};
   const sendToWindow = async (type, data, id = undefined) => {
+    if (logIPC) log('IPC: send', { type, data, id });
+
     const isReply = !!id;
     id = id ?? Math.random().toString().split('.')[1];
 
@@ -149,6 +153,8 @@ delete window._gluonSend;
   };
 
   const onWindowMessage = async ({ id, type, data }) => {
+    if (logIPC) log('IPC: recv', { type, data, id });
+
     if (onIPCReply[id]) {
       onIPCReply[id]({ type, data });
       delete onIPCReply[id];
@@ -190,6 +196,7 @@ delete window._gluonSend;
 
   const expose = (key, func) => {
     if (typeof func !== 'function') return new Error('Invalid arguments (expected key and function)');
+    if (logIPC) log('IPC: expose', key);
 
     const exposeKey = makeExposeKey(key);
 
@@ -222,6 +229,8 @@ delete window._gluonSend;
 
   const _store = {};
   const updateWeb = (key, value) => { // update web with a key/value change
+    if (logIPC) log('IPC: store write (backend)', key, value);
+
     API.send('backend store change', { key, value });
   };
 
@@ -259,6 +268,8 @@ delete window._gluonSend;
   });
 
   API.on('web store change', ({ key, value }) => {
+    if (logIPC) log('IPC: store write (web)', key, value);
+
     if (value === undefined) delete _store[key];
       else _store[key] = value;
   });
