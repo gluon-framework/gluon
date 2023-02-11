@@ -21,6 +21,7 @@ user_pref('fission.bfcacheInParent', false);
 user_pref('fission.webContentIsolationStrategy', 0);
 user_pref('ui.key.menuAccessKeyFocuses', false);
 user_pref('extensions.autoDisableScopes', 0);
+user_pref('media.autoplay.blocking_policy', 0);
 ${process.platform === 'darwin' ? `user_pref('browser.tabs.inTitlebar', 0);` : `` }
 
 user_pref('security.mixed_content.block_active_content', ${![true, 'mixed'].includes(allowHTTP) ? 'true' : 'false'});
