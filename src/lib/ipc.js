@@ -1,4 +1,4 @@
-import { log } from "./logger";
+import { log } from './logger.js';
 const logIPC = process.argv.includes('--ipc-logging');
 
 export default ({ browserName, browserInfo, browserType }, { evalInWindow, evalOnNewDocument }) => {
