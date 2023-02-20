@@ -72,11 +72,6 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
     }
   });
 
-  // when the process has exited (all windows closed), clean up window internally
-  proc.on('exit', () => {
-    Window.close();
-  });
-
   const browserInfo = await CDP.sendMessage('Browser.getVersion');
   log('browser:', browserInfo.product);
 
@@ -212,6 +207,11 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
 
     versions
   };
+
+  // when the process has exited (all windows closed), clean up window internally
+  proc.on('exit', () => {
+    Window.close();
+  });
 
   // Close window fully internally if browser process closes
   proc.on('close', Window.close);
