@@ -78,10 +78,10 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   let sessionId;
   if (injectionType === 'browser') sessionId = await acquireTarget(CDP, target => target.url !== 'about:blank');
 
-  if (openingLocal && browserType === 'chromium') await LocalCDP(CDP, { sessionId, url, basePath, csp: localCSP });
-
   await CDP.sendMessage('Runtime.enable', {}, sessionId); // enable runtime API
   await CDP.sendMessage('Page.enable', {}, sessionId); // enable page API
+
+  if (openingLocal && browserType === 'chromium') await LocalCDP(CDP, { sessionId, url, basePath, csp: localCSP });
 
   CDP.sendMessage('Runtime.addBinding', { // setup sending from window to Node via Binding
     name: '_gluonSend'
