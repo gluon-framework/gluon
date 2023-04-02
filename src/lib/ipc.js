@@ -99,7 +99,8 @@ Gluon.ipc.store = new Proxy({
     return value;
   },
 
-  keys: () => Object.keys(_store)
+  keys: () => Object.keys(_store),
+  toJSON: () => _store
 }, {
   get(target, key) {
     return target[key] ?? _store[key];
@@ -251,7 +252,8 @@ delete window._gluonSend;
       return value;
     },
 
-    keys: () => Object.keys(_store)
+    keys: () => Object.keys(_store),
+    toJSON: () => _store
   }, {
     get(target, key) {
       return target[key] ?? _store[key];
