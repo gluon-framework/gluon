@@ -9,7 +9,7 @@ import Firefox from './browser/firefox.js';
 import * as ExtensionsAPI from './extensions.js';
 import LocalHTTP from './lib/local/http.js';
 
-process.versions.gluon = '0.14.0-alpha.0';
+process.versions.gluon = '0.13.5';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
