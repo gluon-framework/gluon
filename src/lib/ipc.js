@@ -133,10 +133,10 @@ delete window._gluonSend;
 
   let onIPCReply = {}, ipcListeners = {};
   const sendToWindow = async (type, data, id = undefined) => {
-    if (logIPC) log('IPC: send', { type, data, id });
-
     const isReply = !!id;
     id = id ?? Math.random().toString().split('.')[1];
+
+    if (logIPC) log('IPC: send', { type, data, id });
 
     evalInWindow(`window.Gluon.ipc._receive(${JSON.stringify({
       id,
