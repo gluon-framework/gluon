@@ -101,18 +101,22 @@ Gluon.ipc.store = new Proxy({
 
   keys: () => Object.keys(_store)
 }, {
-  get(_obj, key) {
-    return _store[key];
+  get(target, key) {
+    return target[key] ?? _store[key];
   },
 
-  set(_obj, key, value) {
+  set(target, key, value) {
+    if (target[key]) throw new Error('Cannot overwrite Gluon functions');
+
     _store[key] = value;
 
     updateBackend(key, value);
     return true;
   },
 
-  deleteProperty(_obj, key) {
+  deleteProperty(target, key) {
+    if (target[key]) throw new Error('Cannot overwrite Gluon functions');
+
     delete _store[key];
 
     updateBackend(key, undefined);
@@ -249,18 +253,22 @@ delete window._gluonSend;
 
     keys: () => Object.keys(_store)
   }, {
-    get(_obj, key) {
-      return _store[key];
+    get(target, key) {
+      return target[key] ?? _store[key];
     },
 
-    set(_obj, key, value) {
+    set(target, key, value) {
+      if (target[key]) throw new Error('Cannot overwrite Gluon functions');
+
       _store[key] = value;
 
       updateWeb(key, value);
       return true;
     },
 
-    deleteProperty(_obj, key) {
+    deleteProperty(target, key) {
+      if (target[key]) throw new Error('Cannot overwrite Gluon functions');
+
       delete _store[key];
 
       updateWeb(key, undefined);
