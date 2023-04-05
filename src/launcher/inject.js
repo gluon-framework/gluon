@@ -98,13 +98,25 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
     return reply.result?.value ?? reply;
   };
 
+  const evalOnNewDocument = async source => {
+    const { identifier } = await CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', {
+      source
+    }, sessionId);
+
+    return async () => {
+      await CDP.sendMessage('Page.removeScriptToEvaluateOnNewDocument', {
+        identifier
+      }, sessionId);
+    };
+  };
+
   const [ ipcMessageCallback, injectIPC, IPC ] = await IPCApi({
     browserName,
     browserInfo,
     browserType
   }, {
     evalInWindow,
-    evalOnNewDocument: source => CDP.sendMessage('Page.addScriptToEvaluateOnNewDocument', { source }, sessionId)
+    evalOnNewDocument
   });
   onWindowMessage = ipcMessageCallback;
 
