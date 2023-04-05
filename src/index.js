@@ -245,7 +245,7 @@ const checkForDangerousOptions = ({ allowHTTP, allowNavigation }) => {
 };
 
 export const open = async (url, opts = {}) => {
-  const { onLoad, allowHTTP = false } = opts;
+  const { allowHTTP = false } = opts;
 
   if (allowHTTP !== true && url.startsWith('http://')) throw new Error(`HTTP URLs are blocked by default. Please use HTTPS, or if not possible, enable the 'allowHTTP' option.`);
 
@@ -253,20 +253,6 @@ export const open = async (url, opts = {}) => {
   log('starting browser...');
 
   const Browser = await startBrowser(url, getParentDir(), opts);
-
-  if (onLoad) {
-    const toRun = `(() => {
-      if (window.self !== window.top) return; // inside frame
-
-      (${onLoad.toString()})();
-    })();`;
-
-    Browser.page.eval(toRun);
-
-    await Browser.cdp.send(`Page.addScriptToEvaluateOnNewDocument`, {
-      source: toRun
-    });
-  }
 
   return Browser;
 };
