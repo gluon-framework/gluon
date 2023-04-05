@@ -207,7 +207,7 @@ const startBrowser = async (url, parentDir, { allowHTTP = false, allowNavigation
   log('data path:', dataPath);
 
   const openingLocal = !url.includes('://');
-  const localUrl = browserType === 'firefox' ? `http://localhost:${generatePort()}` : 'https://gluon.local';
+  const localUrl = browserType === 'firefox' ? `http://localhost:${generatePort()}` : 'https://app.gluon';
   const basePath = isAbsolute(url) ? url : join(parentDir, url);
 
   const closeHandlers = [];
