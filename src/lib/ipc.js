@@ -131,6 +131,12 @@ Gluon.ipc.on('backend store write', ({ key, value }) => {
     else _store[key] = value;
 });
 
+Gluon.ipc = new Proxy(Gluon.ipc, {
+  get(target, key) {
+    return target[key] ?? ((...args) => Gluon.ipc.send('exposed ' + key, args));
+  }
+});
+
 window.Gluon = Gluon;
 
 delete window._gluonSend;
@@ -204,22 +210,17 @@ delete window._gluonSend;
   const makeExposeKey = key => 'exposed ' + key;
 
   const expose = (key, func) => {
-    if (typeof func !== 'function') return new Error('Invalid arguments (expected key and function)');
+    if (typeof func !== 'function') throw new Error('Invalid arguments (expected string, function)');
     if (logIPC) log('IPC: expose', key);
 
     const exposeKey = makeExposeKey(key);
 
     API.on(exposeKey, args => func(...args)); // handle IPC events
-    evalInWindow(`Gluon.ipc['${key}'] = (...args) => Gluon.ipc.send('${exposeKey}', args)`); // add wrapper func to window
   };
 
   const unexpose = key => {
     const exposeKey = makeExposeKey(key);
-
-    const existed = API.removeListener(exposeKey); // returns false if type isn't registered/active
-    if (!existed) return;
-
-    evalInWindow(`delete Gluon.ipc['${key}']`); // remove wrapper func from window
+    API.removeListener(exposeKey);
   };
 
   API.expose = (...args) => {
