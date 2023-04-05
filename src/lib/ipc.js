@@ -5,7 +5,7 @@ export default ({ browserName, browserInfo, browserType }, { evalInWindow, evalO
   const injection = `(() => {
 if (window.Gluon) return;
 let onIPCReply = {}, ipcListeners = {};
-window.Gluon = {
+const Gluon = {
   versions: {
     gluon: '${process.versions.gluon}',
     builder: '${'GLUGUN_VERSION' === 'G\LUGUN_VERSION' ? 'nothing' : 'Glugun GLUGUN_VERSION'}',
@@ -30,7 +30,7 @@ window.Gluon = {
       const isReply = !!id;
       id = id ?? Math.random().toString().split('.')[1];
 
-      window.Gluon.ipc._send(JSON.stringify({
+      Gluon.ipc._send(JSON.stringify({
         id,
         type,
         data
@@ -82,9 +82,10 @@ window.Gluon = {
   },
 };
 
-const _store = {};
+let _store = {};
+Gluon.ipc.send('web store sync').then(syncedStore => _store = syncedStore);
 const updateBackend = (key, value) => { // update backend with a key/value change
-  Gluon.ipc.send('web store change', { key, value });
+  Gluon.ipc.send('web store write', { key, value });
 };
 
 Gluon.ipc.store = new Proxy({
@@ -125,10 +126,12 @@ Gluon.ipc.store = new Proxy({
   }
 });
 
-Gluon.ipc.on('backend store change', ({ key, value }) => {
+Gluon.ipc.on('backend store write', ({ key, value }) => {
   if (value === undefined) delete _store[key];
     else _store[key] = value;
 });
+
+window.Gluon = Gluon;
 
 delete window._gluonSend;
 })();`;
@@ -237,7 +240,7 @@ delete window._gluonSend;
   const updateWeb = (key, value) => { // update web with a key/value change
     if (logIPC) log('IPC: store write (backend)', key, value);
 
-    API.send('backend store change', { key, value });
+    API.send('backend store write', { key, value });
   };
 
   API.store = new Proxy({
@@ -278,12 +281,14 @@ delete window._gluonSend;
     }
   });
 
-  API.on('web store change', ({ key, value }) => {
+  API.on('web store write', ({ key, value }) => {
     if (logIPC) log('IPC: store write (web)', key, value);
 
     if (value === undefined) delete _store[key];
       else _store[key] = value;
   });
+
+  API.on('web store sync', () => _store);
 
   API = new Proxy(API, { // setter and deleter API
     set(_obj, key, value) {
