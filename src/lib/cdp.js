@@ -48,7 +48,7 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
     });
 
     if (reply.error) {
-      log('warn: CDP reply error:', reply.error);
+      log('warn: CDP reply error.', 'method:', method, 'error:', reply.error, '\n' + new Error().stack.split('\n').slice(3).join('\n'));
       return new Error(reply.error.message);
     }
 
