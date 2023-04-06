@@ -194,7 +194,7 @@ const defaultCSP = [ 'upgrade-insecure-requests' ].concat(
   [ 'connect-src', 'prefetch-src', 'font-src', 'img-src', 'media-src', 'style-src', 'form-action' ].map(x => `${x} ${csp_allowAll}`)
 ).join('; ');
 
-const startBrowser = async (url, parentDir, { allowHTTP = false, allowNavigation = 'same-origin', windowSize, forceBrowser, forceEngine, localCSP = defaultCSP }) => {
+const startBrowser = async (url, parentDir, { allowHTTP = false, allowNavigation = 'same-origin', windowSize, forceBrowser, forceEngine, localCSP = defaultCSP, devtools }) => {
   const [ browserPath, browserName ] = await findBrowserPath(forceBrowser, forceEngine);
   const browserFriendlyName = getFriendlyName(browserName);
 
@@ -220,7 +220,8 @@ const startBrowser = async (url, parentDir, { allowHTTP = false, allowNavigation
     url: openingLocal ? localUrl : url,
     windowSize,
     allowHTTP,
-    extensions: ExtensionsAPI._extensions[browserType]
+    extensions: ExtensionsAPI._extensions[browserType],
+    devtools: devtools === false ? process.argv.includes('--enable-devtools') : true
   }, {
     browserName: browserFriendlyName,
     url: openingLocal ? localUrl : url,

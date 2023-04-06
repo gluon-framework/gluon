@@ -533,7 +533,13 @@ type OpenOptions = {
    * Set to blank (`''`) to use no CSP, or provide your own to use (as a string).
    * @default "upgrade-insecure-requests; default-src 'self' 'unsafe-inline'; connect-src https: data: blob: 'unsafe-inline'; prefetch-src https: data: blob: 'unsafe-inline'; font-src https: data: blob: 'unsafe-inline'; img-src https: data: blob: 'unsafe-inline'; media-src https: data: blob: 'unsafe-inline'; style-src https: data: blob: 'unsafe-inline'; form-action https: data: blob: 'unsafe-inline'"
    */
-  localCSP?: string
+  localCSP?: string,
+
+  /**
+   * Whether DevTools (Ctrl+Shift+I etc) is enabled/disabled in the Gluon window. Enabled by default.
+   * @default true
+   */
+  devtools?: boolean
 };
 
 /**
