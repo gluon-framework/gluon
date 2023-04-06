@@ -51,7 +51,7 @@ $ node .
 <br>
 
 ## Status
-Gluon is currently **barely a month old**, so is still in an **early and experimental state**. But it works and shows (in my opinion) potential! I am open to opinions, suggestions, feedback, ideas, etc. Currently you cannot easily test it yourself. If you're interested and want to talk to me and others about Gluon, you can [join our Discord server](https://discord.gg/RFtUCA8fST).
+Gluon began in **December 2022** (from scratch), so is still in an **early and experimental state**. But it works and shows (in my opinion) potential! I am open to opinions, suggestions, feedback, ideas, etc. Currently you cannot easily test it yourself. If you're interested and want to talk to me and others about Gluon, you can [join our Discord server](https://discord.gg/RFtUCA8fST).
 
 ### Specific feature statuses
 | Feature | Status |
