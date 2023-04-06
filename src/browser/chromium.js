@@ -1,3 +1,5 @@
+import { join } from 'path';
+
 import StartBrowser from '../launcher/start.js';
 
 const presets = { // Presets from OpenAsar
@@ -7,10 +9,19 @@ const presets = { // Presets from OpenAsar
   'memory': '--in-process-gpu --js-flags="--lite-mode --optimize_for_size --wasm_opt --wasm_lazy_compilation --wasm_lazy_validation --always_compact" --renderer-process-limit=2 --enable-features=QuickIntensiveWakeUpThrottlingAfterLoading' // Less (?) memory usage
 };
 
-export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP, extensions }, extra) => {
+export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP, extensions, devtools }, extra) => {
+  if (!devtools) {
+    (async () => {
+      const fs = await import('fs/promises');
+
+      fs.writeFile(join(dataPath, 'devtools_app.html'), `<h1>DevTools is disabled</h1><style>html, body { background: rgb(32, 33, 36); } h1 { color: rgb(154, 160, 166); font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 1.6em; font-weight: normal; } body { display: flex; align-items: center; justify-content: center; }</style><title>DevTools (disabled)</title>`);
+    })();
+  }
+
   return await StartBrowser(browserPath, [
     `--app=${url}`,
     `--user-data-dir=${dataPath}`,
+    !devtools ? `--custom-devtools-frontend=${(await import('url')).pathToFileURL(dataPath)}` : '',
     windowSize ? `--window-size=${windowSize.join(',')}` : '',
     ![true, 'mixed'].includes(allowHTTP) ? `--enable-strict-mixed-content-checking` : '--allow-running-insecure-content',
     Array.isArray(extensions) && extensions.length > 0 ? `--load-extension=${(await Promise.all(extensions)).flat().join(',')}` : '',
