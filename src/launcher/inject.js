@@ -61,7 +61,8 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
         // CDP.sendMessage('Page.navigate', { url: 'about:blank' }, sessionId);
 
         const history = await CDP.sendMessage('Page.getNavigationHistory', {}, sessionId);
-        let oldUrl = history.entries[history.currentIndex - 1].url;
+        let oldUrl = history.entries[history.currentIndex - 1]?.url;
+        if (!oldUrl) return;
         // if (oldUrl === 'about:blank') oldUrl = history.entries[history.currentIndex - 2].url;
 
         CDP.sendMessage('Page.navigate', {
