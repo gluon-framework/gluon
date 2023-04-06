@@ -1,5 +1,5 @@
 import { writeFile } from 'fs/promises';
-import { log } from '../lib/logger.js';
+import { log, logInline } from '../lib/logger.js';
 
 import IPCApi from '../lib/ipc.js';
 import LocalCDP from '../lib/local/cdp.js';
@@ -11,7 +11,7 @@ import V8CacheApi from '../api/v8Cache.js';
 const acquireTarget = async (CDP, filter = () => true) => {
   let target;
 
-  log('acquiring target...');
+  logInline('acquiring target');
 
   while (!target) {
     process.stdout.write('.');

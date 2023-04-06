@@ -1,5 +1,5 @@
 import { get } from 'http';
-import { log } from './logger.js';
+import { log, logInline } from './logger.js';
 
 let WebSocket;
 const logCDP = process.argv.includes('--cdp-logging');
@@ -73,6 +73,8 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
       attempt();
     });
 
+    logInline('fetching websocket url');
+
     const wsUrl = await continualTrying(() => new Promise((resolve, reject) => get(`http://127.0.0.1:${port}/json/version`, res => {
       let body = '';
       res.on('data', chunk => body += chunk.toString());
@@ -86,6 +88,7 @@ export default async ({ pipe: { pipeWrite, pipeRead } = {}, port }) => {
       });
     }).on('error', reject)));
 
+    console.log();
     log('got main process target websocket url:', wsUrl);
 
     const ws = new (await WebSocket).default(wsUrl);
