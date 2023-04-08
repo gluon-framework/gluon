@@ -80,9 +80,10 @@ const getParentDir = () => {
   return dirname(place);
 };
 
-const checkForDangerousOptions = ({ allowHTTP, allowNavigation }) => {
+const checkForDangerousOptions = ({ allowHTTP, allowNavigation, localCSP }) => {
   if (allowHTTP === true) dangerousAPI('Gluon.open', 'allowHTTP', 'true');
   if (allowNavigation === true) dangerousAPI('Gluon.open', 'allowNavigation', 'true');
+  if (localCSP === '') dangerousAPI('Gluon.open', 'localCSP', '\'\'');
 };
 
 export const open = async (url, opts = {}) => {
