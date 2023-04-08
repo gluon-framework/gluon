@@ -111,14 +111,7 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
     };
   };
 
-  const [ ipcMessageCallback, injectIPC, IPC ] = await IPCApi({
-    browserName,
-    browserInfo,
-    browserType
-  }, {
-    evalInWindow,
-    evalOnNewDocument
-  });
+  const [ ipcMessageCallback, injectIPC, IPC ] = await IPCApi({ browserName, browserInfo, browserType }, { evalInWindow, evalOnNewDocument });
   onWindowMessage = ipcMessageCallback;
 
   log('finished setup');
