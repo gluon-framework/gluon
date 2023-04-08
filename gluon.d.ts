@@ -435,6 +435,27 @@ type ControlsApi = {
   ): Promise<void>
 };
 
+type CSSResource = {
+  /** Remove the CSS previously added from the current page and future page loads. */
+  remove(): Promise<void>,
+
+  /** Update the CSS previously added to new code given in the current page and future page loads. */
+  modify(newCode: string): Promise<void>
+};
+
+type JSResource = {
+  /** Remove the JS previously added so it no longer executes in new page loads. */
+  remove(): Promise<void>
+};
+
+type ResourcesApi = {
+  /** Inject CSS to the current page and future page loads (refresh, navigations, etc). */
+  css(code: string): Promise<CSSResource>,
+
+  /** Inject JS to the current page and future page loads (refresh, navigations, etc). */
+  js(code: string): Promise<JSResource>
+};
+
 type Window = {
   /** API for the page of the window. */
   page: PageApi,
@@ -444,6 +465,9 @@ type Window = {
 
   /** API for manually using CDP with the browser. */
   cdp: CDPApi,
+
+  /** API for injecting resources like CSS and JS. */
+  resources: ResourcesApi,
 
   /**
    * API for Gluon idle management (like hibernation). Chromium only.
