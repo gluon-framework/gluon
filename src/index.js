@@ -238,7 +238,11 @@ const startBrowser = async (url, parentDir, { allowHTTP = false, allowNavigation
 };
 
 // get parent directory of where function was called from
-const getParentDir = () => dirname(fileURLToPath((new Error()).stack.split('\n')[3].slice(7).trim().split(':').slice(0, -2).join(':')));
+const getParentDir = () => {
+  let place = (new Error()).stack.split('\n')[3].slice(7).trim().split(':').slice(0, -2).join(':');
+  if (place.startsWith('file://')) place = fileURLToPath(place);
+  return dirname(place);
+};
 
 const checkForDangerousOptions = ({ allowHTTP, allowNavigation }) => {
   if (allowHTTP === true) dangerousAPI('Gluon.open', 'allowHTTP', 'true');
