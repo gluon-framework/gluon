@@ -7,6 +7,7 @@ import LocalCDP from '../lib/local/cdp.js';
 import PageApi from '../api/page.js';
 import IdleApi from '../api/idle.js';
 import ControlsApi from '../api/controls.js';
+import ResourcesApi from '../api/resources.js';
 import V8CacheApi from '../api/v8Cache.js';
 
 const acquireTarget = async (CDP, filter = () => true) => {
@@ -193,6 +194,7 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   Window.page = await PageApi(Window.cdp, evalInWindow, { pageLoadPromise });
   Window.idle = await IdleApi(Window.cdp, { browserType, closeHandlers });
   Window.controls = await ControlsApi(Window.cdp);
+  Window.resources = await ResourcesApi(Window.cdp);
   Window.v8Cache = await V8CacheApi(Window.cdp, evalInWindow, { browserType, dataPath });
 
   return Window;
