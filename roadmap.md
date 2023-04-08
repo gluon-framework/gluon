@@ -1,7 +1,7 @@
 # Gluon Roadmap
 
 > **Note** |
-> Want more info on what some of these mean/are? Ask in [our Discord](https://discord.gg/RFtUCA8fST)!
+> Want more info on some of these? Ask in [our Discord](https://discord.gg/RFtUCA8fST)!
 
 ## Backlog
 - Shortcut (creation/deletion) API
@@ -10,15 +10,19 @@
 - System tray API
 - Browser data (delete) API
 - Crash handling API
-- Resources/Injection API
 - Log file
 - Automatically remember window position/size between starts (disableable)
-
+- Initial system tray API (Windows only for WIP)
+- Frameless windows (Windows only for WIP)
+- Hide window completely (Windows only for WIP)
 
 ## v0.14.0
-- [ ] Initial system tray API (Windows only for WIP)
-- [ ] Frameless windows (Windows only for WIP)
-- [ ] Hide window completely (Windows only for WIP)
+- [X] Resources API
+- [ ] Revamped window controls API featuring getting info and events
+- [ ] Single instance lock API
+- [X] Various IPC fixes and speedups
+- [ ] Window position open option
+- [X] Disable DevTools open option
 
 ## v0.13.0
 - [X] Browser extension API
