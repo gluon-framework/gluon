@@ -15,8 +15,6 @@ process.versions.gluon = '0.14.0-alpha.0';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-
-
 const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase());
 
 const ranJsDir = !process.argv[1] ? __dirname : (extname(process.argv[1]) ? dirname(process.argv[1]) : process.argv[1]);
@@ -26,12 +24,10 @@ const portRange = [ 10000, 60000 ];
 const generatePort = () => (Math.floor(Math.random() * (portRange[1] - portRange[0] + 1)) + portRange[0]);
 
 // default CSP policy. tl;dr: allow everything if same-origin, and allow all mostly non-dangerous things for all domains (images, css, requests)
-const csp_sameOnly = `'self' 'unsafe-inline'`;
-const csp_allowAll = `https: data: blob: 'unsafe-inline'`;
 const defaultCSP = [ 'upgrade-insecure-requests' ].concat(
-  [ 'default-src' ].map(x => `${x} ${csp_sameOnly}`)
+  [ 'default-src' ].map(x => `${x} 'self' 'unsafe-inline'`)
 ).concat(
-  [ 'connect-src', 'prefetch-src', 'font-src', 'img-src', 'media-src', 'style-src', 'form-action' ].map(x => `${x} ${csp_allowAll}`)
+  [ 'connect-src', 'prefetch-src', 'font-src', 'img-src', 'media-src', 'style-src', 'form-action' ].map(x => `${x} https: data: blob: 'unsafe-inline'`)
 ).join('; ');
 
 const startBrowser = async (url, parentDir, { allowHTTP = false, allowNavigation = 'same-origin', windowSize, forceBrowser, forceEngine, localCSP = defaultCSP, devtools }) => {
