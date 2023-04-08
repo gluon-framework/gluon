@@ -194,22 +194,10 @@ type PageApi = {
   ): Promise<void>,
 
   /**
-   * Print (save) the page as a PDF, optionally to a file.
+   * Print (export) the page as a PDF.
    * @returns Buffer of PDF data.
    */
   printToPDF(
-    /** Optional print options (based on Chromium's headless standard). */
-    options?: PrintToPDFOptions
-  ): Promise<Buffer>,
-
-  /**
-   * Print (save) the page as a PDF to a file.
-   * @returns Buffer of PDF data.
-   */
-  printToPDF(
-    /** Path to save the PDF to. Do not include to just get a Buffer. */
-    path: string,
-
     /** Optional print options (based on Chromium's headless standard). */
     options?: PrintToPDFOptions
   ): Promise<Buffer>

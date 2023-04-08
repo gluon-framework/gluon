@@ -4,6 +4,7 @@ import { log, logInline } from '../lib/logger.js';
 import IPCApi from '../lib/ipc.js';
 import LocalCDP from '../lib/local/cdp.js';
 
+import PageApi from '../api/page.js';
 import IdleApi from '../api/idle.js';
 import ControlsApi from '../api/controls.js';
 import V8CacheApi from '../api/v8Cache.js';
@@ -135,53 +136,6 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   };
 
   const Window = {
-    page: {
-      eval: evalInWindow,
-      loaded: pageLoadPromise,
-
-      title: val => {
-        if (!val) return evalInWindow('document.title');
-        return evalInWindow(`document.title = \`${val}\``);
-      },
-
-      reload: async (ignoreCache = false) => {
-        await Window.cdp.send('Page.reload', {
-          ignoreCache
-        });
-      },
-
-      printToPDF: async (...args) => {
-        let path, options = {};
-
-        if (args.length === 1) {
-          if (typeof args[0] === 'string') path = args[0];
-            else options = { ...args[0] };
-        }
-
-        if (args.length === 2) {
-          path = args[0];
-          options = { ...args[1] };
-        }
-
-        if (options.margins) {
-          const { top, bottom, left, right } = options.margins;
-          if (top) options.marginTop = top;
-          if (bottom) options.marginBottom = bottom;
-          if (left) options.marginLeft = left;
-          if (right) options.marginRight = right;
-
-          delete options.margins;
-        }
-
-        const { data } = await Window.cdp.send('Page.printToPDF', options);
-        const buffer = Buffer.from(data, 'base64');
-
-        if (path) await writeFile(path, buffer);
-
-        return buffer;
-      }
-    },
-
     ipc: IPC,
 
     cdp: {
@@ -236,6 +190,7 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   process.on('SIGTERM', interruptHandler);
   // process.on('uncaughtException', interruptHandler);
 
+  Window.page = await PageApi(Window.cdp, evalInWindow, { pageLoadPromise });
   Window.idle = await IdleApi(Window.cdp, { browserType, closeHandlers });
   Window.controls = await ControlsApi(Window.cdp);
   Window.v8Cache = await V8CacheApi(Window.cdp, evalInWindow, { browserType, dataPath });
