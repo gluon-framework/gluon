@@ -1,5 +1,5 @@
-import { join, dirname, extname, delimiter, sep, isAbsolute } from 'path';
-import { access, readdir } from 'fs/promises';
+import { join, dirname, extname, isAbsolute } from 'path';
+
 import { fileURLToPath } from 'url';
 import { log, dangerousAPI } from './lib/logger.js';
 
@@ -8,81 +8,19 @@ import Firefox from './browser/firefox.js';
 
 import * as ExtensionsAPI from './extensions.js';
 import LocalHTTP from './lib/local/http.js';
-import browserPaths from './lib/browserPaths.js';
+import { findBrowserPath, getBrowserType } from './lib/browserPaths.js';
 
 process.versions.gluon = '0.14.0-alpha.0';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-let _binariesInPath; // cache as to avoid excessive reads
-const getBinariesInPath = async () => {
-  if (_binariesInPath) return _binariesInPath;
 
-  return _binariesInPath = (await Promise.all(process.env.PATH
-    .replaceAll('"', '')
-    .split(delimiter)
-    .filter(Boolean)
-    .map(x => readdir(x.replace(/"+/g, '')).catch(() => [])))).flat();
-};
-
-const exists = async path => {
-  if (path.includes(sep)) return await access(path).then(() => true).catch(() => false);
-
-  // just binary name, so check path
-  return (await getBinariesInPath()).includes(path);
-};
-
-const getBrowserPath = async browser => {
-  for (const path of Array.isArray(browserPaths[browser]) ? browserPaths[browser] : [ browserPaths[browser] ]) {
-    // log('checking if ' + browser + ' exists:', path, await exists(path));
-
-    if (await exists(path)) return path;
-  }
-
-  return null;
-};
-
-const findBrowserPath = async (forceBrowser, forceEngine) => {
-  if (forceBrowser) return [ await getBrowserPath(forceBrowser), forceBrowser ];
-
-  for (const x in browserPaths) {
-    if (process.argv.includes('--' + x) || process.argv.includes('--' + x.split('_')[0])) return [ await getBrowserPath(x), x ];
-  }
-
-  if (process.argv.some(x => x.startsWith('--browser='))) {
-    const given = process.argv.find(x => x.startsWith('--browser='));
-    const split = given.slice(given.indexOf('=') + 1).split(',');
-    const name = split[0];
-    const path = split.slice(1).join(',');
-
-    return [ path || await getBrowserPath(name), name ];
-  }
-
-  for (const name in browserPaths) {
-    const path = await getBrowserPath(name);
-
-    if (path) {
-      if (forceEngine && getBrowserType(name) !== forceEngine) continue; // if forceEngine is set, ignore path if it isn't
-
-      return [ path, name ];
-    }
-  }
-
-  return null;
-};
 
 const getFriendlyName = whichBrowser => whichBrowser[0].toUpperCase() + whichBrowser.slice(1).replace(/[a-z]_[a-z]/g, _ => _[0] + ' ' + _[2].toUpperCase());
 
 const ranJsDir = !process.argv[1] ? __dirname : (extname(process.argv[1]) ? dirname(process.argv[1]) : process.argv[1]);
 const getDataPath = browser => join(ranJsDir, 'gluon_data', browser);
-
-const getBrowserType = name => { // todo: not need this
-  if (name.startsWith('firefox') ||
-    [ 'librewolf', 'waterfox' ].includes(name)) return 'firefox';
-
-  return 'chromium';
-};
 
 const portRange = [ 10000, 60000 ];
 const generatePort = () => (Math.floor(Math.random() * (portRange[1] - portRange[0] + 1)) + portRange[0]);

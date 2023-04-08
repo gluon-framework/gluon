@@ -1,4 +1,5 @@
-import { join } from 'path';
+import { join, delimiter, sep } from 'path';
+import { access, readdir } from 'fs/promises';
 
 const browserPaths = ({
   win32: process.platform === 'win32' && { // windows paths are automatically prepended with program files, program files (x86), and local appdata if a string, see below
@@ -99,4 +100,64 @@ if (process.platform === 'win32') { // windows: automatically generate env-based
   }
 }
 
-export default browserPaths;
+let _binariesInPath; // cache as to avoid excessive reads
+const getBinariesInPath = async () => {
+  if (_binariesInPath) return _binariesInPath;
+
+  return _binariesInPath = (await Promise.all(process.env.PATH
+    .replaceAll('"', '')
+    .split(delimiter)
+    .filter(Boolean)
+    .map(x => readdir(x.replace(/"+/g, '')).catch(() => [])))).flat();
+};
+
+const exists = async path => {
+  if (path.includes(sep)) return await access(path).then(() => true).catch(() => false);
+
+  // just binary name, so check path
+  return (await getBinariesInPath()).includes(path);
+};
+
+const getBrowserPath = async browser => {
+  for (const path of Array.isArray(browserPaths[browser]) ? browserPaths[browser] : [ browserPaths[browser] ]) {
+    if (await exists(path)) return path;
+  }
+
+  return null;
+};
+
+export const getBrowserType = name => { // todo: not need this
+  if (name.startsWith('firefox') ||
+    [ 'librewolf', 'waterfox' ].includes(name)) return 'firefox';
+
+  return 'chromium';
+};
+
+export const findBrowserPath = async (forceBrowser, forceEngine) => {
+  if (forceBrowser) return [ await getBrowserPath(forceBrowser), forceBrowser ];
+
+  for (const x in browserPaths) {
+    if (process.argv.includes('--' + x) || process.argv.includes('--' + x.split('_')[0])) return [ await getBrowserPath(x), x ];
+  }
+
+  if (process.argv.some(x => x.startsWith('--browser='))) {
+    const given = process.argv.find(x => x.startsWith('--browser='));
+    const split = given.slice(given.indexOf('=') + 1).split(',');
+    const name = split[0];
+    const path = split.slice(1).join(',');
+
+    return [ path || await getBrowserPath(name), name ];
+  }
+
+  for (const name in browserPaths) {
+    const path = await getBrowserPath(name);
+
+    if (path) {
+      if (forceEngine && getBrowserType(name) !== forceEngine) continue; // if forceEngine is set, ignore path if it isn't
+
+      return [ path, name ];
+    }
+  }
+
+  return null;
+};
