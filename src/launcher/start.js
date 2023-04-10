@@ -12,7 +12,7 @@ export default async (browserPath, args, transport, extra) => {
 
   const proc = spawn(browserPath, [
     transport === 'stdio' ? `--remote-debugging-pipe` : `--remote-debugging-port=${port}`,
-    ...args
+    ...args.filter(x => x)
   ].filter(x => x), {
     detached: false,
     stdio: ['ignore', 'pipe', 'pipe', 'pipe', 'pipe']
