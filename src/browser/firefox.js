@@ -5,7 +5,7 @@ import StartBrowser from '../launcher/start.js';
 
 const exists = path => access(path).then(() => true).catch(() => false);
 
-export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP, extensions }, extra) => {
+export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP, extensions, userAgent }, extra) => {
   await mkdir(dataPath, { recursive: true });
   await writeFile(join(dataPath, 'user.js'), `
 user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
@@ -28,6 +28,8 @@ user_pref('security.mixed_content.block_active_content', ${![true, 'mixed'].incl
 user_pref('security.mixed_content.block_display_content', ${![true, 'mixed'].includes(allowHTTP) ? 'true' : 'false'});
 user_pref('security.mixed_content.block_object_subrequest', ${![true, 'mixed'].includes(allowHTTP) ? 'true' : 'false'});
 user_pref('security.mixed_content.upgrade_display_content', true);
+
+user_pref('general.useragent.override', '${userAgent}');
 `);
 
 // user_pref('privacy.resistFingerprinting', false);
