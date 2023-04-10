@@ -12,6 +12,7 @@ pnpm-lock.yaml
 build
 gluon_data
 
-# github stuff
+# docs/utils not helpful for npm
 .github
 assets
+roadmap.md
