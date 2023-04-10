@@ -551,7 +551,10 @@ type OpenOptions = {
    * Whether DevTools (Ctrl+Shift+I etc) is enabled/disabled in the Gluon window. Enabled by default.
    * @default true
    */
-  devtools?: boolean
+  devtools?: boolean,
+
+  /** Set a custom user agent for the browser engine to use. */
+  userAgent?: string,
 };
 
 /**
