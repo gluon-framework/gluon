@@ -9,7 +9,7 @@ const presets = { // Presets from OpenAsar
   'memory': '--in-process-gpu --js-flags="--lite-mode --optimize_for_size --wasm_opt --wasm_lazy_compilation --wasm_lazy_validation --always_compact" --renderer-process-limit=2 --enable-features=QuickIntensiveWakeUpThrottlingAfterLoading' // Less (?) memory usage
 };
 
-export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP, extensions, devtools }, extra) => {
+export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP, extensions, devtools, userAgent }, extra) => {
   if (!devtools) {
     (async () => {
       const fs = await import('fs/promises');
@@ -22,6 +22,7 @@ export default async ({ browserPath, dataPath }, { url, windowSize, allowHTTP, e
     `--app=${url}`,
     `--user-data-dir=${dataPath}`,
     !devtools ? `--custom-devtools-frontend=${(await import('url')).pathToFileURL(dataPath)}` : '',
+    userAgent ? `--user-agent="${userAgent}"` : '',
     windowSize ? `--window-size=${windowSize.join(',')}` : '',
     ![true, 'mixed'].includes(allowHTTP) ? `--enable-strict-mixed-content-checking` : '--allow-running-insecure-content',
     Array.isArray(extensions) && extensions.length > 0 ? `--load-extension=${(await Promise.all(extensions)).flat().join(',')}` : '',
