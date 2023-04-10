@@ -16,7 +16,7 @@ user_pref('toolkit.telemetry.reportingpolicy.firstRun', false);
 user_pref('browser.shell.checkDefaultBrowser', false);
 ${!windowSize ? '' : `user_pref('privacy.window.maxInnerWidth', ${windowSize[0]});
 user_pref('privacy.window.maxInnerHeight', ${windowSize[1]});`}
-user_pref('privacy.resistFingerprinting', true);
+user_pref('privacy.resistFingerprinting', false);
 user_pref('fission.bfcacheInParent', false);
 user_pref('fission.webContentIsolationStrategy', 0);
 user_pref('ui.key.menuAccessKeyFocuses', false);
