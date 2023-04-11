@@ -20,6 +20,7 @@
 - [X] Resources API
 - [ ] Revamped window controls API featuring getting info and events
 - [ ] Single instance lock API
+- [X] About window API
 - [X] Internal cleanup and rewriting
 - [X] Various IPC fixes and speedups
 - [ ] Window position open option
