@@ -555,6 +555,12 @@ type OpenOptions = {
 
   /** Set a custom user agent for the browser engine to use. */
   userAgent?: string,
+
+  /**
+   * Do not persist browser data in the regular data directory.
+   * @default false
+   */
+  incognito?: boolean,
 };
 
 /**
