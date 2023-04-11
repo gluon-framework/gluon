@@ -105,3 +105,5 @@ export const extensions = {
   add: ExtensionsAPI.add,
   remove: ExtensionsAPI.remove
 };
+
+export { default as openAbout } from "./menus/about.js";
