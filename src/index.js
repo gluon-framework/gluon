@@ -30,13 +30,14 @@ const defaultCSP = [ 'upgrade-insecure-requests' ].concat(
   [ 'connect-src', 'prefetch-src', 'font-src', 'img-src', 'media-src', 'style-src', 'form-action' ].map(x => `${x} https: data: blob: 'unsafe-inline'`)
 ).join('; ');
 
-const startBrowser = async (url, parentDir, { allowHTTP = false, allowNavigation = 'same-origin', windowSize, forceBrowser, forceEngine, localCSP = defaultCSP, devtools, userAgent }) => {
+const startBrowser = async (url, parentDir, { allowHTTP = false, allowNavigation = 'same-origin', windowSize, forceBrowser, forceEngine, localCSP = defaultCSP, devtools, userAgent, incognito }) => {
   const [ browserPath, browserName ] = await findBrowserPath(forceBrowser, forceEngine);
   const browserFriendlyName = getFriendlyName(browserName);
 
   if (!browserPath) return log('failed to find a good browser install');
 
-  const dataPath = getDataPath(browserName);
+  let dataPath = getDataPath(browserName);
+  if (incognito) dataPath = join(dataPath, 'incognito-' + Math.random().toString().slice(2));
   const browserType = getBrowserType(browserName);
 
   log('found browser', browserName, `(${browserType} based)`, 'at path:', browserPath);
