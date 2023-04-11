@@ -23,6 +23,8 @@
 - [X] Internal cleanup and rewriting
 - [X] Various IPC fixes and speedups
 - [ ] Window position open option
+- [X] Incognito open option
+- [X] User agent open option
 - [X] Disable DevTools open option
 
 ## v0.13.0
