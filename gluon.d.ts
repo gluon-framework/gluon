@@ -592,3 +592,36 @@ type ExtensionsAPI = {
 
 /** Manage browser extensions to use. */
 export const extensions: ExtensionsAPI;
+
+type Link = {
+  href: string,
+  text: string
+};
+
+type OpenAboutOptions = {
+  /** Name of the app to display. */
+  name: string,
+
+  /** URL icon of the app to use. */
+  icon: string,
+
+  /** Description of the app to display. Supports HTML. */
+  description?: string,
+
+  /** Version of the app to display. */
+  version?: string,
+
+  /** Links to display in the window. */
+  links?: Link[],
+
+  /** Gluon versions from a Window to display (Gluon, Node, Browser). */
+  gluonVersions?: BrowserVersions
+};
+
+/**
+ * Open a new Gluon about window.
+ */
+export function openAbout(
+  /** Options for what to display in the about window. */
+  options: OpenAboutOptions
+): Promise<Window>;
