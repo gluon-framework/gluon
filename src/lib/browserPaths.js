@@ -159,5 +159,5 @@ export const findBrowserPath = async (forceBrowser, forceEngine) => {
     }
   }
 
-  return null;
+  return [ null, null ];
 };

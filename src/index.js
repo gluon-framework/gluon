@@ -32,13 +32,15 @@ const defaultCSP = [ 'upgrade-insecure-requests' ].concat(
 
 const startBrowser = async (url, parentDir, { allowHTTP = false, allowNavigation = 'same-origin', windowSize, forceBrowser, forceEngine, localCSP = defaultCSP, devtools, userAgent, incognito }) => {
   const [ browserPath, browserName ] = await findBrowserPath(forceBrowser, forceEngine);
-  const browserFriendlyName = getFriendlyName(browserName);
+  if (!browserPath) {
+    throw new Error('Failed to find a usable browser installed');
+  }
 
-  if (!browserPath) return log('failed to find a good browser install');
+  const browserFriendlyName = getFriendlyName(browserName);
+  const browserType = getBrowserType(browserName);
 
   let dataPath = getDataPath(browserName);
   if (incognito) dataPath = join(dataPath, 'incognito-' + Math.random().toString().slice(2));
-  const browserType = getBrowserType(browserName);
 
   log('found browser', browserName, `(${browserType} based)`, 'at path:', browserPath);
   log('data path:', dataPath);
