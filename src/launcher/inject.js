@@ -33,8 +33,6 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   let pageLoadCallback, pageLoadPromise = new Promise(res => pageLoadCallback = res);
   let frameLoadCallback, frameLoadPromise = new Promise(res => frameLoadCallback = res);
 
-  let onWindowMessage = () => {};
-
   CDP.onMessage(async msg => {
     if (msg.method === 'Page.frameStoppedLoading') frameLoadCallback(msg.params);
     if (msg.method === 'Page.loadEventFired') pageLoadCallback();
@@ -145,8 +143,7 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   process.on('SIGTERM', interruptHandler);
   // process.on('uncaughtException', interruptHandler);
 
-  const [ ipcMessageCallback, injectIPC, IPC ] = await IPCApi({ browserName, browserInfo, browserType }, { evalInWindow, evalOnNewDocument }, CDP, sessionId, () => typeof Window === 'undefined' ? false : Window.closed);
-  onWindowMessage = ipcMessageCallback;
+  const [ injectIPC, IPC ] = await IPCApi({ browserName, browserInfo, browserType }, { evalInWindow, evalOnNewDocument }, CDP, sessionId, () => typeof Window === 'undefined' ? false : Window.closed);
   Window.ipc = IPC;
 
   // check if already loaded, if so trigger page load promise

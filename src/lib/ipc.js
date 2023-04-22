@@ -325,7 +325,6 @@ delete window._gluonSend;
   });
 
   return [
-    onWindowMessage,
     () => evalInWindow(injection),
     API
   ];
