@@ -16,17 +16,19 @@
 - Frameless windows (Windows only for WIP)
 - Hide window completely (Windows only for WIP)
 
-## v0.14.0
-- [X] Resources API
+## v0.15.0
 - [ ] Revamped window controls API featuring getting info and events
+- [ ] Window position open option
+
+## v0.14.0
+- [X] Rewritten IPC for stability and speedup
+- [X] Resources API
 - [ ] Single instance lock API
 - [X] About window API
-- [X] Internal cleanup and rewriting
-- [X] Various IPC fixes and speedups
-- [ ] Window position open option
 - [X] Incognito open option
 - [X] User agent open option
 - [X] Disable DevTools open option
+- [X] Internal cleanup and rewriting
 
 ## v0.13.0
 - [X] Browser extension API
