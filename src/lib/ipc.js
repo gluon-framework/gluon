@@ -1,10 +1,10 @@
 import { log } from './logger.js';
 const logIPC = process.argv.includes('--ipc-logging');
 
-export default ({ browserName, browserInfo, browserType }, { evalInWindow, evalOnNewDocument }) => {
+export default ({ browserName, browserInfo, browserType }, { evalInWindow, evalOnNewDocument }, CDP, sessionId, isClosed) => {
   const injection = `(() => {
 if (window.Gluon) return;
-let onIPCReply = {}, ipcListeners = {};
+let onIPCReply = {}, ipcListeners = {}, ipcQueue = [], ipcQueueRes;
 const Gluon = {
   versions: {
     gluon: '${process.versions.gluon}',
@@ -30,11 +30,15 @@ const Gluon = {
       const isReply = !!id;
       id = id ?? Math.random().toString().split('.')[1];
 
-      Gluon.ipc._send(JSON.stringify({
+      ipcQueue.push({
         id,
         type,
         data
-      }));
+      });
+      if (ipcQueueRes) {
+        ipcQueueRes();
+        ipcQueueRes = null;
+      }
 
       if (isReply) return;
 
@@ -53,6 +57,11 @@ const Gluon = {
     removeListener: (type, cb) => {
       if (!ipcListeners[type]) return false;
       ipcListeners[type].splice(ipcListeners[type].indexOf(cb), 1);
+    },
+
+    _get: async () => {
+      if (ipcQueue.length === 0) await new Promise(res => ipcQueueRes = res);
+      return JSON.stringify(ipcQueue.shift());
     },
 
     _receive: async msg => {
@@ -133,7 +142,7 @@ Gluon.ipc.on('backend store write', ({ key, value }) => {
 
 Gluon.ipc = new Proxy(Gluon.ipc, {
   get(target, key) {
-    return target[key] ?? ((...args) => Gluon.ipc.send('exposed ' + key, args));
+    return (Gluon.ipc[key] = target[key] ?? ((...args) => Gluon.ipc.send('exposed ' + key, args)));
   }
 });
 
@@ -144,6 +153,18 @@ delete window._gluonSend;
 
   evalInWindow(injection);
   evalOnNewDocument(injection);
+
+  (async () => {
+    while (!isClosed()) {
+      const msg = await CDP.sendMessage('Runtime.evaluate', {
+        expression: 'window.Gluon.ipc._get()',
+        awaitPromise: true
+      }, sessionId);
+      if (msg.exceptionDetails) continue;
+
+      onWindowMessage(JSON.parse(msg.result.value));
+    }
+  })();
 
   let onIPCReply = {}, ipcListeners = {};
   const sendToWindow = async (type, data, id = undefined) => {
@@ -168,7 +189,7 @@ delete window._gluonSend;
   };
 
   const onWindowMessage = async ({ id, type, data }) => {
-    if (logIPC) log('IPC: recv', { type, data, id });
+    // if (logIPC) log('IPC: recv', { type, data, id });
 
     if (onIPCReply[id]) {
       onIPCReply[id]({ type, data });

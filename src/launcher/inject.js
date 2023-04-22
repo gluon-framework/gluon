@@ -36,7 +36,6 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   let onWindowMessage = () => {};
 
   CDP.onMessage(async msg => {
-    if (msg.method === 'Runtime.bindingCalled' && msg.params.name === '_gluonSend') onWindowMessage(JSON.parse(msg.params.payload));
     if (msg.method === 'Page.frameStoppedLoading') frameLoadCallback(msg.params);
     if (msg.method === 'Page.loadEventFired') pageLoadCallback();
     if (msg.method === 'Runtime.executionContextCreated') {
@@ -86,12 +85,8 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
 
   if (openingLocal && browserType === 'chromium') await LocalCDP(CDP, { sessionId, url, basePath, csp: localCSP });
 
-  CDP.sendMessage('Runtime.addBinding', { // setup sending from window to Node via Binding
-    name: '_gluonSend'
-  }, sessionId);
-
   const evalInWindow = async func => {
-    await frameLoadPromise; // wait for page to load before eval, otherwise fail
+    // await frameLoadPromise; // wait for page to load before eval, otherwise fail
     const reply = await CDP.sendMessage(`Runtime.evaluate`, {
       expression: typeof func === 'string' ? func : `(${func.toString()})()`
     }, sessionId);
@@ -113,46 +108,7 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
     };
   };
 
-  const [ ipcMessageCallback, injectIPC, IPC ] = await IPCApi({ browserName, browserInfo, browserType }, { evalInWindow, evalOnNewDocument });
-  onWindowMessage = ipcMessageCallback;
-
-  log('finished setup');
-
-  evalInWindow('document.readyState').then(readyState => { // check if already loaded, if so trigger page load promise
-    if (readyState === 'complete' || readyState === 'ready') pageLoadCallback();
-    frameLoadCallback();
-  });
-
-
-  const generateVersionInfo = (name, version) => ({
-    name,
-    version,
-    major: parseInt(version.split('.')[0])
-  });
-
-  const versions = {
-    product: generateVersionInfo(browserName, browserInfo.product.split('/')[1]),
-    engine: generateVersionInfo(browserType, browserInfo.product.split('/')[1]),
-    jsEngine: generateVersionInfo(browserType === 'chromium' ? 'v8' : 'spidermonkey', browserInfo.jsVersion)
-  };
-
   const Window = {
-    ipc: IPC,
-
-    cdp: {
-      send: (method, params, useSessionId = true) => CDP.sendMessage(method, params, useSessionId ? sessionId : undefined),
-      on: (method, handler, once = false) => {
-        const unhook = CDP.onMessage(msg => {
-          if (msg.method === method) {
-            handler(msg);
-            if (once) unhook();
-          }
-        });
-
-        return unhook;
-      }
-    },
-
     close: () => {
       if (Window.closed) return false;
 
@@ -164,9 +120,7 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
 
       return Window.closed = true;
     },
-    closed: false,
-
-    versions
+    closed: false
   };
 
   // when the process has exited (all windows closed), clean up window internally
@@ -191,11 +145,49 @@ export default async (CDP, proc, injectionType = 'browser', { dataPath, browserN
   process.on('SIGTERM', interruptHandler);
   // process.on('uncaughtException', interruptHandler);
 
+  const [ ipcMessageCallback, injectIPC, IPC ] = await IPCApi({ browserName, browserInfo, browserType }, { evalInWindow, evalOnNewDocument }, CDP, sessionId, () => typeof Window === 'undefined' ? false : Window.closed);
+  onWindowMessage = ipcMessageCallback;
+  Window.ipc = IPC;
+
+  // check if already loaded, if so trigger page load promise
+  evalInWindow('document.readyState').then(readyState => {
+    if (readyState === 'complete' || readyState === 'ready') pageLoadCallback();
+    frameLoadCallback();
+  });
+
+  const generateVersionInfo = (name, version) => ({
+    name,
+    version,
+    major: parseInt(version.split('.')[0])
+  });
+
+  Window.versions = {
+    product: generateVersionInfo(browserName, browserInfo.product.split('/')[1]),
+    engine: generateVersionInfo(browserType, browserInfo.product.split('/')[1]),
+    jsEngine: generateVersionInfo(browserType === 'chromium' ? 'v8' : 'spidermonkey', browserInfo.jsVersion)
+  }
+
+  Window.cdp = {
+    send: (method, params, useSessionId = true) => CDP.sendMessage(method, params, useSessionId ? sessionId : undefined),
+    on: (method, handler, once = false) => {
+      const unhook = CDP.onMessage(msg => {
+        if (msg.method === method) {
+          handler(msg);
+          if (once) unhook();
+        }
+      });
+
+      return unhook;
+    }
+  };
+
   Window.page = await PageApi(Window.cdp, evalInWindow, { pageLoadPromise });
   Window.idle = await IdleApi(Window.cdp, { browserType, closeHandlers });
   Window.controls = await ControlsApi(Window.cdp);
   Window.resources = await ResourcesApi(Window.cdp);
   Window.v8Cache = await V8CacheApi(Window.cdp, evalInWindow, { browserType, dataPath });
+
+  log('finished window');
 
   return Window;
 };
