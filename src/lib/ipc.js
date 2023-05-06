@@ -160,9 +160,10 @@ delete window._gluonSend;
         expression: 'window.Gluon.ipc._get()',
         awaitPromise: true
       }, sessionId);
-      if (msg.exceptionDetails) continue;
 
-      onWindowMessage(JSON.parse(msg.result.value));
+      if (msg.result) {
+        onWindowMessage(JSON.parse(msg.result.value));
+      }
     }
   })();
 
