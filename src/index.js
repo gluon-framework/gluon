@@ -27,7 +27,7 @@ const generatePort = () => (Math.floor(Math.random() * (portRange[1] - portRange
 const defaultCSP = [ 'upgrade-insecure-requests' ].concat(
   [ 'default-src' ].map(x => `${x} 'self' 'unsafe-inline'`)
 ).concat(
-  [ 'connect-src', 'prefetch-src', 'font-src', 'img-src', 'media-src', 'style-src', 'form-action' ].map(x => `${x} https: data: blob: 'unsafe-inline'`)
+  [ 'connect-src', 'font-src', 'img-src', 'media-src', 'style-src', 'form-action' ].map(x => `${x} https: data: blob: 'unsafe-inline'`)
 ).join('; ');
 
 const startBrowser = async (url, parentDir, { allowHTTP = false, allowNavigation = 'same-origin', windowSize, forceBrowser, forceEngine, localCSP = defaultCSP, devtools, userAgent, incognito }) => {
