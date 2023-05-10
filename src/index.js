@@ -10,7 +10,7 @@ import * as ExtensionsAPI from './extensions.js';
 import LocalHTTP from './lib/local/http.js';
 import { findBrowserPath, getBrowserType } from './lib/browserPaths.js';
 
-process.versions.gluon = '0.14.0-alpha.0';
+process.versions.gluon = '0.14.0';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
