@@ -90,7 +90,7 @@ html:not([tabsintitlebar="true"]) .tab-icon-image {
   }
 
   return await StartBrowser(browserPath, [
-    ...(!windowSize ? [] : [ `-window-size`, windowSize.join(',') ]),
+    ...(!windowSize ? [] : [`-width`, windowSize[0], `-height`, windowSize[1]]),
     `-profile`, dataPath,
     `-new-window`, url,
     `-new-instance`,
