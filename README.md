@@ -97,13 +97,13 @@ Window.ipc.on('my type', data => { // { more: 'data' }
 
 ## Comparisons
 ### Internals
-| Part | Gluon | Electron | Tauri | Neutralinojs |
-| ---- | ----- | -------- | ------------ | ----- |
-| Frontend | System installed Chromium *or Firefox* | Self-contained Chromium | System installed webview | System installed webview |
-| Backend | System installed *or bundled* Node.JS | Self-contained Node.JS | Native (Rust) | Native (Any) |
-| IPC | Window object | Preload | Window object | Window object |
-| Status | Early in development | Production ready | Usable | Usable |
-| Ecosystem | Integrated | Distributed | Integrated | Integrated |
+| Part | Gluon | Electron | Tauri | Neutralinojs | WebUI |
+| ---- | ----- | -------- | ------------ | ----- | ----- |
+| Frontend | System installed Chromium *or Firefox* | Self-contained Chromium | System installed webview | System installed webview | System installed Browser
+| Backend | System installed *or bundled* Node.JS | Self-contained Node.JS | Native (Rust) | Native (Any) | Native (Any)
+| IPC | Window object | Preload | Window object | Window object | Window object
+| Status | Early in development | Production ready | Usable | Usable | Usable
+| Ecosystem | Integrated | Distributed | Integrated | Integrated | Integrated
 
 
 ### Benchmark / Stats
